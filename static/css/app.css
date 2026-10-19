@@ -306,9 +306,79 @@ input::placeholder { color: var(--muted); opacity: 0.7; }
 .qr-box { display: flex; justify-content: center; padding: 14px; background: #fff; border-radius: 12px; width: fit-content; margin: 10px auto; }
 .seed { display: block; word-break: break-all; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 13px; }
 
-@media (max-width: 640px) {
-  .topbar-inner { flex-wrap: wrap; gap: 8px; }
-  .nav { order: 3; width: 100%; overflow-x: auto; }
+/* ---- responsive (issue #2: mobile optimization) ----
+   Desktop (>1024px) is untouched; tablet trims spacing; phones get a
+   CSS-only checkbox hamburger, stacked forms, scrollable tables and
+   44px touch targets. Zero JavaScript. */
+
+.nav-toggle { display: none; }
+.nav-burger { display: none; }
+.table-scroll { overflow-x: auto; scrollbar-width: thin; }
+
+@media (max-width: 1024px) {
+  .container { padding: 20px 16px 60px; }
+  .topbar-inner { gap: 12px; padding: 10px 16px; }
+  .nav a { padding: 6px 9px; font-size: 13px; }
+  .grid-cards { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .panel { padding: 18px 18px; }
+}
+
+@media (max-width: 700px) {
+  .topbar-inner { flex-wrap: wrap; row-gap: 4px; padding: 8px 14px; }
+  .topbar-right { margin-left: auto; gap: 8px; }
+
+  /* hamburger button (three bars -> X when open) */
+  .nav-burger {
+    display: flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 10px; cursor: pointer;
+    flex: none;
+  }
+  .nav-burger:hover { background: var(--grid); }
+  .nav-burger span,
+  .nav-burger span::before,
+  .nav-burger span::after {
+    content: ""; display: block; width: 19px; height: 2px;
+    border-radius: 2px; background: var(--text);
+  }
+  .nav-burger span { position: relative; }
+  .nav-burger span::before { position: absolute; top: -6px; left: 0; }
+  .nav-burger span::after { position: absolute; top: 6px; left: 0; }
+  .nav-toggle:checked ~ .nav-burger span { background: transparent; }
+  .nav-toggle:checked ~ .nav-burger span::before { transform: rotate(45deg); top: 0; }
+  .nav-toggle:checked ~ .nav-burger span::after { transform: rotate(-45deg); top: 0; }
+
+  /* collapsed menu: full-width column below the bar */
+  .nav {
+    display: none; order: 5; width: 100%; flex: 1 0 100%;
+    flex-direction: column; gap: 2px; padding: 4px 0 8px;
+  }
+  .nav-toggle:checked ~ .nav { display: flex; }
+  .nav a { padding: 12px 14px; font-size: 15px; border-radius: 10px; }
+
+  /* touch targets */
+  .btn { padding: 10px 16px; }
+  .btn-sm { padding: 9px 14px; font-size: 13px; }
+  .btn-xs { padding: 7px 12px; }
+  .chip { padding: 8px 14px; }
+  .userchip { padding: 8px 12px; }
+
+  /* 16px inputs stop iOS from zoom-focusing */
+  input[type="text"], input[type="password"], input[type="number"],
+  input[type="date"], input[type="datetime-local"], input[type="time"],
+  input[type="file"], select, textarea { font-size: 16px; }
+
+  .container { padding: 16px 12px 70px; }
+  .panel { padding: 15px 14px; border-radius: 12px; }
   .metric-value { font-size: 28px; }
-  .panel { padding: 16px; }
+  .page-title { font-size: 19px; }
+  .stat-row { gap: 18px; }
+  .legend { gap: 12px; }
+  .insight { font-size: 13px; padding: 8px 11px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .table-scroll .table { min-width: 540px; }
+  .schedule-row { flex-wrap: wrap; row-gap: 4px; }
+  .schedule-time { margin-left: 0; width: 100%; }
+  .metric-knobs td { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+  .metric-knobs table, .metric-knobs tr, .metric-knobs tbody { display: block; }
+  .qr-box { max-width: 100%; overflow: auto; }
 }

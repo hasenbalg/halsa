@@ -184,7 +184,8 @@ Hosting: public GitHub repo github.com/hasenbalg/halsa (frank's
 fresh single-commit init; local history realigned to it — the old
 internal-hosting history is not pushed anywhere public).
 
-## Issue #3 — interactive install script (2026-10-19)
+<<<<<<< HEAD
+
 
 install.sh is now a standalone question game (curl | bash) that PULLS
 ghcr.io/hasenbalg/halsa:latest — it never builds. Questions: port,
@@ -198,3 +199,24 @@ or redo-Q&A (postgres password preserved from old .env).
 - TIME_ZONE is now an env knob (was hardcoded Europe/Berlin).
 - Gotcha: [ -r /dev/tty ] is true even with no controlling terminal —
   probe by opening it; EOF on input must die, not loop.
+=======
+## Issue #2 — mobile optimization (2026-10-20)
+
+Menu: CSS-only checkbox hamburger below 700px (checkbox + label in
+base.html, :checked ~ .nav; burger morphs to X). Breakpoints: 1024px
+tablet trims spacing, 700px phone. Plumbing: form-grid stacks, history
+table wrapped in .table-scroll (min-width 540), 44px touch targets,
+16px inputs (stops iOS focus-zoom), schedule rows + metric knobs
+reflow. Desktop verified PIXEL-IDENTICAL (before/after diff at
+1280x800; only the prefilled clock minute differs). README gets 4
+phone + 2 tablet dark shots (docs/screenshots/12-17).
+Gotcha: browser harness device-metrics override resets between
+browser_exec calls — re-assert viewport + media emulation in every
+call; and JS-set .checked is lost on navigation (set it after the
+final goto).
+
+Follow-up: bottom horizontal scrollbars came from unwrapped tables
+(dashboard/metric/schedules) overflowing their panels; all four
+templates now use .table-scroll (thin scrollbar inside the panel).
+Verified zero overflow at 390/820 on every page.
+>>>>>>> feature/mobile-optimization

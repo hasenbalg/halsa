@@ -8,6 +8,7 @@
 
 <section class="panel">
   {% if rows %}
+  <div class="table-scroll">
   <table class="table">
     <tbody>
     {% for row in rows %}
@@ -36,6 +37,7 @@
     {% endfor %}
     </tbody>
   </table>
+  </div>
   {% else %}
   <p class="empty">No schedules yet. Create one to get an email when a measurement is overdue.</p>
   {% endif %}

@@ -98,6 +98,24 @@ table — safe to merge exports, no enumerable ids.
 logging and the 2FA flow; OWASP-based security audit on record
 (`security-audit/REPORT.md`).
 
+## Mobile & tablet
+
+One responsive stylesheet, still zero JavaScript: a CSS-only checkbox
+hamburger below 700px, stacked entry forms, scrollable history table,
+scaling charts and 44px touch targets; tablet trims spacing and keeps
+the inline nav.
+
+<p>
+  <img src="docs/screenshots/12-mobile-dashboard.png" width="24%" alt="Phone dashboard">
+  <img src="docs/screenshots/13-mobile-menu.png" width="24%" alt="Phone menu open">
+  <img src="docs/screenshots/14-mobile-add.png" width="24%" alt="Phone quick entry">
+  <img src="docs/screenshots/15-mobile-glucose.png" width="24%" alt="Phone glucose chart">
+</p>
+<p>
+  <img src="docs/screenshots/16-tablet-dashboard.png" width="49%" alt="Tablet dashboard">
+  <img src="docs/screenshots/17-tablet-glucose.png" width="49%" alt="Tablet glucose chart">
+</p>
+
 ## Deploy
 
 Hälsa is a plain Django (gunicorn) app listening for **http**; TLS is

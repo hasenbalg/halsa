@@ -47,6 +47,7 @@
 <section class="panel">
   <h2 class="panel-title">Readings</h2>
   {% if rows %}
+  <div class="table-scroll">
   <table class="table">
     <tbody>
     {% for r in rows reversed %}
@@ -68,6 +69,7 @@
     {% endfor %}
     </tbody>
   </table>
+  </div>
   {% else %}
   <p class="empty">No readings in this range. <a href="/add/">Add one</a>.</p>
   {% endif %}
