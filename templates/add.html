@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Add reading &middot; Hälsa{% endblock %}
+{% block content %}
+<section class="panel panel-narrow">
+  <h1 class="page-title">Add reading</h1>
+  <p class="page-sub">Fill what you have &mdash; one field is enough. Enter saves and stays here.</p>
+
+  <form method="post" class="form" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      {% for e in form.non_field_errors %}<div class="flash flash-error">{{ e }}</div>{% endfor %}
+    {% endif %}
+
+    <div class="field field-wide">
+      <label for="id_taken_at">When</label>
+      {{ form.taken_at }}
+      {% for e in form.taken_at.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="id_glucose">{{ form.fields.glucose.label }}</label>
+        {{ form.glucose }}
+        {% for e in form.glucose.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="field">
+        <label for="id_weight">{{ form.fields.weight.label }}</label>
+        {{ form.weight }}
+        {% for e in form.weight.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="field field-pair">
+        <div>
+          <label for="id_systolic">{{ form.fields.systolic.label }}</label>
+          {{ form.systolic }}
+        </div>
+        <div>
+          <label for="id_diastolic">{{ form.fields.diastolic.label }}</label>
+          {{ form.diastolic }}
+        </div>
+        {% for e in form.systolic.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+        {% for e in form.diastolic.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="field">
+        <label for="id_pulse">{{ form.fields.pulse.label }} (bpm)</label>
+        {{ form.pulse }}
+        {% for e in form.pulse.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+      </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Save</button>
+  </form>
+</section>
+{% endblock %}

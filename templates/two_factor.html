@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Two-factor &middot; Hälsa{% endblock %}
+{% block content %}
+<section class="panel panel-narrow">
+  <h1 class="page-title">Two-factor authentication</h1>
+
+  {% if profile.two_factor_enabled %}
+    <div class="flash flash-success">2FA is enabled on this account.</div>
+    <form method="post" class="form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="disable">
+      <div class="field field-wide">
+        <label for="id_code">Enter a current code to disable 2FA</label>
+        <input type="text" id="id_code" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code">
+      </div>
+      <button class="btn btn-danger" type="submit">Disable 2FA</button>
+      <a class="btn btn-ghost" href="/settings/">Back</a>
+    </form>
+
+  {% elif qr %}
+    <p class="page-sub">1. Scan this QR code with your authenticator app (Aegis, Authy, 1Password, ...).</p>
+    <div class="qr-box"><img src="{{ qr }}" alt="TOTP QR code" width="220" height="220"></div>
+    <p class="page-sub">Or enter this key manually:</p>
+    <code class="seed">{{ seed }}</code>
+    <hr class="rule">
+    <p class="page-sub">2. Enter the 6-digit code the app shows to confirm:</p>
+    <form method="post" class="form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="confirm">
+      <div class="field field-wide">
+        <input type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" autofocus required>
+      </div>
+      <button class="btn btn-primary" type="submit">Confirm and enable</button>
+    </form>
+
+  {% else %}
+    <p class="page-sub">Set up an authenticator app to require a 6-digit code at login.</p>
+    <form method="post" class="form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="enroll">
+      <button class="btn btn-primary" type="submit">Start setup</button>
+      <a class="btn btn-ghost" href="/settings/">Cancel</a>
+    </form>
+  {% endif %}
+</section>
+{% endblock %}

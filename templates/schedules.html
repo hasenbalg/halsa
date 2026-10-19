@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Schedules &middot; Hälsa{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1 class="page-title">Schedules</h1>
+  <a class="btn btn-primary btn-sm" href="/schedules/new/">+ New schedule</a>
+</div>
+
+<section class="panel">
+  {% if rows %}
+  <table class="table">
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td class="cell-kind"><span class="dot dot-{{ row.s.metric }}"></span>{{ row.s.name }}</td>
+        <td>{{ row.s.get_metric_display }}</td>
+        <td class="cell-when">{{ row.s.time|time:"H:i" }} &middot;
+          {% for wd in row.s.weekdays %}{% if forloop.first %}{{ wd }}{% else %},{{ wd }}{% endif %}{% endfor %}
+        </td>
+        <td>
+          {% if row.status %}
+            <span class="badge badge-{{ row.status }}">{{ row.status }}</span>
+          {% elif row.next %}
+            <span class="unit">next {{ row.next|date:"D d.m H:i" }}</span>
+          {% else %}
+            <span class="unit">inactive</span>
+          {% endif %}
+        </td>
+        <td class="cell-actions">
+          <a class="btn btn-ghost btn-xs" href="/schedules/{{ row.s.id }}/edit/">edit</a>
+          <form method="post" action="/schedules/{{ row.s.id }}/delete/" class="inline-form">{% csrf_token %}
+            <button class="btn btn-ghost btn-xs danger" type="submit">delete</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">No schedules yet. Create one to get an email when a measurement is overdue.</p>
+  {% endif %}
+</section>
+
+<p class="page-sub">Reminder knobs (window and grace minutes per metric) live in
+<a href="/settings/">Settings</a>.</p>
+{% endblock %}

@@ -1,0 +1,8 @@
+Django>=5.1,<6
+psycopg[binary]>=3.2
+gunicorn>=23.0
+whitenoise>=6.7
+pyotp>=2.9
+segno>=1.6
+reportlab>=4.2
+coverage>=7.6

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{% if obj %}Edit schedule{% else %}New schedule{% endif %} &middot; Hälsa{% endblock %}
+{% block content %}
+<section class="panel panel-narrow">
+  <h1 class="page-title">{% if obj %}Edit schedule{% else %}New schedule{% endif %}</h1>
+  <form method="post" class="form" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      {% for e in form.non_field_errors %}<div class="flash flash-error">{{ e }}</div>{% endfor %}
+    {% endif %}
+    <div class="field field-wide">
+      <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+      {{ form.name }}
+      {% for e in form.name.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+    </div>
+    <div class="form-grid">
+      <div class="field">
+        <label for="{{ form.metric.id_for_label }}">{{ form.metric.label }}</label>
+        {{ form.metric }}
+      </div>
+      <div class="field">
+        <label for="{{ form.time.id_for_label }}">{{ form.time.label }}</label>
+        {{ form.time }}
+      </div>
+    </div>
+    <fieldset class="weekday-set">
+      <legend>Repeat on</legend>
+      {% for cb in form.weekdays %}
+        <label class="cb">{{ cb.tag }} {{ cb.choice_label }}</label>
+      {% endfor %}
+      {% for e in form.weekdays.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+    </fieldset>
+    <label class="cb">{{ form.active.tag }} {{ form.active.label }}</label>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Save</button>
+      <a class="btn btn-ghost" href="/schedules/">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

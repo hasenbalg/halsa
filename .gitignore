@@ -1,0 +1,14 @@
+# secrets & local state
+.env
+*.log
+soak.log
+loadsim-results.jsonl*
+
+# python
+__pycache__/
+*.pyc
+.coverage
+
+# django
+staticfiles/
+.hermes-tmp.*

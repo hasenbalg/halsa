@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Settings &middot; Hälsa{% endblock %}
+{% block content %}
+<h1 class="page-title">Settings</h1>
+
+<section class="panel panel-narrow">
+  <h2 class="panel-title">Units</h2>
+  <p class="page-sub">Data is always stored in metric (mmol/L, kg, mmHg). This only changes display and input.</p>
+  <form method="post" class="form">
+    {% csrf_token %}
+    <div class="radio-row">
+      {% for radio in form.units %}
+        <label class="radio-card">{{ radio.tag }} {{ radio.choice_label }}</label>
+      {% endfor %}
+    </div>
+    <button class="btn btn-primary" type="submit">Save units</button>
+  </form>
+</section>
+
+<section class="panel panel-narrow">
+  <h2 class="panel-title">Measurement schedules</h2>
+  <p class="page-sub">
+    <a href="/schedules/">Manage schedules</a> &mdash; when one is missed, one reminder email lands in your inbox.
+  </p>
+  {% for label, mf in metric_forms %}
+    <fieldset class="metric-knobs">
+      <legend>{{ label }}</legend>
+      <form method="post" class="form form-inline">
+        {% csrf_token %}
+        {{ mf }}
+        <button class="btn btn-ghost btn-sm" type="submit">Save {{ label }}</button>
+      </form>
+    </fieldset>
+  {% endfor %}
+</section>
+
+<section class="panel panel-narrow">
+  <h2 class="panel-title">Backup and restore data</h2>
+  <p class="page-sub">JSON is a full backup: all readings, schedules and settings in canonical metric units.
+     Restoring merges by record id, so re-importing the same file is safe.</p>
+  <div class="btn-row">
+    <a class="btn btn-primary" href="/export/json/">Download JSON backup</a>
+  </div>
+  <h3 class="panel-sub">PDF report</h3>
+  <p class="page-sub">Doctor-friendly report with stats, trends and graphs.</p>
+  <div class="btn-row">
+    <a class="btn btn-ghost" href="/export/pdf/?range=30">Last 30 days</a>
+    <a class="btn btn-ghost" href="/export/pdf/?range=90">Last 90 days</a>
+    <a class="btn btn-ghost" href="/export/pdf/?range=365">Last year</a>
+    <a class="btn btn-ghost" href="/export/pdf/?range=all">All time</a>
+  </div>
+  <h3 class="panel-sub">Restore</h3>
+  <form method="post" action="/settings/restore/" enctype="multipart/form-data" class="form">
+    {% csrf_token %}
+    <div class="field field-wide">
+      <label for="{{ restore_form.backup.id_for_label }}">{{ restore_form.backup.label }}</label>
+      {{ restore_form.backup }}
+    </div>
+    <button class="btn btn-primary" type="submit">Import backup</button>
+  </form>
+</section>
+
+<section class="panel panel-narrow">
+  <h2 class="panel-title">Two-factor authentication</h2>
+  {% if profile.two_factor_enabled %}
+    <p class="page-sub">2FA is <strong>enabled</strong>. Login requires a code from your authenticator app.</p>
+  {% else %}
+    <p class="page-sub">2FA is off. Add a second factor to protect your health data.</p>
+  {% endif %}
+  <a class="btn {% if not profile.two_factor_enabled %}btn-primary{% else %}btn-ghost{% endif %}" href="/settings/2fa/">
+    {% if profile.two_factor_enabled %}Manage 2FA{% else %}Set up 2FA{% endif %}
+  </a>
+</section>
+
+<section class="panel panel-narrow">
+  <h2 class="panel-title">Password</h2>
+  <a class="btn btn-ghost" href="/accounts/password/">Change password</a>
+</section>
+
+{% if user.is_staff %}
+<section class="panel panel-narrow">
+  <h2 class="panel-title">Admin</h2>
+  <a class="btn btn-ghost" href="/admin/">Django admin</a>
+</section>
+{% endif %}
+{% endblock %}

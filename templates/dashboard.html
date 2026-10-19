@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load fmt %}
+{% block title %}Dashboard &middot; Hälsa{% endblock %}
+{% block content %}
+
+<div class="grid grid-cards">
+  {% for card in cards %}
+  <a class="card metric-card" href="/{{ card.url }}/">
+    <div class="metric-head">
+      <span class="dot dot-{{ card.css }}"></span>
+      <span class="metric-name">{{ card.name }}</span>
+      <span class="metric-when">{{ card.when }}</span>
+    </div>
+    <div class="metric-value c-{{ card.css }}">{{ card.value|safe }}</div>
+    <div class="metric-delta">{{ card.delta|safe }}</div>
+    <div class="metric-chart">{{ card.chart }}</div>
+    {% for i in card.insights %}
+      <div class="insight insight-{{ i.tone }}"><span class="insight-dot"></span>{{ i.text }}</div>
+    {% endfor %}
+  </a>
+  {% endfor %}
+</div>
+
+
+{% if schedule_rows %}
+<section class="panel">
+  <div class="panel-head">
+    <h2 class="panel-title">Today</h2>
+    <a class="btn btn-ghost btn-sm" href="/schedules/">Schedules</a>
+  </div>
+  <div class="schedule-list">
+    {% for row in schedule_rows %}
+    <div class="schedule-row">
+      <span class="dot dot-{{ row.s.metric }}"></span>
+      <span class="schedule-name">{{ row.s.name }}</span>
+      <span class="schedule-time">{% if row.slot %}{{ row.slot|date:"H:i" }}{% elif row.next %}next {{ row.next|date:"D H:i" }}{% endif %}</span>
+      {% if row.status %}<span class="badge badge-{{ row.status }}">{{ row.status }}</span>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if has_insights %}
+<section class="panel">
+  <h2 class="panel-title">Long-term trends</h2>
+  <div class="insight-list">
+    {% for group, items in insights.items %}
+      {% for i in items %}
+        <div class="insight insight-{{ i.tone }}"><span class="insight-dot"></span>
+          <span class="insight-metric">{{ group }}</span>{{ i.text }}</div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="panel">
+  <div class="panel-head">
+    <h2 class="panel-title">Recent readings</h2>
+    <a class="btn btn-ghost btn-sm" href="/history/">All history</a>
+  </div>
+  {% if recent %}
+  <table class="table">
+    <tbody>
+    {% for kind, dt, r in recent %}
+      <tr>
+        <td class="cell-kind"><span class="dot dot-{{ kind }}"></span>{{ kind }}</td>
+        <td class="cell-when">{{ dt|when }}</td>
+        <td class="cell-value">
+          {% if kind == "glucose" %}{{ r.value_mmol|glucose:units }} <span class="unit">{{ units|glucose_unit }}</span>
+          {% elif kind == "weight" %}{{ r.value_kg|weight:units }} <span class="unit">{{ units|weight_unit }}</span>
+          {% else %}{{ r.systolic }}/{{ r.diastolic }} <span class="unit">mmHg</span>{% endif %}
+        </td>
+        <td class="cell-actions">
+          <a class="btn btn-ghost btn-xs" href="/{{ kind }}/edit/{{ r.id }}/">edit</a>
+          <form method="post" action="/{{ kind }}/delete/{{ r.id }}/" class="inline-form">{% csrf_token %}
+            <button class="btn btn-ghost btn-xs danger" type="submit">delete</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">Nothing logged yet. <a href="/add/">Add your first reading</a> to get started.</p>
+  {% endif %}
+</section>
+
+{% endblock %}

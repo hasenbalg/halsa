@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load fmt %}
+{% block title %}{{ title }} &middot; Hälsa{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <h1 class="page-title"><span class="dot dot-{{ css }}"></span>{{ title }}
+    <span class="page-unit">({{ unit }})</span></h1>
+  <div class="ranges">
+    <a class="chip {% if days == 7 %}chip-active{% endif %}" href="?range=7">7d</a>
+    <a class="chip {% if days == 30 %}chip-active{% endif %}" href="?range=30">30d</a>
+    <a class="chip {% if days == 90 %}chip-active{% endif %}" href="?range=90">90d</a>
+    <a class="chip {% if days == 365 %}chip-active{% endif %}" href="?range=365">1y</a>
+    <a class="chip {% if days == None %}chip-active{% endif %}" href="?range=all">all</a>
+  </div>
+</div>
+
+<section class="panel">
+  <div class="chart-wrap c-{{ css }}">{{ chart }}</div>
+  <div class="legend">
+    <span><span class="swatch" style="background:var(--{{ css }})"></span>measured</span>
+    <span><span class="swatch swatch-line"></span>7-point average</span>
+    {% if css == "glucose" %}<span><span class="swatch swatch-band"></span>target band</span>{% endif %}
+  </div>
+</section>
+
+{% if insights %}
+<section class="panel">
+  <h2 class="panel-title">Trends</h2>
+  <div class="insight-list">
+    {% for i in insights %}
+      <div class="insight insight-{{ i.tone }}"><span class="insight-dot"></span>{{ i.text }}</div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="panel">
+  <h2 class="panel-title">Stats (all time)</h2>
+  <div class="stat-row">
+    {% for label, value in stats %}
+      <div class="stat"><div class="stat-value">{{ value|safe }}</div><div class="stat-label">{{ label }}</div></div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="panel">
+  <h2 class="panel-title">Readings</h2>
+  {% if rows %}
+  <table class="table">
+    <tbody>
+    {% for r in rows reversed %}
+      <tr>
+        <td class="cell-when">{% if kind == "weight" %}{{ r.date|day }}{% else %}{{ r.taken_at|when }}{% endif %}</td>
+        <td class="cell-value">
+          {% if kind == "glucose" %}{{ r.value_mmol|glucose:units }}
+          {% elif kind == "weight" %}{{ r.value_kg|weight:units }}
+          {% else %}{{ r.systolic }}/{{ r.diastolic }}{% if r.pulse %} <span class="unit">&middot; {{ r.pulse }} bpm</span>{% endif %}{% endif %}
+        </td>
+        <td class="cell-note">{{ r.note }}</td>
+        <td class="cell-actions">
+          <a class="btn btn-ghost btn-xs" href="/{{ kind }}/edit/{{ r.id }}/">edit</a>
+          <form method="post" action="/{{ kind }}/delete/{{ r.id }}/" class="inline-form">{% csrf_token %}
+            <button class="btn btn-ghost btn-xs danger" type="submit">delete</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="empty">No readings in this range. <a href="/add/">Add one</a>.</p>
+  {% endif %}
+</section>
+
+{% endblock %}
