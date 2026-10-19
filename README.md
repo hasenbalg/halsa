@@ -48,6 +48,10 @@ the job of whatever reverse proxy you already run. Full instructions —
 compose example, proxy requirements, environment reference, security
 notes — live in **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**.
 
+A prebuilt multi-arch image (amd64 + arm64) is published to the GitHub
+Container Registry on every push to `main`:
+`docker pull ghcr.io/hasenbalg/halsa:latest`.
+
 Fastest path:
 
 ```bash

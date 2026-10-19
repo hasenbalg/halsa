@@ -84,6 +84,27 @@ Bare metal works too: `pip install -r requirements.txt`, point the
 `POSTGRES_*`/`DJANGO_*` variables at your database, then
 `python manage.py migrate && gunicorn halsa.wsgi:application -c gunicorn.conf.py`.
 
+### Prebuilt image (no local build)
+
+Every push to `main` publishes a multi-arch image
+(**linux/amd64** and **linux/arm64**, so the same tag runs on servers
+and Raspberry Pi 4/5) via GitHub Actions:
+
+```bash
+docker pull ghcr.io/hasenbalg/halsa:latest   # :<commit-sha> for pinning
+```
+
+To use it in the compose example above, replace the `build: .` line of
+the `web` service with:
+
+```yaml
+    image: ghcr.io/hasenbalg/halsa:latest
+```
+
+Everything else (env_file, ports, volumes) stays the same. The image
+runs migrations at container start, so upgrades are pull-and-restart:
+`docker compose pull web && docker compose up -d web`.
+
 ## Reverse proxy requirements
 
 The app needs exactly four things from the proxy:

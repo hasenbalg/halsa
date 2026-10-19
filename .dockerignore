@@ -1,0 +1,13 @@
+# never bake these into the image
+.git
+.github
+.env
+.env.local
+__pycache__/
+*/__pycache__/
+*.pyc
+.coverage
+soak.log
+loadsim-results.jsonl*
+.venv/
+*.sqlite3
