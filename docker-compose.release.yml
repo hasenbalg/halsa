@@ -1,0 +1,51 @@
+# Release stack: pulls the published image instead of building.
+# Generated .env by install.sh; see README for the manual path.
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - halsa_db:/var/lib/postgresql/data
+    networks: [halsa]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  web:
+    image: ghcr.io/hasenbalg/halsa:latest
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${HALSA_HTTP_PORT:-8000}:8000"
+    volumes:
+      - halsa_logs:/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [halsa]
+
+  ticker:
+    image: busybox:latest
+    restart: unless-stopped
+    env_file: .env
+    depends_on: [web]
+    networks: [halsa]
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        while true; do
+          wget -q -O /dev/null --header="Authorization: Bearer ${SCHEDULER_TOKEN}" \
+            http://web:8000/scheduler/tick/ || true
+          sleep 300
+        done
+
+volumes:
+  halsa_db:
+  halsa_logs:
+
+networks:
+  halsa:
+    driver: bridge

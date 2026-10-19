@@ -183,3 +183,18 @@ Grill session 3 (export)
 Hosting: public GitHub repo github.com/hasenbalg/halsa (frank's
 fresh single-commit init; local history realigned to it — the old
 internal-hosting history is not pushed anywhere public).
+
+## Issue #3 — interactive install script (2026-10-19)
+
+install.sh is now a standalone question game (curl | bash) that PULLS
+ghcr.io/hasenbalg/halsa:latest — it never builds. Questions: port,
+hostnames, TLS-proxy y/n, timezone, optional SMTP, admin account
+(hidden, confirmed). Generates .env with fresh secrets. Re-running in
+an installed dir: backs up .env + pg_dump, then offers update-in-place
+or redo-Q&A (postgres password preserved from old .env).
+
+- docker-compose.release.yml: image-based stack (no container_name, so
+  it coexists with the dev stack); dev docker-compose.yml unchanged.
+- TIME_ZONE is now an env knob (was hardcoded Europe/Berlin).
+- Gotcha: [ -r /dev/tty ] is true even with no controlling terminal —
+  probe by opening it; EOF on input must die, not loop.
