@@ -52,17 +52,31 @@ A prebuilt multi-arch image (amd64 + arm64) is published to the GitHub
 Container Registry on every push to `main`:
 `docker pull ghcr.io/hasenbalg/halsa:latest`.
 
-Fastest path:
+Fastest path — an interactive question game that pulls the published
+image (nothing is built):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/hasenbalg/halsa/main/install.sh | bash
+```
+
+It asks for port, hostnames, TLS-proxy y/n, timezone, optional SMTP
+and an admin account, generates `.env` with fresh secrets, pulls
+`ghcr.io/hasenbalg/halsa:latest` and starts the stack. Re-running it
+in the same directory backs up `.env` + database, then offers to
+update the image in place or redo the questions.
+
+Manual path (or from a clone):
 
 ```bash
 git clone https://github.com/hasenbalg/halsa.git
 cd halsa
-./install.sh            # generates .env with fresh secrets, builds, starts
-docker compose up -d    # or manually: cp .env.example .env, edit, build, up
+cp .env.example .env    # edit secrets, then:
+docker compose -f docker-compose.release.yml up -d   # pull-based
+# (docker-compose.yml with build: . is for development)
 ```
 
-Open `http://localhost:8000`, log in with the superuser printed by the
-installer, rotate the password, enable 2FA. The stack is three
+Open `http://localhost:8000`, log in with the admin account you chose,
+enable 2FA. The stack is three
 services: `db` (postgres:17), `web` (Django + gunicorn + whitenoise,
 port `${HALSA_HTTP_PORT:-8000}`), `ticker` (busybox hitting
 `/scheduler/tick/` every 5 min). Code is baked into the image — after
