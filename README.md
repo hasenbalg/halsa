@@ -51,6 +51,8 @@ notes — live in **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**.
 Fastest path:
 
 ```bash
+git clone https://github.com/hasenbalg/halsa.git
+cd halsa
 ./install.sh            # generates .env with fresh secrets, builds, starts
 docker compose up -d    # or manually: cp .env.example .env, edit, build, up
 ```

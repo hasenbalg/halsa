@@ -179,3 +179,7 @@ Grill session 3 (export)
   probes 23/23 + 17/17, loadsim pages smoke green (halsa-load now runs
   gunicorn itself, no proxy needed). Soak loop killed after 11h (it had
   entered a test-DB collision spin).
+
+Hosting: public GitHub repo github.com/hasenbalg/halsa (frank's
+fresh single-commit init; local history realigned to it — the old
+internal-hosting history is not pushed anywhere public).
