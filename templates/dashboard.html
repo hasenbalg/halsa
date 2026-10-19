@@ -61,6 +61,7 @@
     <a class="btn btn-ghost btn-sm" href="/history/">All history</a>
   </div>
   {% if recent %}
+  <div class="table-scroll">
   <table class="table">
     <tbody>
     {% for kind, dt, r in recent %}
@@ -82,6 +83,7 @@
     {% endfor %}
     </tbody>
   </table>
+  </div>
   {% else %}
   <p class="empty">Nothing logged yet. <a href="/add/">Add your first reading</a> to get started.</p>
   {% endif %}
