@@ -8,38 +8,95 @@ automatic dark mode.
 Everything runs locally in Docker — your health data never leaves your
 network.
 
+<p>
+  <img src="docs/screenshots/02-dashboard.png" width="49%" alt="Dashboard with sparklines, today's schedule and long-term trends">
+  <img src="docs/screenshots/03-add.png" width="49%" alt="Quick entry: all three metrics side by side">
+</p>
+<p>
+  <img src="docs/screenshots/01-login.png" width="49%" alt="Login">
+  <img src="docs/screenshots/07-history.png" width="49%" alt="History with inline edit and delete">
+</p>
+
+All screenshots are dark mode (auto-follows your OS); light mode is the
+same layout on a white canvas.
+
 ## Features
 
-- **Quick entry** — one page, date/time prefilled, all three metrics
-  side by side; Enter saves and stays on the page for the next reading.
-- **Charts for everything** — server-rendered SVG line charts with
-  target bands and rolling averages. No charting library, no JS, tiny
-  pages (~7 ms responses).
-- **Dark mode** — follows your OS `prefers-color-scheme`. Zero clicks,
-  zero JS.
-- **Units** — data is stored canonically in metric (mmol/L, kg, mmHg);
-  each user picks metric or imperial display and everything converts.
-- **Long-term trends** — plain-language insights: 4-week slopes,
-  quarter-over-quarter comparisons, time-in-range, estimated HbA1c,
-  blood-pressure category callouts.
-- **Schedules & reminders** — named per-metric schedules (weekday +
-  time), configurable window and grace per user *and* metric, and one
-  digest email per user when measurements are overdue. Includes a link
-  straight to the entry page.
-- **2FA (TOTP)** — works with any authenticator app; enforcement only
-  starts after you confirm the setup with a code, so nobody locks
-  themselves out mid-setup.
-- **Doctor-report PDF** — header, per-metric summary stats, trend
-  insights, native line charts and compact reading tables
-  (reportlab, pure Python).
-- **JSON backup & restore** — full export (readings, schedules, metric
-  settings, profile) in canonical units; the restore form merges by
-  UUID, so re-importing the same file never duplicates anything.
-- **UUID primary keys** on every table — safe to merge exports, no
-  enumerable ids.
-- **75 tests** over views, models, scheduling, export, restore, units,
-  logging and the 2FA flow; OWASP-based security audit on record
-  (`security-audit/REPORT.md`).
+### Quick entry
+
+One page, date/time prefilled, all three metrics side by side; Enter
+saves and stays on the page for the next reading. Existing readings are
+editable and deletable straight from the history table.
+
+### Charts for everything
+
+Server-rendered SVG line charts with target bands and rolling averages.
+No charting library, no JS, tiny pages (~7 ms responses). Each metric
+page has a full chart with range selector (7/30/90/365 days, all).
+
+<p>
+  <img src="docs/screenshots/04-glucose.png" width="49%" alt="Glucose chart with target band">
+  <img src="docs/screenshots/05-weight.png" width="49%" alt="Weight chart">
+</p>
+<p>
+  <img src="docs/screenshots/06-pressure.png" width="49%" alt="Blood pressure chart, systolic and diastolic">
+</p>
+
+### Dark mode
+
+Follows your OS `prefers-color-scheme`. Zero clicks, zero JS.
+
+### Units
+
+Data is stored canonically in metric (mmol/L, kg, mmHg); each user
+picks metric or imperial display and everything converts — charts,
+insights, PDF, entry forms.
+
+### Long-term trends
+
+Plain-language insights: 4-week slopes, quarter-over-quarter
+comparisons, time-in-range, estimated HbA1c, blood-pressure category
+callouts. Shown on the dashboard and inside the PDF.
+
+### Schedules & reminders
+
+Named per-metric schedules (weekday + time), configurable match window
+and email grace per user *and* metric, and one digest email per user
+when measurements are overdue — with a link straight to the entry page.
+The dashboard shows today's slots (done / today / overdue).
+
+<img src="docs/screenshots/09-schedules.png" width="70%" alt="Schedules: per-metric weekday reminders">
+
+### 2FA (TOTP)
+
+Works with any authenticator app; enforcement only starts after you
+confirm the setup with a code, so nobody locks themselves out
+mid-setup.
+
+<img src="docs/screenshots/10-2fa-setup.png" width="70%" alt="2FA setup with QR code">
+
+### Doctor-report PDF
+
+Header, per-metric summary stats, trend insights, native line charts
+and compact reading tables (reportlab, pure Python) — one download for
+the whole practice, no JavaScript on either side.
+
+<img src="docs/screenshots/11-pdf.png" width="49%" alt="Doctor-report PDF page with glucose chart and readings table">
+
+### Backup & restore
+
+Full JSON export (readings, schedules, metric settings, profile) in
+canonical units; the restore form merges by UUID, so re-importing the
+same file never duplicates anything. **UUID primary keys** on every
+table — safe to merge exports, no enumerable ids.
+
+<img src="docs/screenshots/08-settings.png" width="70%" alt="Settings: units, reminder tuning, backup and restore">
+
+### Tested
+
+**78 tests** over views, models, scheduling, export, restore, units,
+logging and the 2FA flow; OWASP-based security audit on record
+(`security-audit/REPORT.md`).
 
 ## Deploy
 
@@ -130,6 +187,9 @@ docker compose run --rm --no-deps web sh -c \
   "coverage run --source=tracker,halsa manage.py test tracker; coverage report -m"
 ```
 
+- **Demo data:** `scripts/demo_seed.py` seeds a synthetic `John`
+  account with ~90 days of readings (the screenshots above were taken
+  from it).
 - **Security audit (OWASP):** `python3 scripts/audit_anon.py` against a
   running stack; the authenticated battery
   (`scripts/audit_authed.py`) runs inside an isolated container on the
