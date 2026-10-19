@@ -183,3 +183,18 @@ Grill session 3 (export)
 Hosting: public GitHub repo github.com/hasenbalg/halsa (frank's
 fresh single-commit init; local history realigned to it — the old
 internal-hosting history is not pushed anywhere public).
+
+## Issue #2 — mobile optimization (2026-10-20)
+
+Menu: CSS-only checkbox hamburger below 700px (checkbox + label in
+base.html, :checked ~ .nav; burger morphs to X). Breakpoints: 1024px
+tablet trims spacing, 700px phone. Plumbing: form-grid stacks, history
+table wrapped in .table-scroll (min-width 540), 44px touch targets,
+16px inputs (stops iOS focus-zoom), schedule rows + metric knobs
+reflow. Desktop verified PIXEL-IDENTICAL (before/after diff at
+1280x800; only the prefilled clock minute differs). README gets 4
+phone + 2 tablet dark shots (docs/screenshots/12-17).
+Gotcha: browser harness device-metrics override resets between
+browser_exec calls — re-assert viewport + media emulation in every
+call; and JS-set .checked is lost on navigation (set it after the
+final goto).

@@ -12,6 +12,8 @@
 <header class="topbar">
   <div class="topbar-inner">
     <a class="brand" href="/">Hä<span>l</span>sa</a>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" tabindex="-1" aria-hidden="true">
+    <label class="nav-burger" for="nav-toggle" aria-label="Toggle menu"><span></span></label>
     <nav class="nav">
       <a href="/" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
       <a href="/glucose/" class="{% if request.resolver_match.url_name == 'glucose' %}active{% endif %}">Glucose</a>
