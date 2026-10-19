@@ -198,3 +198,8 @@ Gotcha: browser harness device-metrics override resets between
 browser_exec calls — re-assert viewport + media emulation in every
 call; and JS-set .checked is lost on navigation (set it after the
 final goto).
+
+Follow-up: bottom horizontal scrollbars came from unwrapped tables
+(dashboard/metric/schedules) overflowing their panels; all four
+templates now use .table-scroll (thin scrollbar inside the panel).
+Verified zero overflow at 390/820 on every page.
