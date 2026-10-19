@@ -5,6 +5,7 @@
 <h1 class="page-title">History</h1>
 <section class="panel">
   {% if rows %}
+  <div class="table-scroll">
   <table class="table">
     <tbody>
     {% for kind, dt, r in rows %}
@@ -27,6 +28,7 @@
     {% endfor %}
     </tbody>
   </table>
+  </div>
   {% else %}
   <p class="empty">Nothing here yet.</p>
   {% endif %}

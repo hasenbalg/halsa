@@ -84,7 +84,6 @@ ask_secret() {  # hidden input on stdout
 banner() {
   printf '\033[1m  H\xc3\xa4lsa\033[0m  \033[2minstaller\033[0m\n'
   echo "  health tracking on your own server"
-  echo "  (the app image is pulled from ghcr.io - nothing is built)"
   echo
 }
 banner
@@ -218,7 +217,7 @@ else
 fi
 say "compose file ready (image-based, no build)"
 
-say "pulling $IMAGE (this replaces the old build step)"
+say "pulling $IMAGE"
 docker compose pull
 
 say "starting the stack"
