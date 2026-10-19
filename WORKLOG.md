@@ -184,8 +184,9 @@ Hosting: public GitHub repo github.com/hasenbalg/halsa (frank's
 fresh single-commit init; local history realigned to it — the old
 internal-hosting history is not pushed anywhere public).
 
-<<<<<<< HEAD
 
+
+## Issue #3 — interactive install script (2026-10-19)
 
 install.sh is now a standalone question game (curl | bash) that PULLS
 ghcr.io/hasenbalg/halsa:latest — it never builds. Questions: port,
@@ -199,7 +200,6 @@ or redo-Q&A (postgres password preserved from old .env).
 - TIME_ZONE is now an env knob (was hardcoded Europe/Berlin).
 - Gotcha: [ -r /dev/tty ] is true even with no controlling terminal —
   probe by opening it; EOF on input must die, not loop.
-=======
 ## Issue #2 — mobile optimization (2026-10-20)
 
 Menu: CSS-only checkbox hamburger below 700px (checkbox + label in
@@ -219,4 +219,3 @@ Follow-up: bottom horizontal scrollbars came from unwrapped tables
 (dashboard/metric/schedules) overflowing their panels; all four
 templates now use .table-scroll (thin scrollbar inside the panel).
 Verified zero overflow at 390/820 on every page.
->>>>>>> feature/mobile-optimization
