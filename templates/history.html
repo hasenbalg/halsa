@@ -17,9 +17,7 @@
           {% elif kind == "weight" %}{{ r.value_kg|weight:units }} <span class="unit">{{ units|weight_unit }}</span>
           {% else %}{{ r.systolic }}/{{ r.diastolic }} <span class="unit">mmHg</span>{% endif %}
         </td>
-        {% if kind == "glucose" %}
         <td class="cell-context">{% if r.context %}<span class="badge badge-{{ r.context }}">{{ r.get_context_display }}</span>{% endif %}</td>
-        {% endif %}
         <td class="cell-note">{{ r.note }}</td>
         <td class="cell-actions">
           <a class="btn btn-ghost btn-xs" href="/{{ kind }}/edit/{{ r.id }}/">edit</a>
