@@ -52,6 +52,19 @@ Data is stored canonically in metric (mmol/L, kg, mmHg); each user
 picks metric or imperial display and everything converts — charts,
 insights, PDF, entry forms.
 
+### Languages
+
+The whole app — UI, form errors, flash messages, reminder emails and
+the doctor-report PDF — speaks **English and German**. Language follows
+your browser's `Accept-Language` until you pin one in Settings; a
+pinned language sticks to your account (and a cookie keeps even the
+login page in it on your browser). German is informal *Du* with local
+number and date formats (comma decimals, `20.10.2026`). New languages
+are just a new `locale/<code>/` catalog — `makemessages`, translate,
+`compilemessages`, no code changes.
+
+<img src="docs/screenshots/18-german-dashboard.png" width="70%" alt="German dashboard (Blutzucker, Gewicht, Blutdruck)">
+
 ### Long-term trends
 
 Plain-language insights: 4-week slopes, quarter-over-quarter
@@ -94,8 +107,8 @@ table — safe to merge exports, no enumerable ids.
 
 ### Tested
 
-**78 tests** over views, models, scheduling, export, restore, units,
-logging and the 2FA flow; OWASP-based security audit on record
+**100 tests** over views, models, scheduling, export, restore, units,
+i18n, logging and the 2FA flow; OWASP-based security audit on record
 (`security-audit/REPORT.md`).
 
 ## Mobile & tablet
