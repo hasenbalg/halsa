@@ -214,11 +214,36 @@ a:hover { text-decoration: underline; }
 .badge-done { background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); }
 .badge-today { background: var(--accent-soft); color: var(--accent); }
 .badge-due { background: color-mix(in srgb, var(--warn) 15%, transparent); color: var(--warn); }
+
+/* glucose meal context badges (issue #9) */
+.badge-fasting { background: color-mix(in srgb, #38bdf8 16%, transparent); color: #38bdf8; }
+.badge-pre { background: color-mix(in srgb, #a78bfa 16%, transparent); color: #a78bfa; }
+.badge-post { background: color-mix(in srgb, #fbbf24 18%, transparent); color: #d97706; }
+.badge-random { background: color-mix(in srgb, var(--muted) 16%, transparent); color: var(--muted); }
+.cell-context { white-space: nowrap; }
+.context-label { margin-top: 8px; }
 .badge-overdue { background: color-mix(in srgb, var(--bad) 13%, transparent); color: var(--bad); }
 
 /* ---- forms ---- */
 .form { display: flex; flex-direction: column; gap: 14px; margin-top: 10px; }
 .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+
+/* grouped quick-add form (issue #9 follow-up) */
+.form-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; align-items: stretch; }
+.field-group {
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 12px 14px 14px; margin: 0; min-width: 0;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.field-group legend {
+  font-size: 12.5px; font-weight: 700; color: var(--muted);
+  padding: 0 6px;
+}
+.bp-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
 .field { display: flex; flex-direction: column; gap: 5px; }
 .field label, .radio-row label { font-size: 12.5px; font-weight: 600; color: var(--muted); }
 input[type="text"], input[type="password"], input[type="number"],
@@ -375,6 +400,7 @@ input::placeholder { color: var(--muted); opacity: 0.7; }
   .legend { gap: 12px; }
   .insight { font-size: 13px; padding: 8px 11px; }
   .form-grid { grid-template-columns: 1fr; }
+  .form-groups { grid-template-columns: 1fr; }
   .table-scroll .table { min-width: 540px; }
   .schedule-row { flex-wrap: wrap; row-gap: 4px; }
   .schedule-time { margin-left: 0; width: 100%; }

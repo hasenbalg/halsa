@@ -219,3 +219,14 @@ Follow-up: bottom horizontal scrollbars came from unwrapped tables
 (dashboard/metric/schedules) overflowing their panels; all four
 templates now use .table-scroll (thin scrollbar inside the panel).
 Verified zero overflow at 390/820 on every page.
+
+## Issue #9 — glucose meal context (2026-10-20)
+
+Glucose readings get an optional context: Fasting / Before meal /
+After meal / Random (plain words in the app, Fasting/Preprandial/
+Postprandial/Random in the doctor-report PDF). Compact dropdown on
+the add page under Glucose; edit form too. Chart markers encode
+context by shape (circle/diamond/square/triangle, only when <=45
+points). Badges in glucose + history tables. JSON export carries
+the field; old backups restore with blank context. Migration 0003.
+88 tests green (tests6.py).

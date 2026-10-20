@@ -291,8 +291,8 @@ def glucose_detail(request):
     days = _range_days(request)
     qs = GlucoseReading.objects.filter(user=request.user)
     rows = list(qs.filter(taken_at__gte=_since(days)).order_by("taken_at")) if days else list(qs.order_by("taken_at"))
-    points = [(r.taken_at, float(r.value_mmol)) for r in rows]
-    rolling = _rolling(points, window=7)
+    points = [(r.taken_at, float(r.value_mmol), r.context) for r in rows]
+    rolling = _rolling([(p[0], p[1]) for p in points], window=7)
     stats = qs.aggregate(avg=Avg("value_mmol"), lo=Min("value_mmol"), hi=Max("value_mmol"))
     return render(request, "metric.html", {
         "title": "Glucose",
@@ -609,7 +609,8 @@ def _backup_payload(user):
         },
         "glucose_readings": [
             {"id": str(r.id), "taken_at": iso(r.taken_at),
-             "value_mmol": str(r.value_mmol), "note": r.note}
+             "value_mmol": str(r.value_mmol), "context": r.context,
+             "note": r.note}
             for r in GlucoseReading.objects.filter(user=user).order_by("taken_at")
         ],
         "weight_readings": [

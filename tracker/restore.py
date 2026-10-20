@@ -97,6 +97,7 @@ def restore_from_json(user, raw_text):
                 "id": r.get("id"),
                 "taken_at": _parse_dt(r.get("taken_at")),
                 "value_mmol": _dec(r.get("value_mmol")),
+                "context": r.get("context", "") or "",
                 "note": r.get("note", "") or "",
             })
         for r in data.get("weight_readings", []):
