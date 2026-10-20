@@ -22,6 +22,9 @@
         <label for="id_glucose">{{ form.fields.glucose.label }}</label>
         {{ form.glucose }}
         {% for e in form.glucose.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+        <label class="context-label" for="id_glucose_context">{{ form.fields.glucose_context.label }}</label>
+        {{ form.glucose_context }}
+        {% for e in form.glucose_context.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
       </div>
       <div class="field">
         <label for="id_weight">{{ form.fields.weight.label }}</label>

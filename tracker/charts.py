@@ -56,6 +56,27 @@ def _fmt_val(v, decimals):
     return f"{v:.{decimals}f}".rstrip("0").rstrip(".") if decimals else f"{v:.0f}"
 
 
+def _marker(cx, cy, kind, color):
+    """Point marker whose shape encodes the glucose meal context (issue #9).
+
+    fasting = circle, before meal = diamond, after meal = square,
+    random = triangle, unspecified = small circle.
+    """
+    a = 'fill="var(--card)" stroke="{}" stroke-width="1.6"'.format(color)
+    if kind == "fasting":
+        return f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="3" {a}/>'
+    if kind == "pre":  # diamond
+        return (f'<rect x="{cx - 2.6:.1f}" y="{cy - 2.6:.1f}" width="5.2" '
+                f'height="5.2" transform="rotate(45 {cx:.1f} {cy:.1f})" {a}/>')
+    if kind == "post":  # square
+        return (f'<rect x="{cx - 2.6:.1f}" y="{cy - 2.6:.1f}" width="5.2" '
+                f'height="5.2" {a}/>')
+    if kind == "random":  # triangle
+        return (f'<polygon points="{cx:.1f},{cy - 3.2:.1f} '
+                f'{cx - 3:.1f},{cy + 2.2:.1f} {cx + 3:.1f},{cy + 2.2:.1f}" {a}/>')
+    return f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="1.8" {a}/>'
+
+
 def line_chart(
     series,
     *,
@@ -168,10 +189,9 @@ def line_chart(
         )
         if dots and len(pts) <= 45 and not s.get("dashed"):
             for p in pts:
-                parts.append(
-                    f'<circle cx="{px(_x(p[0])):.1f}" cy="{py(p[1]):.1f}" r="2.6" '
-                    f'fill="var(--card)" stroke="{color}" stroke-width="1.6"/>'
-                )
+                cx, cy = px(_x(p[0])), py(p[1])
+                kind = p[2] if len(p) > 2 else ""
+                parts.append(_marker(cx, cy, kind, color))
 
     parts.append("</svg>")
     return mark_safe("".join(parts))

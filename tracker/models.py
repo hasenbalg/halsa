@@ -79,6 +79,29 @@ class Profile(UUIDModel):
         return self._check_token(token)
 
 
+class GlucoseContext(models.TextChoices):
+    """Meal context of a glucose reading (issue #9).
+
+    Plain language in the app, Latin terms in the doctor report.
+    Empty string means "not specified" and is always allowed.
+    """
+
+    FASTING = "fasting", "Fasting"
+    PRE = "pre", "Before meal"
+    POST = "post", "After meal"
+    RANDOM = "random", "Random"
+
+
+# Latin terms for the doctor report (issue #9); app UI uses the plain
+# labels above.
+GLUCOSE_CONTEXT_LATIN = {
+    "fasting": "Fasting",
+    "pre": "Preprandial",
+    "post": "Postprandial",
+    "random": "Random",
+}
+
+
 class GlucoseReading(UUIDModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="glucose_readings"
@@ -88,6 +111,9 @@ class GlucoseReading(UUIDModel):
     value_mmol = models.DecimalField(
         max_digits=5, decimal_places=2,
         validators=[MinValueValidator(0.5), MaxValueValidator(40)],
+    )
+    context = models.CharField(
+        max_length=10, blank=True, choices=GlucoseContext.choices
     )
     note = models.TextField(blank=True, max_length=2000)
 

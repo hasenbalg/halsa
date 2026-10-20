@@ -5,6 +5,7 @@ from django import forms
 from . import units as U
 from .models import (
     BloodPressureReading,
+    GlucoseContext,
     GlucoseReading,
     MetricSettings,
     Profile,
@@ -26,6 +27,10 @@ class QuickAddForm(forms.Form):
         input_formats=["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M", "%Y-%m-%d"],
     )
     glucose = forms.DecimalField(label="Glucose", required=False, min_value=0, max_value=2000)
+    glucose_context = forms.ChoiceField(
+        label="Context", required=False,
+        choices=[("", "—")] + list(GlucoseContext.choices),
+    )
     weight = forms.DecimalField(label="Weight", required=False, min_value=0, max_value=2000)
     systolic = forms.IntegerField(label="Systolic", required=False, min_value=60, max_value=260)
     diastolic = forms.IntegerField(label="Diastolic", required=False, min_value=30, max_value=160)
@@ -67,6 +72,7 @@ class QuickAddForm(forms.Form):
                     user=user,
                     taken_at=cd["taken_at"],
                     value_mmol=U.glucose_from_display(cd["glucose"], self.units),
+                    context=cd.get("glucose_context") or "",
                 )
             )
         if cd.get("weight") is not None:
@@ -95,7 +101,7 @@ class GlucoseForm(forms.ModelForm):
 
     class Meta:
         model = GlucoseReading
-        fields = ["taken_at", "note"]
+        fields = ["taken_at", "context", "note"]
         widgets = {"taken_at": forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M")}
 
     def __init__(self, *args, units=Profile.Units.METRIC, **kwargs):

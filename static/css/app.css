@@ -214,6 +214,14 @@ a:hover { text-decoration: underline; }
 .badge-done { background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); }
 .badge-today { background: var(--accent-soft); color: var(--accent); }
 .badge-due { background: color-mix(in srgb, var(--warn) 15%, transparent); color: var(--warn); }
+
+/* glucose meal context badges (issue #9) */
+.badge-fasting { background: color-mix(in srgb, #38bdf8 16%, transparent); color: #38bdf8; }
+.badge-pre { background: color-mix(in srgb, #a78bfa 16%, transparent); color: #a78bfa; }
+.badge-post { background: color-mix(in srgb, #fbbf24 18%, transparent); color: #d97706; }
+.badge-random { background: color-mix(in srgb, var(--muted) 16%, transparent); color: var(--muted); }
+.cell-context { white-space: nowrap; }
+.context-label { margin-top: 8px; }
 .badge-overdue { background: color-mix(in srgb, var(--bad) 13%, transparent); color: var(--bad); }
 
 /* ---- forms ---- */
