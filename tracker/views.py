@@ -83,6 +83,16 @@ def _delta_html(latest, ref, fmt):
 PENDING_KEY = "halsa_" + "2fa_user" + "_pk"
 
 
+def _set_language_cookie(request, response, language):
+    """Remember the user's pinned language for the anonymous login page."""
+    response.set_cookie(
+        "django_language", language or "",
+        max_age=60 * 60 * 24 * 365 if language else 0,
+        samesite="Lax", httponly=True, secure=request.is_secure(),
+    )
+    return response
+
+
 def login_view(request):
     next_url = request.POST.get("next") or request.GET.get("next") or "/"
     if not url_has_allowed_host_and_scheme(
@@ -101,7 +111,10 @@ def login_view(request):
             if profile.verify(token):
                 logger.info("login ok (2fa)")
                 auth_login(request, user)
-                return redirect(next_url)
+                if profile.language:
+                    translation.activate(profile.language)
+                return _set_language_cookie(request, redirect(next_url),
+                                            profile.language)
             logger.warning("login 2fa code failed")
             return render(
                 request, "login.html",
@@ -135,7 +148,8 @@ def login_view(request):
                 translation.activate(profile.language)
             logger.info("login ok")
             messages.success(request, _lazy("Welcome back."))
-            return redirect(next_url)
+            return _set_language_cookie(request, redirect(next_url),
+                                        profile.language)
         if request.method == "POST":
             logger.warning("login failed")
     return render(
@@ -477,7 +491,8 @@ def settings_view(request):
                 translation.activate(profile.language)
             logger.info("language changed")
             messages.success(request, _lazy("Language updated."))
-            return redirect("settings")
+            return _set_language_cookie(request, redirect("settings"),
+                                        profile.language)
     elif request.method == "POST" and request.POST.get("units"):
         form = UnitsForm(request.POST, instance=profile)
         if form.is_valid():

@@ -64,6 +64,19 @@ class I18nTests(TestCase):
         self.assertContains(res, "Sprache")
         self.assertContains(res, 'value="de"')
 
+    def test_login_sets_language_cookie(self):
+        self.profile.language = "de"
+        self.profile.save()
+        res = self.client.post("/accounts/login/",
+                               {"username": "u", "password": "***"})
+        self.assertEqual(res.status_code, 302)
+        self.assertEqual(res.cookies["django_language"].value, "de")
+        # anonymous login page now German even with en browser
+        self.client.post("/accounts/logout/")
+        self.client.cookies["django_language"] = "de"
+        res = self._get("/accounts/login/", "en")
+        self.assertContains(res, "Anmelden")
+
     def test_email_uses_pinned_language(self):
         import datetime
         from django.core import mail

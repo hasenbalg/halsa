@@ -63,7 +63,7 @@ msgstr "Übersicht"
 #: tracker/models.py:183 tracker/views.py:194 tracker/views.py:241
 #: tracker/views.py:301 tracker/views.py:428
 msgid "Glucose"
-msgstr "Glukose"
+msgstr "Blutzucker"
 
 #: templates/base.html:20 tracker/forms.py:35 tracker/forms.py:129
 #: tracker/models.py:184 tracker/views.py:210 tracker/views.py:242
@@ -109,7 +109,7 @@ msgstr "Heute"
 #: templates/dashboard.html:36
 #, python-format
 msgid "next %(when)s"
-msgstr "nächste:r %(when)s"
+msgstr "nächstes mal: %(when)s"
 
 #: templates/dashboard.html:46
 msgid "Long-term trends"
@@ -301,8 +301,8 @@ msgid ""
 "Auto follows your browser language. Pick a language to pin it to your "
 "account."
 msgstr ""
-"Auto folgt deiner Browser-Sprache. Wähle eine Sprache, um sie an dein Konto "
-"zu binden."
+"Die Sprache richtet sich automatisch nach deiner Browser-Sprache. Wähle eine"
+" Sprache, um sie an dein Konto zu binden."
 
 #: templates/settings.html:30
 msgid "Save language"
@@ -471,7 +471,7 @@ msgstr "Puls"
 #: tracker/forms.py:44 tracker/forms.py:112 tracker/pdfexport.py:167
 #, python-brace-format
 msgid "Glucose ({unit})"
-msgstr "Glukose ({unit})"
+msgstr "Blutzucker ({unit})"
 
 #: tracker/forms.py:47 tracker/forms.py:140 tracker/pdfexport.py:204
 #, python-brace-format
@@ -570,7 +570,7 @@ msgstr "Imperial (mg/dL, lb)"
 
 #: tracker/models.py:28
 msgid "Auto (browser)"
-msgstr "Auto (Browser)"
+msgstr "Automatisch (Browser)"
 
 #: tracker/models.py:98
 msgid "Fasting"
@@ -719,12 +719,12 @@ msgstr "gestern"
 #: tracker/trends.py:50
 #, python-format
 msgid "Weight trending down %(disp)s %(label)s/week over the last 4 weeks"
-msgstr "Gewicht fällt um %(disp)s %(label)s/Woche über die letzten 4 Wochen"
+msgstr "Gewicht fiel um %(disp)s %(label)s/Woche über die letzten 4 Wochen"
 
 #: tracker/trends.py:54
 #, python-format
 msgid "Weight trending up %(disp)s %(label)s/week over the last 4 weeks"
-msgstr "Gewicht steigt um %(disp)s %(label)s/Woche über die letzten 4 Wochen"
+msgstr "Gewicht stieg um %(disp)s %(label)s/Woche über die letzten 4 Wochen"
 
 #: tracker/trends.py:58
 msgid "Weight holding steady over the last 4 weeks"
@@ -747,7 +747,7 @@ msgstr "90-Tage-Mittel liegt %(disp)s %(label)s über dem Vorquartal"
 #: tracker/trends.py:94
 #, python-format
 msgid "Average glucose %(v)s %(unit)s over the last 14 days"
-msgstr "Durchschnittliche Glukose %(v)s %(unit)s über die letzten 14 Tage"
+msgstr "Durchschnittlicher Blutzucker %(v)s %(unit)s über die letzten 14 Tage"
 
 #: tracker/trends.py:98
 msgid " - above target"
@@ -831,7 +831,7 @@ msgstr "am %(date)s"
 
 #: tracker/views.py:276
 msgid "glucose"
-msgstr "Glukose"
+msgstr "Blutzucker"
 
 #: tracker/views.py:277
 msgid "weight"
@@ -848,7 +848,7 @@ msgstr "Gespeichert: %(names)s."
 
 #: tracker/views.py:311
 msgid "Glucose over time, mmol per litre"
-msgstr "Glukoseverlauf, mmol pro Liter"
+msgstr "Blutzuckerverlauf, mmol pro Liter"
 
 #: tracker/views.py:341
 msgid "Weight over time"
