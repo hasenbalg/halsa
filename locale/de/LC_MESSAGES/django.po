@@ -337,8 +337,9 @@ msgid ""
 "is safe."
 msgstr ""
 "JSON ist ein vollständiges Backup: alle Messwerte, Zeitpläne und "
-"Einstellungen in metrischen Einheiten. Beim Wiederherstellen wird pro "
-"Datensatz-ID zusammengeführt, derselbe Datei-Import ist also sicher."
+"Einstellungen in metrischen Einheiten. Beim Wiederherstellen werden die "
+"Daten anhand der Datensatz-IDs zusammengeführt – mehrfaches Importieren "
+"derselben Datei ist also ungefährlich."
 
 #: templates/settings.html:54
 msgid "Download JSON backup"
