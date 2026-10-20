@@ -301,8 +301,8 @@ msgid ""
 "Auto follows your browser language. Pick a language to pin it to your "
 "account."
 msgstr ""
-"Die Sprache richtet sich automatisch nach deiner Browser-Sprache. Wähle eine"
-" Sprache, um sie an dein Konto zu binden."
+"Standardmäßig folgt die Sprache deiner Browser-Einstellung. Wähle eine "
+"Sprache aus, um sie dauerhaft für dein Konto festzulegen."
 
 #: templates/settings.html:30
 msgid "Save language"
