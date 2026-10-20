@@ -10,7 +10,12 @@ from io import BytesIO
 from django.utils import timezone
 
 from . import trends, units as U
-from .models import BloodPressureReading, GlucoseReading, WeightReading
+from .models import (
+    GLUCOSE_CONTEXT_LATIN,
+    BloodPressureReading,
+    GlucoseReading,
+    WeightReading,
+)
 
 PAGE = (595, 842)  # A4 pt
 MARGIN = 42
@@ -177,12 +182,14 @@ def build_report(user, units, days):
         for r in g[-MAX_TABLE_ROWS:]:
             v, _ = U.glucose_display(r.value_mmol, units)
             rows.append([f"{timezone.localtime(r.taken_at):%d.%m.%Y %H:%M}",
-                         str(v), r.note[:60]])
+                         str(v),
+                         GLUCOSE_CONTEXT_LATIN.get(r.context, "")])
         story.append(Spacer(1, 8))
         note = "" if len(g) <= MAX_TABLE_ROWS else \
             f" (showing most recent {MAX_TABLE_ROWS})"
         story.append(Paragraph(f"Readings{note}", st["small"]))
-        story.append(_table(["When", U.glucose_unit_label(units), "Note"], rows))
+        story.append(_table(["When", U.glucose_unit_label(units),
+                             "Context"], rows))
     else:
         story.append(Paragraph("No readings in this period.", st["body"]))
 
@@ -211,9 +218,9 @@ def build_report(user, units, days):
         rows = []
         for r in w[-MAX_TABLE_ROWS:]:
             v, _ = U.weight_display(r.value_kg, units)
-            rows.append([f"{r.date:%d.%m.%Y}", str(v), r.note[:60]])
+            rows.append([f"{r.date:%d.%m.%Y}", str(v)])
         story.append(Spacer(1, 8))
-        story.append(_table(["Date", U.weight_unit_label(units), "Note"], rows))
+        story.append(_table(["Date", U.weight_unit_label(units)], rows))
     else:
         story.append(Paragraph("No readings in this period.", st["body"]))
 
@@ -242,9 +249,9 @@ def build_report(user, units, days):
         for r in b[-MAX_TABLE_ROWS:]:
             rows.append([f"{timezone.localtime(r.taken_at):%d.%m.%Y %H:%M}",
                          f"{r.systolic}/{r.diastolic}",
-                         str(r.pulse or ""), r.note[:50]])
+                         str(r.pulse or "")])
         story.append(Spacer(1, 8))
-        story.append(_table(["When", "mmHg", "Pulse", "Note"], rows))
+        story.append(_table(["When", "mmHg", "Pulse"], rows))
     else:
         story.append(Paragraph("No readings in this period.", st["body"]))
 

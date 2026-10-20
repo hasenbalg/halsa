@@ -17,34 +17,42 @@
       {% for e in form.taken_at.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
     </div>
 
-    <div class="form-grid">
-      <div class="field">
-        <label for="id_glucose">{{ form.fields.glucose.label }}</label>
+    <div class="form-groups">
+      <fieldset class="field-group">
+        <legend>{{ form.fields.glucose.label }}</legend>
+        <label class="sr-only" for="id_glucose">{{ form.fields.glucose.label }}</label>
         {{ form.glucose }}
         {% for e in form.glucose.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
-      </div>
-      <div class="field">
-        <label for="id_weight">{{ form.fields.weight.label }}</label>
+        <label class="context-label" for="id_glucose_context">{{ form.fields.glucose_context.label }}</label>
+        {{ form.glucose_context }}
+        {% for e in form.glucose_context.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+      </fieldset>
+      <fieldset class="field-group">
+        <legend>{{ form.fields.weight.label }}</legend>
+        <label class="sr-only" for="id_weight">{{ form.fields.weight.label }}</label>
         {{ form.weight }}
         {% for e in form.weight.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
-      </div>
-      <div class="field field-pair">
-        <div>
-          <label for="id_systolic">{{ form.fields.systolic.label }}</label>
-          {{ form.systolic }}
-        </div>
-        <div>
-          <label for="id_diastolic">{{ form.fields.diastolic.label }}</label>
-          {{ form.diastolic }}
+      </fieldset>
+      <fieldset class="field-group">
+        <legend>Blood pressure (mmHg)</legend>
+        <div class="bp-pair">
+          <div class="field">
+            <label for="id_systolic">Systolic</label>
+            {{ form.systolic }}
+          </div>
+          <div class="field">
+            <label for="id_diastolic">Diastolic</label>
+            {{ form.diastolic }}
+          </div>
         </div>
         {% for e in form.systolic.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
         {% for e in form.diastolic.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
-      </div>
-      <div class="field">
-        <label for="id_pulse">{{ form.fields.pulse.label }} (bpm)</label>
-        {{ form.pulse }}
+        <div class="field">
+          <label for="id_pulse">{{ form.fields.pulse.label }} (bpm)</label>
+          {{ form.pulse }}
+        </div>
         {% for e in form.pulse.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
-      </div>
+      </fieldset>
     </div>
 
     <button class="btn btn-primary" type="submit">Save</button>
