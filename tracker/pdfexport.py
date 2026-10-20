@@ -8,6 +8,7 @@ from datetime import timedelta
 from io import BytesIO
 
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from . import trends, units as U
 from .models import (
@@ -140,14 +141,16 @@ def build_report(user, units, days):
 
     now = timezone.now()
     since = now - timedelta(days=days) if days else None
-    period = f"last {days} days" if days else "all time"
+    period = _("last %(n)s days") % {"n": days} if days else _("all time")
     st = _styles()
 
     story = [
         Paragraph("Hälsa", st["h1"]),
         Paragraph(
-            f"Health report for {user.username} &nbsp;·&nbsp; {period} "
-            f"&nbsp;·&nbsp; generated {now:%d.%m.%Y %H:%M}",
+            _("Health report for %(name)s &nbsp;·&nbsp; %(period)s "
+              "&nbsp;·&nbsp; generated %(when)s")
+            % {"name": user.username, "period": period,
+               "when": f"{now:%d.%m.%Y %H:%M}"},
             st["sub"],
         ),
     ]
@@ -161,16 +164,17 @@ def build_report(user, units, days):
     g = list(window(GlucoseReading.objects.filter(user=user), "taken_at")
              .order_by("taken_at"))
     g_all = GlucoseReading.objects.filter(user=user)
-    story.append(Paragraph(f"Glucose ({U.glucose_unit_label(units)})", st["h2"]))
+    story.append(Paragraph(_("Glucose ({unit})").format(unit=U.glucose_unit_label(units)), st["h2"]))
     if g:
         vals = [float(r.value_mmol) for r in g]
         avg = sum(vals) / len(vals)
-        d, _ = U.glucose_display(avg, units)
-        lo, _ = U.glucose_display(min(vals), units)
-        hi, _ = U.glucose_display(max(vals), units)
+        d, _lbl = U.glucose_display(avg, units)
+        lo, _lbl = U.glucose_display(min(vals), units)
+        hi, _lbl = U.glucose_display(max(vals), units)
         story.append(Paragraph(
-            f"{len(g)} readings &nbsp;·&nbsp; average {d} &nbsp;·&nbsp; "
-            f"range {lo}&ndash;{hi}", st["body"]))
+            _("%(n)s readings &nbsp;·&nbsp; average %(avg)s &nbsp;·&nbsp; "
+              "range %(lo)s&ndash;%(hi)s")
+            % {"n": len(g), "avg": d, "lo": lo, "hi": hi}, st["body"]))
         for i in trends.glucose_insights(g_all[:400], units):
             story.append(Paragraph(f"&bull; {i['text']}", st["ins"]))
         chart = _chart([(r.taken_at, float(r.value_mmol)) for r in g],
@@ -180,33 +184,34 @@ def build_report(user, units, days):
             story.append(chart)
         rows = []
         for r in g[-MAX_TABLE_ROWS:]:
-            v, _ = U.glucose_display(r.value_mmol, units)
+            v, _lbl = U.glucose_display(r.value_mmol, units)
             rows.append([f"{timezone.localtime(r.taken_at):%d.%m.%Y %H:%M}",
                          str(v),
                          GLUCOSE_CONTEXT_LATIN.get(r.context, "")])
         story.append(Spacer(1, 8))
         note = "" if len(g) <= MAX_TABLE_ROWS else \
-            f" (showing most recent {MAX_TABLE_ROWS})"
-        story.append(Paragraph(f"Readings{note}", st["small"]))
-        story.append(_table(["When", U.glucose_unit_label(units),
-                             "Context"], rows))
+            _(" (showing most recent %(n)s)") % {"n": MAX_TABLE_ROWS}
+        story.append(Paragraph(_("Readings%(note)s") % {"note": note}, st["small"]))
+        story.append(_table([_("When"), U.glucose_unit_label(units),
+                             _("Context")], rows))
     else:
-        story.append(Paragraph("No readings in this period.", st["body"]))
+        story.append(Paragraph(_("No readings in this period."), st["body"]))
 
     # --- weight ---
     w = list(window(WeightReading.objects.filter(user=user), "date")
              .order_by("date"))
     w_all = WeightReading.objects.filter(user=user)
-    story.append(Paragraph(f"Weight ({U.weight_unit_label(units)})", st["h2"]))
+    story.append(Paragraph(_("Weight ({unit})").format(unit=U.weight_unit_label(units)), st["h2"]))
     if w:
         vals = [float(r.value_kg) for r in w]
         avg = sum(vals) / len(vals)
-        d, _ = U.weight_display(avg, units)
-        lo, _ = U.weight_display(min(vals), units)
-        hi, _ = U.weight_display(max(vals), units)
+        d, _lbl = U.weight_display(avg, units)
+        lo, _lbl = U.weight_display(min(vals), units)
+        hi, _lbl = U.weight_display(max(vals), units)
         story.append(Paragraph(
-            f"{len(w)} readings &nbsp;·&nbsp; average {d} &nbsp;·&nbsp; "
-            f"range {lo}&ndash;{hi}", st["body"]))
+            _("%(n)s readings &nbsp;·&nbsp; average %(avg)s &nbsp;·&nbsp; "
+              "range %(lo)s&ndash;%(hi)s")
+            % {"n": len(w), "avg": d, "lo": lo, "hi": hi}, st["body"]))
         for i in trends.weight_insights(w_all[:400], units):
             story.append(Paragraph(f"&bull; {i['text']}", st["ins"]))
         chart = _chart([(timezone.datetime.combine(
@@ -217,23 +222,24 @@ def build_report(user, units, days):
             story.append(chart)
         rows = []
         for r in w[-MAX_TABLE_ROWS:]:
-            v, _ = U.weight_display(r.value_kg, units)
+            v, _lbl = U.weight_display(r.value_kg, units)
             rows.append([f"{r.date:%d.%m.%Y}", str(v)])
         story.append(Spacer(1, 8))
-        story.append(_table(["Date", U.weight_unit_label(units)], rows))
+        story.append(_table([_("Date"), U.weight_unit_label(units)], rows))
     else:
-        story.append(Paragraph("No readings in this period.", st["body"]))
+        story.append(Paragraph(_("No readings in this period."), st["body"]))
 
     # --- blood pressure ---
     b = list(window(BloodPressureReading.objects.filter(user=user), "taken_at")
              .order_by("taken_at"))
     b_all = BloodPressureReading.objects.filter(user=user)
-    story.append(Paragraph("Blood pressure (mmHg)", st["h2"]))
+    story.append(Paragraph(_("Blood pressure (mmHg)"), st["h2"]))
     if b:
         s_avg = sum(r.systolic for r in b) / len(b)
         d_avg = sum(r.diastolic for r in b) / len(b)
         story.append(Paragraph(
-            f"{len(b)} readings &nbsp;·&nbsp; average {s_avg:.0f}/{d_avg:.0f}",
+            _("%(n)s readings &nbsp;·&nbsp; average %(avg)s")
+            % {"n": len(b), "avg": f"{s_avg:.0f}/{d_avg:.0f}"},
             st["body"]))
         for i in trends.bp_insights(b_all[:400], units):
             story.append(Paragraph(f"&bull; {i['text']}", st["ins"]))
@@ -242,8 +248,8 @@ def build_report(user, units, days):
             story.append(Spacer(1, 6))
             story.append(chart)
             story.append(Paragraph(
-                f'<font color="{COLORS["bp"]}">&#9473;</font> systolic &nbsp; '
-                f'<font color="{COLORS["bp2"]}">&#9473;</font> diastolic',
+                f'<font color="{COLORS["bp"]}">&#9473;</font> {_("systolic")} &nbsp; '
+                f'<font color="{COLORS["bp2"]}">&#9473;</font> {_("diastolic")}',
                 st["small"]))
         rows = []
         for r in b[-MAX_TABLE_ROWS:]:
@@ -251,20 +257,21 @@ def build_report(user, units, days):
                          f"{r.systolic}/{r.diastolic}",
                          str(r.pulse or "")])
         story.append(Spacer(1, 8))
-        story.append(_table(["When", "mmHg", "Pulse"], rows))
+        story.append(_table([_("When"), "mmHg", _("Pulse")], rows))
     else:
-        story.append(Paragraph("No readings in this period.", st["body"]))
+        story.append(Paragraph(_("No readings in this period."), st["body"]))
 
     story.append(Spacer(1, 18))
     story.append(Paragraph(
-        "Generated by Hälsa. Self-reported data, not a medical diagnosis.",
+        _("Generated by Hälsa. Self-reported data, not a medical diagnosis."),
         st["small"]))
 
     buf = BytesIO()
     doc = SimpleDocTemplate(
         buf, pagesize=PAGE, leftMargin=MARGIN, rightMargin=MARGIN,
         topMargin=MARGIN, bottomMargin=MARGIN,
-        title=f"Hälsa health report {period}", author="Hälsa",
+        title=_("Hälsa health report %(period)s") % {"period": period},
+        author="Hälsa",
     )
     doc.build(story)
     return buf.getvalue()

@@ -1,8 +1,8 @@
 {% extends "base.html" %}
-{% load fmt %}
-{% block title %}History &middot; Hälsa{% endblock %}
+{% load i18n fmt %}
+{% block title %}{% translate "History" %} &middot; Hälsa{% endblock %}
 {% block content %}
-<h1 class="page-title">History</h1>
+<h1 class="page-title">{% translate "History" %}</h1>
 <section class="panel">
   {% if rows %}
   <div class="table-scroll">
@@ -20,9 +20,9 @@
         <td class="cell-context">{% if r.context %}<span class="badge badge-{{ r.context }}">{{ r.get_context_display }}</span>{% endif %}</td>
         <td class="cell-note">{{ r.note }}</td>
         <td class="cell-actions">
-          <a class="btn btn-ghost btn-xs" href="/{{ kind }}/edit/{{ r.id }}/">edit</a>
+          <a class="btn btn-ghost btn-xs" href="/{{ kind }}/edit/{{ r.id }}/">{% translate "edit" %}</a>
           <form method="post" action="/{{ kind }}/delete/{{ r.id }}/" class="inline-form">{% csrf_token %}
-            <button class="btn btn-ghost btn-xs danger" type="submit">delete</button>
+            <button class="btn btn-ghost btn-xs danger" type="submit">{% translate "delete" %}</button>
           </form>
         </td>
       </tr>
@@ -31,7 +31,7 @@
   </table>
   </div>
   {% else %}
-  <p class="empty">Nothing here yet.</p>
+  <p class="empty">{% translate "Nothing here yet." %}</p>
   {% endif %}
 </section>
 {% endblock %}

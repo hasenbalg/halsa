@@ -230,3 +230,12 @@ context by shape (circle/diamond/square/triangle, only when <=45
 points). Badges in glucose + history tables. JSON export carries
 the field; old backups restore with blank context. Migration 0003.
 88 tests green (tests6.py).
+
+## Issue #10 — i18n (2026-10-20)
+- Languages: en + de. Browser Accept-Language drives anonymous/auto users (LocaleMiddleware); Profile.language pins per account (UserLanguageMiddleware). Auto = follow browser until user picks.
+- Scope: all templates (~200 strings), form labels/errors, flash messages (activated at login/language-change so session-stored messages land in the right language), reminder emails (run_tick overrides language), doctor PDF.
+- German: informal "Du". Locale formats follow language (Django l10n: comma decimals, dd.mm.).
+- Tooling: gettext not on host — helper container `i18n-tools` (python:3.13-slim + gettext + django + psycopg) runs makemessages/compilemessages against /src copy.
+- Pitfalls hit: `_lazy` alias invisible to xgettext (must use `_`/gettext* names); `x, _ = ...` throwaways shadow gettext `_` (renamed _lbl/_x); `{% load %}` must come after `{% extends %}`; lazy messages are stringified into the session at store time (activate language before messages.success).
+- locale/de/LC_MESSAGES/django.{po,mo} — 207 entries, 100% translated.
+- tests7.py: 11 i18n tests (browser detect, pinning both directions, settings change, German email via run_tick, German PDF, Du-not-Sie). 99 tests green.

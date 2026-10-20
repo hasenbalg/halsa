@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 class UUIDModel(models.Model):
@@ -20,13 +21,21 @@ class UUIDModel(models.Model):
 
 class Profile(UUIDModel):
     class Units(models.TextChoices):
-        METRIC = "metric", "Metric (mmol/L, kg)"
-        IMPERIAL = "imperial", "Imperial (mg/dL, lb)"
+        METRIC = "metric", _("Metric (mmol/L, kg)")
+        IMPERIAL = "imperial", _("Imperial (mg/dL, lb)")
+
+    class Language(models.TextChoices):
+        AUTO = "", _("Auto (browser)")
+        EN = "en", "English"
+        DE = "de", "Deutsch"
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile"
     )
     units = models.CharField(max_length=10, choices=Units.choices, default=Units.METRIC)
+    # Empty means "auto": follow the browser's Accept-Language.
+    language = models.CharField(max_length=10, blank=True, choices=Language.choices,
+                                default=Language.AUTO)
 
     # TOTP two-factor enrollment. Enforcement starts only after the user
     # proves the seed with a code (nobody gets locked out mid-setup).
@@ -86,10 +95,10 @@ class GlucoseContext(models.TextChoices):
     Empty string means "not specified" and is always allowed.
     """
 
-    FASTING = "fasting", "Fasting"
-    PRE = "pre", "Before meal"
-    POST = "post", "After meal"
-    RANDOM = "random", "Random"
+    FASTING = "fasting", _("Fasting")
+    PRE = "pre", _("Before meal")
+    POST = "post", _("After meal")
+    RANDOM = "random", _("Random")
 
 
 # Latin terms for the doctor report (issue #9); app UI uses the plain
@@ -171,9 +180,9 @@ class BloodPressureReading(UUIDModel):
 
 
 class Metric(models.TextChoices):
-    GLUCOSE = "glucose", "Glucose"
-    WEIGHT = "weight", "Weight"
-    BP = "bp", "Blood pressure"
+    GLUCOSE = "glucose", _("Glucose")
+    WEIGHT = "weight", _("Weight")
+    BP = "bp", _("Blood pressure")
 
 
 class MetricSettings(UUIDModel):

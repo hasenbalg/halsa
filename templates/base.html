@@ -1,5 +1,5 @@
-{% load static %}<!doctype html>
-<html lang="en">
+{% load i18n static %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,20 +13,20 @@
   <div class="topbar-inner">
     <a class="brand" href="/">Hä<span>l</span>sa</a>
     <input type="checkbox" id="nav-toggle" class="nav-toggle" tabindex="-1" aria-hidden="true">
-    <label class="nav-burger" for="nav-toggle" aria-label="Toggle menu"><span></span></label>
+    <label class="nav-burger" for="nav-toggle" aria-label="{% translate 'Toggle menu' %}"><span></span></label>
     <nav class="nav">
-      <a href="/" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
-      <a href="/glucose/" class="{% if request.resolver_match.url_name == 'glucose' %}active{% endif %}">Glucose</a>
-      <a href="/weight/" class="{% if request.resolver_match.url_name == 'weight' %}active{% endif %}">Weight</a>
-      <a href="/pressure/" class="{% if request.resolver_match.url_name == 'pressure' %}active{% endif %}">Blood&nbsp;pressure</a>
-      <a href="/schedules/" class="{% if 'schedules' in request.path %}active{% endif %}">Schedules</a>
-      <a href="/history/" class="{% if request.resolver_match.url_name == 'history' %}active{% endif %}">History</a>
-      <a href="/settings/" class="{% if request.resolver_match.url_name == 'settings' or request.resolver_match.url_name == 'two_factor' %}active{% endif %}">Settings</a>
+      <a href="/" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">{% translate "Dashboard" %}</a>
+      <a href="/glucose/" class="{% if request.resolver_match.url_name == 'glucose' %}active{% endif %}">{% translate "Glucose" %}</a>
+      <a href="/weight/" class="{% if request.resolver_match.url_name == 'weight' %}active{% endif %}">{% translate "Weight" %}</a>
+      <a href="/pressure/" class="{% if request.resolver_match.url_name == 'pressure' %}active{% endif %}">{% translate "Blood pressure" %}</a>
+      <a href="/schedules/" class="{% if 'schedules' in request.path %}active{% endif %}">{% translate "Schedules" %}</a>
+      <a href="/history/" class="{% if request.resolver_match.url_name == 'history' %}active{% endif %}">{% translate "History" %}</a>
+      <a href="/settings/" class="{% if request.resolver_match.url_name == 'settings' or request.resolver_match.url_name == 'two_factor' %}active{% endif %}">{% translate "Settings" %}</a>
     </nav>
     <div class="topbar-right">
-      <a class="btn btn-primary btn-sm" href="/add/">+ Add reading</a>
+      <a class="btn btn-primary btn-sm" href="/add/">{% translate "+ Add reading" %}</a>
       <form method="post" action="{% url 'logout' %}" class="inline-form">{% csrf_token %}
-        <button class="userchip" title="Sign out">{{ user.username }}</button>
+        <button class="userchip" title="{% translate 'Sign out' %}">{{ user.username }}</button>
       </form>
     </div>
   </div>
@@ -41,6 +41,6 @@
   {% endif %}
   {% block content %}{% endblock %}
 </main>
-<footer class="footer">Hälsa &middot; your health data, on your own server</footer>
+<footer class="footer">Hälsa &middot; {% translate "your health data, on your own server" %}</footer>
 </body>
 </html>

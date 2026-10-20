@@ -9,7 +9,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Avg, Max, Min
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
+from django.utils import timezone, translation
+from django.utils.formats import date_format
+from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _lazy
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -20,6 +23,7 @@ from . import charts, pdfexport, scheduling, trends, units as U
 from .forms import (
     BloodPressureForm,
     GlucoseForm,
+    LanguageForm,
     MetricSettingsForm,
     QuickAddForm,
     RestoreForm,
@@ -41,7 +45,7 @@ RANGES = {"7": 7, "30": 30, "90": 90, "365": 365, "all": None}
 
 
 def get_profile(user):
-    profile, _ = Profile.objects.get_or_create(user=user)
+    profile, _x = Profile.objects.get_or_create(user=user)
     return profile
 
 
@@ -57,9 +61,9 @@ def _fmt_dt(dt, units):
     local = timezone.localtime(dt)
     today = timezone.localdate()
     if local.date() == today:
-        return f"today {local:%H:%M}"
+        return f"{_('today')} {local:%H:%M}"
     if local.date() == today - timedelta(days=1):
-        return f"yesterday {local:%H:%M}"
+        return f"{_('yesterday')} {local:%H:%M}"
     return f"{local:%d.%m. %H:%M}"
 
 
@@ -68,7 +72,7 @@ def _delta_html(latest, ref, fmt):
         return ""
     diff = latest - ref
     if abs(diff) < Decimal("0.05"):
-        return '<span class="delta flat">steady</span>'
+        return f'<span class="delta flat">{_("steady")}</span>'
     arrow = "&#9650;" if diff > 0 else "&#9660;"
     cls = "up" if diff > 0 else "down"
     return f'<span class="delta {cls}">{arrow} {fmt(abs(diff))}</span>'
@@ -102,13 +106,13 @@ def login_view(request):
             return render(
                 request, "login.html",
                 {"step": "code", "next": next_url,
-                 "error": "That code didn't work. Check your authenticator app."},
+                 "error": _("That code didn't work. Check your authenticator app.")},
             )
         # stale pending entry -> back to password step
         return render(
             request, "login.html",
             {"step": "password", "next": next_url, "form": AuthenticationForm(),
-             "error": "Sign in again to continue."},
+             "error": _("Sign in again to continue.")},
         )
 
     if request.user.is_authenticated:
@@ -127,8 +131,10 @@ def login_view(request):
                     {"step": "code", "next": next_url},
                 )
             auth_login(request, user)
+            if profile.language:
+                translation.activate(profile.language)
             logger.info("login ok")
-            messages.success(request, "Welcome back.")
+            messages.success(request, _lazy("Welcome back."))
             return redirect(next_url)
         if request.method == "POST":
             logger.warning("login failed")
@@ -188,14 +194,14 @@ def dashboard(request):
 
     cards = [
         {
-            "name": "Glucose",
+            "name": _("Glucose"),
             "url": "glucose",
             "css": "glucose",
             "value": (
                 f'{U.glucose_display(latest_g.value_mmol, units)[0]}'
                 f'<span class="unit">{U.glucose_unit_label(units)}</span>'
             ) if latest_g else "&ndash;",
-            "when": _fmt_dt(latest_g.taken_at, units) if latest_g else "no readings",
+            "when": _fmt_dt(latest_g.taken_at, units) if latest_g else _("no readings"),
             "delta": g_delta(),
             "chart": charts.sparkline(
                 [(r.taken_at, float(r.value_mmol)) for r in g30],
@@ -204,14 +210,14 @@ def dashboard(request):
             "insights": trends.glucose_insights(g_all[:400], units)[:1],
         },
         {
-            "name": "Weight",
+            "name": _("Weight"),
             "url": "weight",
             "css": "weight",
             "value": (
                 f'{U.weight_display(latest_w.value_kg, units)[0]}'
                 f'<span class="unit">{U.weight_unit_label(units)}</span>'
             ) if latest_w else "&ndash;",
-            "when": (f"on {latest_w.date}" if latest_w else "no readings"),
+            "when": (_("on %(date)s") % {"date": date_format(latest_w.date)} if latest_w else _("no readings")),
             "delta": w_delta(),
             "chart": charts.sparkline(
                 [(r.date, float(r.value_kg)) for r in w30],
@@ -220,11 +226,11 @@ def dashboard(request):
             "insights": trends.weight_insights(w_all[:400], units)[:1],
         },
         {
-            "name": "Blood pressure",
+            "name": _("Blood pressure"),
             "url": "pressure",
             "css": "bp",
             "value": f'{latest_b.systolic}/{latest_b.diastolic}<span class="unit">mmHg</span>' if latest_b else "&ndash;",
-            "when": _fmt_dt(latest_b.taken_at, units) if latest_b else "no readings",
+            "when": _fmt_dt(latest_b.taken_at, units) if latest_b else _("no readings"),
             "delta": "",
             "chart": charts.sparkline(
                 [(r.taken_at, float(r.systolic)) for r in b30],
@@ -235,9 +241,9 @@ def dashboard(request):
     ]
 
     insights = {
-        "glucose": trends.glucose_insights(g_all[:400], units),
-        "weight": trends.weight_insights(w_all[:400], units),
-        "bp": trends.bp_insights(b_all[:400], units),
+        _("Glucose"): trends.glucose_insights(g_all[:400], units),
+        _("Weight"): trends.weight_insights(w_all[:400], units),
+        _("Blood pressure"): trends.bp_insights(b_all[:400], units),
     }
     has_insights = any(insights.values())
 
@@ -270,13 +276,13 @@ def add(request):
         if form.is_valid():
             created = form.save(request.user)
             names = {
-                GlucoseReading: "glucose",
-                WeightReading: "weight",
-                BloodPressureReading: "blood pressure",
+                GlucoseReading: _("glucose"),
+                WeightReading: _("weight"),
+                BloodPressureReading: _("blood pressure"),
             }
             saved = ", ".join(names[type(r)] for r in created)
             logger.info("readings saved: %s", saved)
-            messages.success(request, f"Saved: {saved}.")
+            messages.success(request, _lazy("Saved: %(names)s.") % {"names": saved})
             return redirect("/add/?saved=1")
     else:
         form = QuickAddForm(initial={"taken_at": timezone.localtime().replace(microsecond=0)}, units=units)
@@ -295,7 +301,7 @@ def glucose_detail(request):
     rolling = _rolling([(p[0], p[1]) for p in points], window=7)
     stats = qs.aggregate(avg=Avg("value_mmol"), lo=Min("value_mmol"), hi=Max("value_mmol"))
     return render(request, "metric.html", {
-        "title": "Glucose",
+        "title": _lazy("Glucose"),
         "css": "glucose",
         "unit": U.glucose_unit_label(units),
         "chart": charts.line_chart(
@@ -305,7 +311,7 @@ def glucose_detail(request):
             ],
             band=(3.9, 7.8),
             y_decimals=1,
-            aria_label="Glucose over time, mmol per litre",
+            aria_label=_("Glucose over time, mmol per litre"),
         ),
         "rows": rows,
         "kind": "glucose",
@@ -326,7 +332,7 @@ def weight_detail(request):
     rolling = _rolling(points, window=7)
     stats = qs.aggregate(avg=Avg("value_kg"), lo=Min("value_kg"), hi=Max("value_kg"))
     return render(request, "metric.html", {
-        "title": "Weight",
+        "title": _("Weight"),
         "css": "weight",
         "unit": U.weight_unit_label(units),
         "chart": charts.line_chart(
@@ -335,7 +341,7 @@ def weight_detail(request):
                 {"points": rolling, "color": "var(--muted)", "fill": False, "dashed": True},
             ],
             y_decimals=1,
-            aria_label="Weight over time",
+            aria_label=_("Weight over time"),
         ),
         "rows": rows,
         "kind": "weight",
@@ -354,7 +360,7 @@ def bp_detail(request):
     rows = list(qs.filter(taken_at__gte=_since(days)).order_by("taken_at")) if days else list(qs.order_by("taken_at"))
     stats = qs.aggregate(avg_s=Avg("systolic"), avg_d=Avg("diastolic"))
     return render(request, "metric.html", {
-        "title": "Blood pressure",
+        "title": _("Blood pressure"),
         "css": "bp",
         "unit": "mmHg",
         "chart": charts.line_chart(
@@ -364,13 +370,13 @@ def bp_detail(request):
             ],
             band=(90, 120),
             y_decimals=0,
-            aria_label="Blood pressure over time, systolic and diastolic",
+            aria_label=_("Blood pressure over time, systolic and diastolic"),
         ),
         "rows": rows,
         "kind": "bp",
         "stats": [
-            ("Average", f"{stats['avg_s']:.0f}/{stats['avg_d']:.0f}" if stats["avg_s"] else "-"),
-            ("Systolic range", f"{qs.aggregate(m=Min('systolic'))['m']}&ndash;{qs.aggregate(m=Max('systolic'))['m']}" if rows else "-"),
+            (_("Average"), f"{stats['avg_s']:.0f}/{stats['avg_d']:.0f}" if stats["avg_s"] else "-"),
+            (_("Systolic range"), f"{qs.aggregate(m=Min('systolic'))['m']}&ndash;{qs.aggregate(m=Max('systolic'))['m']}" if rows else "-"),
         ],
         "insights": trends.bp_insights(qs[:400], units),
         "days": days,
@@ -391,9 +397,9 @@ def _rolling(points, window=7):
 
 def _fmt_stats(stats, fmt):
     return [
-        ("Average", fmt(stats["avg"]) if stats["avg"] is not None else "-"),
-        ("Lowest", fmt(stats["lo"]) if stats["lo"] is not None else "-"),
-        ("Highest", fmt(stats["hi"]) if stats["hi"] is not None else "-"),
+        (_("Average"), fmt(stats["avg"]) if stats["avg"] is not None else "-"),
+        (_("Lowest"), fmt(stats["lo"]) if stats["lo"] is not None else "-"),
+        (_("Highest"), fmt(stats["hi"]) if stats["hi"] is not None else "-"),
     ]
 
 
@@ -408,7 +414,7 @@ MODELS = {
 
 @login_required
 def edit(request, kind, pk):
-    model, form_class, _ = MODELS[kind]
+    model, form_class, _x = MODELS[kind]
     obj = get_object_or_404(model, pk=pk, user=request.user)
     units = get_profile(request.user).units
     kwargs = {"units": units} if form_class is not BloodPressureForm else {}
@@ -417,21 +423,27 @@ def edit(request, kind, pk):
         if form.is_valid():
             form.save()
             logger.info("reading updated: %s", kind)
-            messages.success(request, "Updated.")
+            messages.success(request, _lazy("Updated."))
             return redirect(f"/{kind}/")
     else:
         form = form_class(instance=obj, **kwargs)
-    return render(request, "edit.html", {"form": form, "kind": kind, "obj": obj, "units": units})
+    kind_label = {
+        "glucose": _("Glucose"), "weight": _("Weight"),
+        "bp": _("Blood pressure"),
+    }.get(kind, kind)
+    return render(request, "edit.html", {"form": form, "kind": kind,
+                                         "kind_label": kind_label,
+                                         "obj": obj, "units": units})
 
 
 @login_required
 @require_POST
 def delete(request, kind, pk):
-    model, _, _ = MODELS[kind]
+    model, _x, _y = MODELS[kind]
     obj = get_object_or_404(model, pk=pk, user=request.user)
     obj.delete()
     logger.info("reading deleted: %s", kind)
-    messages.success(request, "Deleted.")
+    messages.success(request, _lazy("Deleted."))
     return redirect(f"/{kind}/")
 
 
@@ -457,12 +469,21 @@ def history(request):
 @login_required
 def settings_view(request):
     profile = get_profile(request.user)
-    if request.method == "POST" and request.POST.get("units"):
+    if request.method == "POST" and "language" in request.POST:
+        form = LanguageForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            if profile.language:
+                translation.activate(profile.language)
+            logger.info("language changed")
+            messages.success(request, _lazy("Language updated."))
+            return redirect("settings")
+    elif request.method == "POST" and request.POST.get("units"):
         form = UnitsForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
             logger.info("units changed")
-            messages.success(request, "Units updated.")
+            messages.success(request, _lazy("Units updated."))
             return redirect("settings")
     elif request.method == "POST":
         forms_ = []
@@ -474,9 +495,10 @@ def settings_view(request):
             for f in forms_:
                 f.save()
             logger.info("scheduling settings updated")
-            messages.success(request, "Scheduling settings updated.")
+            messages.success(request, _lazy("Scheduling settings updated."))
             return redirect("settings")
     form = UnitsForm(instance=profile)
+    lang_form = LanguageForm(instance=profile)
     metric_forms = []
     for metric, label in Metric.choices:
         ms = scheduling.settings_for(request.user, metric)
@@ -484,6 +506,7 @@ def settings_view(request):
                                                         prefix=f"m{metric}")))
     return render(request, "settings.html", {
         "form": form,
+        "lang_form": lang_form,
         "profile": profile,
         "metric_forms": metric_forms,
         "restore_form": RestoreForm(),
@@ -505,27 +528,27 @@ def two_factor(request):
             profile.totp_confirmed = False
             profile.save(update_fields=["totp_seed", "totp_confirmed"])
             logger.info("2fa enrollment started")
-            messages.info(request, "Scan the QR code, then confirm with a code.")
+            messages.info(request, _lazy("Scan the QR code, then confirm with a code."))
             return redirect("two_factor")
         elif action == "confirm":
             if profile.verify_enrollment(request.POST.get("code", "")):
                 profile.totp_confirmed = True
                 profile.save(update_fields=["totp_confirmed", "last_verified_at"])
                 logger.info("2fa enabled")
-                messages.success(request, "Two-factor authentication enabled.")
+                messages.success(request, _lazy("Two-factor authentication enabled."))
                 return redirect("settings")
             logger.warning("2fa confirm failed")
-            messages.error(request, "Wrong code - try the next one from your app.")
+            messages.error(request, _lazy("Wrong code - try the next one from your app."))
         elif action == "disable":
             if profile._check_token(request.POST.get("code", "")):
                 profile.totp_seed = ""
                 profile.totp_confirmed = False
                 profile.save(update_fields=["totp_seed", "totp_confirmed"])
                 logger.info("2fa disabled")
-                messages.success(request, "Two-factor authentication disabled.")
+                messages.success(request, _lazy("Two-factor authentication disabled."))
                 return redirect("settings")
             logger.warning("2fa disable rejected")
-            messages.error(request, "A current valid code is required to disable 2FA.")
+            messages.error(request, _lazy("A current valid code is required to disable 2FA."))
     if profile.totp_seed and not profile.two_factor_enabled:
         try:
             qr = segno.make(profile.provisioning_uri()).svg_data_uri(scale=5, border=2)
@@ -574,7 +597,7 @@ def schedule_edit(request, pk=None):
             s.user = request.user
             s.save()
             logger.info("schedule saved")
-            messages.success(request, "Schedule saved.")
+            messages.success(request, _lazy("Schedule saved."))
             return redirect("schedules")
     else:
         form = ScheduleForm(instance=obj)
@@ -588,7 +611,7 @@ def schedule_delete(request, pk):
     obj = get_object_or_404(Schedule, pk=pk, user=request.user)
     obj.delete()
     logger.info("schedule deleted")
-    messages.success(request, "Schedule deleted.")
+    messages.success(request, _lazy("Schedule deleted."))
     return redirect("schedules")
 
 
@@ -670,22 +693,24 @@ def restore(request):
 
     upload = request.FILES.get("backup")
     if not upload:
-        messages.error(request, "Choose a backup file first.")
+        messages.error(request, _lazy("Choose a backup file first."))
         return redirect("settings")
     if upload.size > 20 * 1024 * 1024:
-        messages.error(request, "Backup file too large (max 20 MB).")
+        messages.error(request, _lazy("Backup file too large (max 20 MB)."))
         return redirect("settings")
     raw = upload.read().decode("utf-8", errors="replace")
     try:
         summary = restore_from_json(request.user, raw)
     except RestoreError as e:
         logger.warning("restore failed: %s", e)
-        messages.error(request, f"Restore failed: {e}")
+        messages.error(request, _lazy("Restore failed: %(err)s") % {"err": e})
     else:
         created = sum(summary["created"].values())
         updated = sum(summary["updated"].values())
         logger.info("restore: %d created, %d updated", created, updated)
         messages.success(
-            request, f"Restore complete: {created} records created, {updated} updated."
+            request,
+            _lazy("Restore complete: %(created)s records created, %(updated)s updated.")
+            % {"created": created, "updated": updated},
         )
     return redirect("settings")

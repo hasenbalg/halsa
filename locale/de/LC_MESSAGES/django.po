@@ -1,0 +1,944 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-20 21:56+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: templates/add.html:3 templates/add.html:6
+msgid "Add reading"
+msgstr "Messwert erfassen"
+
+#: templates/add.html:7
+msgid ""
+"Fill what you have &mdash; one field is enough. Enter saves and stays here."
+msgstr ""
+"Trag ein, was du hast &mdash; ein Feld genügt. Enter speichert und du "
+"bleibst hier."
+
+#: templates/add.html:16 tracker/forms.py:26 tracker/pdfexport.py:195
+#: tracker/pdfexport.py:260
+msgid "When"
+msgstr "Zeitpunkt"
+
+#: templates/add.html:38 tracker/pdfexport.py:236
+msgid "Blood pressure (mmHg)"
+msgstr "Blutdruck (mmHg)"
+
+#: templates/add.html:41 tracker/forms.py:36
+msgid "Systolic"
+msgstr "Systolisch"
+
+#: templates/add.html:45 tracker/forms.py:37
+msgid "Diastolic"
+msgstr "Diastolisch"
+
+#: templates/add.html:59 templates/edit.html:20
+#: templates/schedule_form.html:36
+msgid "Save"
+msgstr "Speichern"
+
+#: templates/base.html:16
+msgid "Toggle menu"
+msgstr "Menü umschalten"
+
+#: templates/base.html:18 templates/dashboard.html:3
+msgid "Dashboard"
+msgstr "Übersicht"
+
+#: templates/base.html:19 tracker/forms.py:30 tracker/forms.py:101
+#: tracker/models.py:183 tracker/views.py:194 tracker/views.py:241
+#: tracker/views.py:301 tracker/views.py:428
+msgid "Glucose"
+msgstr "Glukose"
+
+#: templates/base.html:20 tracker/forms.py:35 tracker/forms.py:129
+#: tracker/models.py:184 tracker/views.py:210 tracker/views.py:242
+#: tracker/views.py:332 tracker/views.py:428
+msgid "Weight"
+msgstr "Gewicht"
+
+#: templates/base.html:21 tracker/models.py:185 tracker/views.py:226
+#: tracker/views.py:243 tracker/views.py:360 tracker/views.py:429
+msgid "Blood pressure"
+msgstr "Blutdruck"
+
+#: templates/base.html:22 templates/dashboard.html:29
+#: templates/schedules.html:3 templates/schedules.html:6
+msgid "Schedules"
+msgstr "Zeitpläne"
+
+#: templates/base.html:23 templates/history.html:3 templates/history.html:5
+msgid "History"
+msgstr "Verlauf"
+
+#: templates/base.html:24 templates/schedules.html:47
+#: templates/settings.html:3 templates/settings.html:5
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: templates/base.html:27
+msgid "+ Add reading"
+msgstr "+ Messwert erfassen"
+
+#: templates/base.html:29
+msgid "Sign out"
+msgstr "Abmelden"
+
+#: templates/base.html:44
+msgid "your health data, on your own server"
+msgstr "deine Gesundheitsdaten, auf deinem eigenen Server"
+
+#: templates/dashboard.html:28
+msgid "Today"
+msgstr "Heute"
+
+#: templates/dashboard.html:36
+#, python-format
+msgid "next %(when)s"
+msgstr "nächste:r %(when)s"
+
+#: templates/dashboard.html:46
+msgid "Long-term trends"
+msgstr "Langzeittrends"
+
+#: templates/dashboard.html:60
+msgid "Recent readings"
+msgstr "Letzte Messwerte"
+
+#: templates/dashboard.html:61
+msgid "All history"
+msgstr "Gesamter Verlauf"
+
+#: templates/dashboard.html:77 templates/history.html:23
+#: templates/metric.html:66 templates/schedules.html:32
+msgid "edit"
+msgstr "bearbeiten"
+
+#: templates/dashboard.html:79 templates/history.html:25
+#: templates/metric.html:68 templates/schedules.html:34
+msgid "delete"
+msgstr "löschen"
+
+#: templates/dashboard.html:88
+msgid ""
+"Nothing logged yet. <a href=\"/add/\">Add your first reading</a> to get "
+"started."
+msgstr ""
+"Noch nichts erfasst. <a href=\"/add/\">Erfasse deinen ersten Messwert</a>, "
+"um zu starten."
+
+#: templates/edit.html:3
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: templates/edit.html:6
+msgid "Edit reading"
+msgstr "Messwert bearbeiten"
+
+#: templates/edit.html:21 templates/password_change.html:20
+#: templates/schedule_form.html:37 templates/two_factor.html:43
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: templates/history.html:34
+msgid "Nothing here yet."
+msgstr "Noch nichts hier."
+
+#: templates/login.html:7 templates/login.html:39
+msgid "Sign in"
+msgstr "Anmelden"
+
+#: templates/login.html:13
+msgid "Private health tracking"
+msgstr "Privates Gesundheits-Tracking"
+
+#: templates/login.html:16
+msgid "Authentication code"
+msgstr "Authentifizierungscode"
+
+#: templates/login.html:17
+msgid "Enter the 6-digit code from your authenticator app."
+msgstr "Gib den 6-stelligen Code aus deiner Authenticator-App ein."
+
+#: templates/login.html:25
+msgid "Verify"
+msgstr "Bestätigen"
+
+#: templates/login.html:35
+msgid "Username"
+msgstr "Benutzername"
+
+#: templates/login.html:37 templates/settings.html:88
+msgid "Password"
+msgstr "Passwort"
+
+#: templates/metric.html:10
+msgid "7d"
+msgstr "7T"
+
+#: templates/metric.html:11
+msgid "30d"
+msgstr "30T"
+
+#: templates/metric.html:12
+msgid "90d"
+msgstr "90T"
+
+#: templates/metric.html:13
+msgid "1y"
+msgstr "1J"
+
+#: templates/metric.html:14
+msgid "all"
+msgstr "alle"
+
+#: templates/metric.html:21
+msgid "measured"
+msgstr "gemessen"
+
+#: templates/metric.html:22
+msgid "7-point average"
+msgstr "7-Tage-Mittel"
+
+#: templates/metric.html:23
+msgid "target band"
+msgstr "Zielbereich"
+
+#: templates/metric.html:29
+msgid "Trends"
+msgstr "Trends"
+
+#: templates/metric.html:39
+msgid "Stats (all time)"
+msgstr "Statistik (gesamter Zeitraum)"
+
+#: templates/metric.html:48
+msgid "Readings"
+msgstr "Messwerte"
+
+#: templates/metric.html:77
+msgid "No readings in this range."
+msgstr "Keine Messwerte in diesem Zeitraum."
+
+#: templates/metric.html:77
+msgid "Add one"
+msgstr "Erfassen"
+
+#: templates/password_change.html:3 templates/password_change.html:6
+#: templates/password_change.html:19 templates/settings.html:89
+msgid "Change password"
+msgstr "Passwort ändern"
+
+#: templates/schedule_form.html:3 templates/schedule_form.html:6
+msgid "Edit schedule"
+msgstr "Zeitplan bearbeiten"
+
+#: templates/schedule_form.html:3 templates/schedule_form.html:6
+msgid "New schedule"
+msgstr "Neuer Zeitplan"
+
+#: templates/schedule_form.html:28 tracker/forms.py:194
+msgid "Repeat on"
+msgstr "Wiederholen am"
+
+#: templates/schedules.html:7
+msgid "+ New schedule"
+msgstr "+ Neuer Zeitplan"
+
+#: templates/schedules.html:28
+msgid "inactive"
+msgstr "inaktiv"
+
+#: templates/schedules.html:43
+msgid ""
+"No schedules yet. Create one to get an email when a measurement is overdue."
+msgstr ""
+"Noch keine Zeitpläne. Erstelle einen, um eine E-Mail zu erhalten, wenn ein "
+"Messwert überfällig ist."
+
+#: templates/schedules.html:47
+msgid "Reminder knobs (window and grace minutes per metric) live in"
+msgstr ""
+"Erinnerungs-Einstellungen (Fenster- und Karenzminuten pro Metrik) findest du"
+" in den"
+
+#: templates/settings.html:8
+msgid "Units"
+msgstr "Einheiten"
+
+#: templates/settings.html:9
+msgid ""
+"Data is always stored in metric (mmol/L, kg, mmHg). This only changes "
+"display and input."
+msgstr ""
+"Daten werden immer metrisch gespeichert (mmol/L, kg, mmHg). Dies ändert nur "
+"Anzeige und Eingabe."
+
+#: templates/settings.html:17
+msgid "Save units"
+msgstr "Einheiten speichern"
+
+#: templates/settings.html:22 templates/settings.html:27
+msgid "Language"
+msgstr "Sprache"
+
+#: templates/settings.html:23
+msgid ""
+"Auto follows your browser language. Pick a language to pin it to your "
+"account."
+msgstr ""
+"Auto folgt deiner Browser-Sprache. Wähle eine Sprache, um sie an dein Konto "
+"zu binden."
+
+#: templates/settings.html:30
+msgid "Save language"
+msgstr "Sprache speichern"
+
+#: templates/settings.html:35
+msgid "Measurement schedules"
+msgstr "Mess-Zeitpläne"
+
+#: templates/settings.html:37
+msgid "Manage schedules"
+msgstr "Zeitpläne verwalten"
+
+#: templates/settings.html:37
+msgid "when one is missed, one reminder email lands in your inbox."
+msgstr ""
+"wird einer verpasst, landet eine Erinnerungs-E-Mail in deinem Postfach."
+
+#: templates/settings.html:44
+#, python-format
+msgid "Save %(name)s"
+msgstr "%(name)s speichern"
+
+#: templates/settings.html:51
+msgid "Backup and restore data"
+msgstr "Daten sichern und wiederherstellen"
+
+#: templates/settings.html:52
+msgid ""
+"JSON is a full backup: all readings, schedules and settings in canonical "
+"metric units. Restoring merges by record id, so re-importing the same file "
+"is safe."
+msgstr ""
+"JSON ist ein vollständiges Backup: alle Messwerte, Zeitpläne und "
+"Einstellungen in metrischen Einheiten. Beim Wiederherstellen wird pro "
+"Datensatz-ID zusammengeführt, derselbe Datei-Import ist also sicher."
+
+#: templates/settings.html:54
+msgid "Download JSON backup"
+msgstr "JSON-Backup herunterladen"
+
+#: templates/settings.html:56
+msgid "PDF report"
+msgstr "PDF-Bericht"
+
+#: templates/settings.html:57
+msgid "Doctor-friendly report with stats, trends and graphs."
+msgstr "Arztfreundlicher Bericht mit Statistik, Trends und Diagrammen."
+
+#: templates/settings.html:59
+msgid "Last 30 days"
+msgstr "Letzte 30 Tage"
+
+#: templates/settings.html:60
+msgid "Last 90 days"
+msgstr "Letzte 90 Tage"
+
+#: templates/settings.html:61
+msgid "Last year"
+msgstr "Letztes Jahr"
+
+#: templates/settings.html:62
+msgid "All time"
+msgstr "Gesamter Zeitraum"
+
+#: templates/settings.html:64
+msgid "Restore"
+msgstr "Wiederherstellen"
+
+#: templates/settings.html:71
+msgid "Import backup"
+msgstr "Backup importieren"
+
+#: templates/settings.html:76 templates/two_factor.html:6
+msgid "Two-factor authentication"
+msgstr "Zwei-Faktor-Authentifizierung"
+
+#: templates/settings.html:78
+msgid "2FA is"
+msgstr "2FA ist"
+
+#: templates/settings.html:78
+msgid "enabled"
+msgstr "aktiviert"
+
+#: templates/settings.html:78
+msgid ". Login requires a code from your authenticator app."
+msgstr ". Der Login benötigt einen Code aus deiner Authenticator-App."
+
+#: templates/settings.html:80
+msgid "2FA is off. Add a second factor to protect your health data."
+msgstr ""
+"2FA ist aus. Füge einen zweiten Faktor hinzu, um deine Gesundheitsdaten zu "
+"schützen."
+
+#: templates/settings.html:94
+msgid "Admin"
+msgstr "Administration"
+
+#: templates/settings.html:95
+msgid "Django admin"
+msgstr "Django-Administration"
+
+#: templates/two_factor.html:3
+msgid "Two-factor"
+msgstr "Zwei-Faktor"
+
+#: templates/two_factor.html:9
+msgid "2FA is enabled on this account."
+msgstr "2FA ist für dieses Konto aktiviert."
+
+#: templates/two_factor.html:14
+msgid "Enter a current code to disable 2FA"
+msgstr "Gib einen aktuellen Code ein, um 2FA zu deaktivieren"
+
+#: templates/two_factor.html:17
+msgid "Disable 2FA"
+msgstr "2FA deaktivieren"
+
+#: templates/two_factor.html:18
+msgid "Back"
+msgstr "Zurück"
+
+#: templates/two_factor.html:22
+msgid ""
+"1. Scan this QR code with your authenticator app (Aegis, Authy, 1Password, "
+"...)."
+msgstr ""
+"1. Scanne diesen QR-Code mit deiner Authenticator-App (Aegis, Authy, "
+"1Password, ...)."
+
+#: templates/two_factor.html:23
+msgid "TOTP QR code"
+msgstr "TOTP-QR-Code"
+
+#: templates/two_factor.html:24
+msgid "Or enter this key manually:"
+msgstr "Oder gib diesen Schlüssel manuell ein:"
+
+#: templates/two_factor.html:27
+msgid "2. Enter the 6-digit code the app shows to confirm:"
+msgstr "2. Gib den 6-stelligen Code aus der App zur Bestätigung ein:"
+
+#: templates/two_factor.html:34
+msgid "Confirm and enable"
+msgstr "Bestätigen und aktivieren"
+
+#: templates/two_factor.html:38
+msgid "Set up an authenticator app to require a 6-digit code at login."
+msgstr ""
+"Richte eine Authenticator-App ein, die beim Login einen 6-stelligen Code "
+"verlangt."
+
+#: templates/two_factor.html:42
+msgid "Start setup"
+msgstr "Einrichtung starten"
+
+#: tracker/forms.py:32 tracker/pdfexport.py:196
+msgid "Context"
+msgstr "Kontext"
+
+#: tracker/forms.py:38 tracker/pdfexport.py:260
+msgid "Pulse"
+msgstr "Puls"
+
+#: tracker/forms.py:44 tracker/forms.py:112 tracker/pdfexport.py:167
+#, python-brace-format
+msgid "Glucose ({unit})"
+msgstr "Glukose ({unit})"
+
+#: tracker/forms.py:47 tracker/forms.py:140 tracker/pdfexport.py:204
+#, python-brace-format
+msgid "Weight ({unit})"
+msgstr "Gewicht ({unit})"
+
+#: tracker/forms.py:50
+msgid "Systolic (mmHg)"
+msgstr "Systolisch (mmHg)"
+
+#: tracker/forms.py:51
+msgid "Diastolic (mmHg)"
+msgstr "Diastolisch (mmHg)"
+
+#: tracker/forms.py:58
+msgid "Blood pressure needs both systolic and diastolic."
+msgstr "Blutdruck benötigt systolisch und diastolisch."
+
+#: tracker/forms.py:60 tracker/forms.py:170
+msgid "Diastolic must be lower than systolic."
+msgstr "Diastolisch muss niedriger als systolisch sein."
+
+#: tracker/forms.py:62
+msgid "Enter at least one value."
+msgstr "Gib mindestens einen Wert ein."
+
+#: tracker/forms.py:187
+msgid "Mon"
+msgstr "Mo"
+
+#: tracker/forms.py:187
+msgid "Tue"
+msgstr "Di"
+
+#: tracker/forms.py:187
+msgid "Wed"
+msgstr "Mi"
+
+#: tracker/forms.py:188
+msgid "Thu"
+msgstr "Do"
+
+#: tracker/forms.py:188
+msgid "Fri"
+msgstr "Fr"
+
+#: tracker/forms.py:188
+msgid "Sat"
+msgstr "Sa"
+
+#: tracker/forms.py:189
+msgid "Sun"
+msgstr "So"
+
+#: tracker/forms.py:204
+msgid "Name"
+msgstr "Name"
+
+#: tracker/forms.py:205
+msgid "Metric"
+msgstr "Metrik"
+
+#: tracker/forms.py:206
+msgid "Time"
+msgstr "Uhrzeit"
+
+#: tracker/forms.py:207
+msgid "Active"
+msgstr "Aktiv"
+
+#: tracker/forms.py:221
+msgid "A reading counts as done if within this many minutes of the slot"
+msgstr ""
+"Ein Messwert zählt als erledigt, wenn er innerhalb dieser Minutenzahl um den"
+" Termin liegt"
+
+#: tracker/forms.py:222
+msgid "Email me this many minutes after a missed slot"
+msgstr "Mir so viele Minuten nach einem verpassten Termin eine E-Mail senden"
+
+#: tracker/forms.py:223
+msgid "Send overdue reminder emails for this metric"
+msgstr "Überfälligkeits-Erinnerungen für diese Metrik senden"
+
+#: tracker/forms.py:228
+msgid "Backup file (Hälsa JSON)"
+msgstr "Backup-Datei (Hälsa JSON)"
+
+#: tracker/models.py:24
+msgid "Metric (mmol/L, kg)"
+msgstr "Metrisch (mmol/L, kg)"
+
+#: tracker/models.py:25
+msgid "Imperial (mg/dL, lb)"
+msgstr "Imperial (mg/dL, lb)"
+
+#: tracker/models.py:28
+msgid "Auto (browser)"
+msgstr "Auto (Browser)"
+
+#: tracker/models.py:98
+msgid "Fasting"
+msgstr "Nüchtern"
+
+#: tracker/models.py:99
+msgid "Before meal"
+msgstr "Vor dem Essen"
+
+#: tracker/models.py:100
+msgid "After meal"
+msgstr "Nach dem Essen"
+
+#: tracker/models.py:101
+msgid "Random"
+msgstr "Zufällig"
+
+#: tracker/pdfexport.py:144
+#, python-format
+msgid "last %(n)s days"
+msgstr "letzte %(n)s Tage"
+
+#: tracker/pdfexport.py:144
+msgid "all time"
+msgstr "gesamter Zeitraum"
+
+#: tracker/pdfexport.py:150
+#, python-format
+msgid ""
+"Health report for %(name)s &nbsp;·&nbsp; %(period)s &nbsp;·&nbsp; generated "
+"%(when)s"
+msgstr ""
+"Gesundheitsbericht für %(name)s &nbsp;·&nbsp; %(period)s &nbsp;·&nbsp; "
+"erstellt %(when)s"
+
+#: tracker/pdfexport.py:175 tracker/pdfexport.py:212
+#, python-format
+msgid ""
+"%(n)s readings &nbsp;·&nbsp; average %(avg)s &nbsp;·&nbsp; range "
+"%(lo)s&ndash;%(hi)s"
+msgstr ""
+"%(n)s Messwerte &nbsp;·&nbsp; Mittel %(avg)s &nbsp;·&nbsp; Bereich "
+"%(lo)s&ndash;%(hi)s"
+
+#: tracker/pdfexport.py:193
+#, python-format
+msgid " (showing most recent %(n)s)"
+msgstr " (neueste %(n)s werden angezeigt)"
+
+#: tracker/pdfexport.py:194
+#, python-format
+msgid "Readings%(note)s"
+msgstr "Messwerte%(note)s"
+
+#: tracker/pdfexport.py:198 tracker/pdfexport.py:230 tracker/pdfexport.py:262
+msgid "No readings in this period."
+msgstr "Keine Messwerte in diesem Zeitraum."
+
+#: tracker/pdfexport.py:228
+msgid "Date"
+msgstr "Datum"
+
+#: tracker/pdfexport.py:241
+#, python-format
+msgid "%(n)s readings &nbsp;·&nbsp; average %(avg)s"
+msgstr "%(n)s Messwerte &nbsp;·&nbsp; Mittel %(avg)s"
+
+#: tracker/pdfexport.py:251
+msgid "systolic"
+msgstr "systolisch"
+
+#: tracker/pdfexport.py:252
+msgid "diastolic"
+msgstr "diastolisch"
+
+#: tracker/pdfexport.py:266
+msgid "Generated by Hälsa. Self-reported data, not a medical diagnosis."
+msgstr ""
+"Erstellt von Hälsa. Selbstberichtete Daten, keine medizinische Diagnose."
+
+#: tracker/pdfexport.py:273
+#, python-format
+msgid "Hälsa health report %(period)s"
+msgstr "Hälsa-Gesundheitsbericht %(period)s"
+
+#: tracker/scheduling.py:86
+#, python-format
+msgid "Hi %(name)s,"
+msgstr "Hallo %(name)s,"
+
+#: tracker/scheduling.py:90
+#, python-format
+msgid "Your measurement '%(name)s' (%(metric)s)"
+msgstr "Dein Messwert '%(name)s' (%(metric)s)"
+
+#: tracker/scheduling.py:93
+#, python-format
+msgid "was due %(when)s and is still missing."
+msgstr "war am %(when)s fällig und fehlt noch."
+
+#: tracker/scheduling.py:97
+#, python-format
+msgid "You have %(n)s measurements that are overdue:"
+msgstr "Du hast %(n)s überfällige Messwerte:"
+
+#: tracker/scheduling.py:102 tracker/scheduling.py:173
+msgid "due"
+msgstr "fällig"
+
+#: tracker/scheduling.py:105
+#, python-format
+msgid "Log it now: %(url)s"
+msgstr "Jetzt erfassen: %(url)s"
+
+#: tracker/scheduling.py:106
+#, python-format
+msgid "(or open %(url)s to see your trends)"
+msgstr "(oder öffne %(url)s, um deine Trends zu sehen)"
+
+#: tracker/scheduling.py:108
+msgid "Hälsa: 1 measurement overdue"
+msgstr "Hälsa: 1 Messwert überfällig"
+
+#: tracker/scheduling.py:110
+#, python-format
+msgid "Hälsa: %(n)s measurements overdue"
+msgstr "Hälsa: %(n)s Messwerte überfällig"
+
+#: tracker/scheduling.py:172
+msgid "done"
+msgstr "erledigt"
+
+#: tracker/scheduling.py:172
+msgid "overdue"
+msgstr "überfällig"
+
+#: tracker/scheduling.py:173 tracker/templatetags/fmt.py:37
+#: tracker/views.py:63
+msgid "today"
+msgstr "heute"
+
+#: tracker/templatetags/fmt.py:39 tracker/views.py:65
+msgid "yesterday"
+msgstr "gestern"
+
+#: tracker/trends.py:50
+#, python-format
+msgid "Weight trending down %(disp)s %(label)s/week over the last 4 weeks"
+msgstr "Gewicht fällt um %(disp)s %(label)s/Woche über die letzten 4 Wochen"
+
+#: tracker/trends.py:54
+#, python-format
+msgid "Weight trending up %(disp)s %(label)s/week over the last 4 weeks"
+msgstr "Gewicht steigt um %(disp)s %(label)s/Woche über die letzten 4 Wochen"
+
+#: tracker/trends.py:58
+msgid "Weight holding steady over the last 4 weeks"
+msgstr "Gewicht stabil über die letzten 4 Wochen"
+
+#: tracker/trends.py:67
+msgid "90-day average unchanged vs the previous quarter"
+msgstr "90-Tage-Mittel unverändert gegenüber dem Vorquartal"
+
+#: tracker/trends.py:70
+#, python-format
+msgid "90-day average is %(disp)s %(label)s below the previous quarter"
+msgstr "90-Tage-Mittel liegt %(disp)s %(label)s unter dem Vorquartal"
+
+#: tracker/trends.py:74
+#, python-format
+msgid "90-day average is %(disp)s %(label)s above the previous quarter"
+msgstr "90-Tage-Mittel liegt %(disp)s %(label)s über dem Vorquartal"
+
+#: tracker/trends.py:94
+#, python-format
+msgid "Average glucose %(v)s %(unit)s over the last 14 days"
+msgstr "Durchschnittliche Glukose %(v)s %(unit)s über die letzten 14 Tage"
+
+#: tracker/trends.py:98
+msgid " - above target"
+msgstr " - über Ziel"
+
+#: tracker/trends.py:103 tracker/trends.py:153
+msgid "up"
+msgstr "gestiegen"
+
+#: tracker/trends.py:103 tracker/trends.py:153
+msgid "down"
+msgstr "gesunken"
+
+#: tracker/trends.py:104
+#, python-format
+msgid ", %(arrow)s from %(v)s in the prior two weeks"
+msgstr ", %(arrow)s von %(v)s in den zwei Wochen davor"
+
+#: tracker/trends.py:117
+#, python-format
+msgid "Estimated HbA1c %(v)s%% from the last 90 days"
+msgstr "Geschätzter HbA1c %(v)s%% aus den letzten 90 Tagen"
+
+#: tracker/trends.py:122
+#, python-format
+msgid "%(pct)s%% of readings in range (3.9-10.0 mmol/L) over 90 days"
+msgstr "%(pct)s%% der Messwerte im Zielbereich (3,9-10,0 mmol/L) über 90 Tage"
+
+#: tracker/trends.py:142
+#, python-format
+msgid "Average blood pressure %(sys)s/%(dia)s mmHg over the last 14 days"
+msgstr ""
+"Durchschnittlicher Blutdruck %(sys)s/%(dia)s mmHg über die letzten 14 Tage"
+
+#: tracker/trends.py:146
+msgid " - consistently elevated"
+msgstr " - dauerhaft erhöht"
+
+#: tracker/trends.py:155
+#, python-format
+msgid "Systolic %(arrow)s %(v)s mmHg vs the prior two weeks"
+msgstr "Systolisch %(arrow)s um %(v)s mmHg gegenüber den zwei Wochen davor"
+
+#: tracker/trends.py:165
+msgid "rising"
+msgstr "steigend"
+
+#: tracker/trends.py:165
+msgid "falling"
+msgstr "fallend"
+
+#: tracker/trends.py:167
+#, python-format
+msgid "Systolic %(arrow)s about %(v)s mmHg/week across 90 days"
+msgstr "Systolisch %(arrow)s um etwa %(v)s mmHg/Woche über 90 Tage"
+
+#: tracker/views.py:74
+msgid "steady"
+msgstr "stabil"
+
+#: tracker/views.py:108
+msgid "That code didn't work. Check your authenticator app."
+msgstr "Dieser Code hat nicht funktioniert. Prüfe deine Authenticator-App."
+
+#: tracker/views.py:114
+msgid "Sign in again to continue."
+msgstr "Melde dich erneut an, um fortzufahren."
+
+#: tracker/views.py:134
+msgid "Welcome back."
+msgstr "Willkommen zurück."
+
+#: tracker/views.py:201 tracker/views.py:217 tracker/views.py:230
+msgid "no readings"
+msgstr "keine Messwerte"
+
+#: tracker/views.py:217
+#, python-format
+msgid "on %(date)s"
+msgstr "am %(date)s"
+
+#: tracker/views.py:276
+msgid "glucose"
+msgstr "Glukose"
+
+#: tracker/views.py:277
+msgid "weight"
+msgstr "Gewicht"
+
+#: tracker/views.py:278
+msgid "blood pressure"
+msgstr "Blutdruck"
+
+#: tracker/views.py:282
+#, python-format
+msgid "Saved: %(names)s."
+msgstr "Gespeichert: %(names)s."
+
+#: tracker/views.py:311
+msgid "Glucose over time, mmol per litre"
+msgstr "Glukoseverlauf, mmol pro Liter"
+
+#: tracker/views.py:341
+msgid "Weight over time"
+msgstr "Gewichtsverlauf"
+
+#: tracker/views.py:370
+msgid "Blood pressure over time, systolic and diastolic"
+msgstr "Blutdruckverlauf, systolisch und diastolisch"
+
+#: tracker/views.py:375 tracker/views.py:397
+msgid "Average"
+msgstr "Mittel"
+
+#: tracker/views.py:376
+msgid "Systolic range"
+msgstr "Systolischer Bereich"
+
+#: tracker/views.py:398
+msgid "Lowest"
+msgstr "Niedrigster"
+
+#: tracker/views.py:399
+msgid "Highest"
+msgstr "Höchster"
+
+#: tracker/views.py:423
+msgid "Updated."
+msgstr "Aktualisiert."
+
+#: tracker/views.py:443
+msgid "Deleted."
+msgstr "Gelöscht."
+
+#: tracker/views.py:474
+msgid "Language updated."
+msgstr "Sprache aktualisiert."
+
+#: tracker/views.py:481
+msgid "Units updated."
+msgstr "Einheiten aktualisiert."
+
+#: tracker/views.py:493
+msgid "Scheduling settings updated."
+msgstr "Zeitplan-Einstellungen aktualisiert."
+
+#: tracker/views.py:526
+msgid "Scan the QR code, then confirm with a code."
+msgstr "Scanne den QR-Code und bestätige mit einem Code."
+
+#: tracker/views.py:533
+msgid "Two-factor authentication enabled."
+msgstr "Zwei-Faktor-Authentifizierung aktiviert."
+
+#: tracker/views.py:536
+msgid "Wrong code - try the next one from your app."
+msgstr "Falscher Code - versuche den nächsten aus deiner App."
+
+#: tracker/views.py:543
+msgid "Two-factor authentication disabled."
+msgstr "Zwei-Faktor-Authentifizierung deaktiviert."
+
+#: tracker/views.py:546
+msgid "A current valid code is required to disable 2FA."
+msgstr ""
+"Zum Deaktivieren von 2FA ist ein aktueller gültiger Code erforderlich."
+
+#: tracker/views.py:595
+msgid "Schedule saved."
+msgstr "Zeitplan gespeichert."
+
+#: tracker/views.py:609
+msgid "Schedule deleted."
+msgstr "Zeitplan gelöscht."
+
+#: tracker/views.py:691
+msgid "Choose a backup file first."
+msgstr "Wähle zuerst eine Backup-Datei."
+
+#: tracker/views.py:694
+msgid "Backup file too large (max 20 MB)."
+msgstr "Backup-Datei zu groß (max. 20 MB)."
+
+#: tracker/views.py:701
+#, python-format
+msgid "Restore failed: %(err)s"
+msgstr "Wiederherstellung fehlgeschlagen: %(err)s"
+
+#: tracker/views.py:708
+#, python-format
+msgid "Restore complete: %(created)s records created, %(updated)s updated."
+msgstr ""
+"Wiederherstellung abgeschlossen: %(created)s Datensätze erstellt, "
+"%(updated)s aktualisiert."
