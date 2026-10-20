@@ -13,6 +13,8 @@ from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.formats import date_format
+from django.utils.translation import gettext as _, override
 
 from .models import (
     BloodPressureReading,
@@ -39,7 +41,7 @@ DATE_FIELD = {
 
 
 def settings_for(user, metric):
-    ms, _ = MetricSettings.objects.get_or_create(user=user, metric=metric)
+    ms, _x = MetricSettings.objects.get_or_create(user=user, metric=metric)
     return ms
 
 
@@ -81,25 +83,31 @@ def collect_overdue(now=None):
 
 
 def build_email(user, items):
-    lines = [f"Hi {user.username},", ""]
+    lines = [_("Hi %(name)s,") % {"name": user.username}, ""]
+    when_fmt = "D d.m. H:i"
     if len(items) == 1:
         sched, slot = items[0]
-        lines.append(f"Your measurement '{sched.name}' ({sched.get_metric_display()})")
-        lines.append(f"was due {slot:%a %d.%m. at %H:%M} and is still missing.")
+        lines.append(_("Your measurement '%(name)s' (%(metric)s)")
+                     % {"name": sched.name,
+                        "metric": sched.get_metric_display()})
+        lines.append(_("was due %(when)s and is still missing.")
+                     % {"when": date_format(timezone.localtime(slot),
+                                            when_fmt)})
     else:
-        lines.append(f"You have {len(items)} measurements that are overdue:")
+        lines.append(_("You have %(n)s measurements that are overdue:")
+                     % {"n": len(items)})
         for sched, slot in items:
-            lines.append(
-                f"  - {sched.name} ({sched.get_metric_display()}) "
-                f"due {slot:%a %d.%m. %H:%M}"
-            )
+            lines.append("  - %s (%s) %s %s" % (
+                sched.name, sched.get_metric_display(),
+                _("due"),
+                date_format(timezone.localtime(slot), when_fmt)))
     base = getattr(settings, "SITE_BASE_URL", "").rstrip("/")
-    lines += ["", f"Log it now: {base}/add/", ""]
-    lines.append(f"(or open {base}/ to see your trends)")
+    lines += ["", _("Log it now: %(url)s") % {"url": f"{base}/add/"}, ""]
+    lines.append(_("(or open %(url)s to see your trends)") % {"url": f"{base}/"})
     subject = (
-        f"Hälsa: 1 measurement overdue"
+        _("Hälsa: 1 measurement overdue")
         if len(items) == 1
-        else f"Hälsa: {len(items)} measurements overdue"
+        else _("Hälsa: %(n)s measurements overdue") % {"n": len(items)}
     )
     return subject, "\n".join(lines)
 
@@ -120,7 +128,9 @@ def run_tick(now=None):
             continue
         if not user.email:
             continue
-        subject, body = build_email(user, items)
+        lang = getattr(user, "profile", None) and user.profile.language
+        with override(lang or None):
+            subject, body = build_email(user, items)
         send_mail(
             subject,
             body,
@@ -158,6 +168,10 @@ def status_rows(user, now=None):
                 status = "today"
         rows.append({
             "s": s, "slot": slot, "status": status, "ms": ms,
+            "status_label": {
+                "done": _("done"), "overdue": _("overdue"),
+                "due": _("due"), "today": _("today"),
+            }.get(status or "", ""),
             "next": s.next_slot(now) if s.active else None,
         })
     return rows

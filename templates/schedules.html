@@ -1,9 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Schedules &middot; Hälsa{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Schedules" %} &middot; Hälsa{% endblock %}
 {% block content %}
 <div class="page-head">
-  <h1 class="page-title">Schedules</h1>
-  <a class="btn btn-primary btn-sm" href="/schedules/new/">+ New schedule</a>
+  <h1 class="page-title">{% translate "Schedules" %}</h1>
+  <a class="btn btn-primary btn-sm" href="/schedules/new/">{% translate "+ New schedule" %}</a>
 </div>
 
 <section class="panel">
@@ -20,17 +21,17 @@
         </td>
         <td>
           {% if row.status %}
-            <span class="badge badge-{{ row.status }}">{{ row.status }}</span>
+            <span class="badge badge-{{ row.status }}">{{ row.status_label }}</span>
           {% elif row.next %}
             <span class="unit">next {{ row.next|date:"D d.m H:i" }}</span>
           {% else %}
-            <span class="unit">inactive</span>
+            <span class="unit">{% translate "inactive" %}</span>
           {% endif %}
         </td>
         <td class="cell-actions">
-          <a class="btn btn-ghost btn-xs" href="/schedules/{{ row.s.id }}/edit/">edit</a>
+          <a class="btn btn-ghost btn-xs" href="/schedules/{{ row.s.id }}/edit/">{% translate "edit" %}</a>
           <form method="post" action="/schedules/{{ row.s.id }}/delete/" class="inline-form">{% csrf_token %}
-            <button class="btn btn-ghost btn-xs danger" type="submit">delete</button>
+            <button class="btn btn-ghost btn-xs danger" type="submit">{% translate "delete" %}</button>
           </form>
         </td>
       </tr>
@@ -39,10 +40,9 @@
   </table>
   </div>
   {% else %}
-  <p class="empty">No schedules yet. Create one to get an email when a measurement is overdue.</p>
+  <p class="empty">{% translate "No schedules yet. Create one to get an email when a measurement is overdue." %}</p>
   {% endif %}
 </section>
 
-<p class="page-sub">Reminder knobs (window and grace minutes per metric) live in
-<a href="/settings/">Settings</a>.</p>
+<p class="page-sub">{% translate "Reminder knobs (window and grace minutes per metric) live in" %}<a href="/settings/">{% translate "Settings" %}</a>.</p>
 {% endblock %}

@@ -1,9 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Add reading &middot; Hälsa{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Add reading" %} &middot; Hälsa{% endblock %}
 {% block content %}
 <section class="panel panel-narrow">
-  <h1 class="page-title">Add reading</h1>
-  <p class="page-sub">Fill what you have &mdash; one field is enough. Enter saves and stays here.</p>
+  <h1 class="page-title">{% translate "Add reading" %}</h1>
+  <p class="page-sub">{% translate "Fill what you have &mdash; one field is enough. Enter saves and stays here." %}</p>
 
   <form method="post" class="form" novalidate>
     {% csrf_token %}
@@ -12,7 +13,7 @@
     {% endif %}
 
     <div class="field field-wide">
-      <label for="id_taken_at">When</label>
+      <label for="id_taken_at">{% translate "When" %}</label>
       {{ form.taken_at }}
       {% for e in form.taken_at.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
     </div>
@@ -34,14 +35,14 @@
         {% for e in form.weight.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
       </fieldset>
       <fieldset class="field-group">
-        <legend>Blood pressure (mmHg)</legend>
+        <legend>{% translate "Blood pressure (mmHg)" %}</legend>
         <div class="bp-pair">
           <div class="field">
-            <label for="id_systolic">Systolic</label>
+            <label for="id_systolic">{% translate "Systolic" %}</label>
             {{ form.systolic }}
           </div>
           <div class="field">
-            <label for="id_diastolic">Diastolic</label>
+            <label for="id_diastolic">{% translate "Diastolic" %}</label>
             {{ form.diastolic }}
           </div>
         </div>
@@ -55,7 +56,7 @@
       </fieldset>
     </div>
 
-    <button class="btn btn-primary" type="submit">Save</button>
+    <button class="btn btn-primary" type="submit">{% translate "Save" %}</button>
   </form>
 </section>
 {% endblock %}

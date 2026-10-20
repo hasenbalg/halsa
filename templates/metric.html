@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load fmt %}
+{% load i18n fmt %}
 {% block title %}{{ title }} &middot; Hälsa{% endblock %}
 {% block content %}
 
@@ -7,26 +7,26 @@
   <h1 class="page-title"><span class="dot dot-{{ css }}"></span>{{ title }}
     <span class="page-unit">({{ unit }})</span></h1>
   <div class="ranges">
-    <a class="chip {% if days == 7 %}chip-active{% endif %}" href="?range=7">7d</a>
-    <a class="chip {% if days == 30 %}chip-active{% endif %}" href="?range=30">30d</a>
-    <a class="chip {% if days == 90 %}chip-active{% endif %}" href="?range=90">90d</a>
-    <a class="chip {% if days == 365 %}chip-active{% endif %}" href="?range=365">1y</a>
-    <a class="chip {% if days == None %}chip-active{% endif %}" href="?range=all">all</a>
+    <a class="chip {% if days == 7 %}chip-active{% endif %}" href="?range=7">{% translate "7d" %}</a>
+    <a class="chip {% if days == 30 %}chip-active{% endif %}" href="?range=30">{% translate "30d" %}</a>
+    <a class="chip {% if days == 90 %}chip-active{% endif %}" href="?range=90">{% translate "90d" %}</a>
+    <a class="chip {% if days == 365 %}chip-active{% endif %}" href="?range=365">{% translate "1y" %}</a>
+    <a class="chip {% if days == None %}chip-active{% endif %}" href="?range=all">{% translate "all" %}</a>
   </div>
 </div>
 
 <section class="panel">
   <div class="chart-wrap c-{{ css }}">{{ chart }}</div>
   <div class="legend">
-    <span><span class="swatch" style="background:var(--{{ css }})"></span>measured</span>
-    <span><span class="swatch swatch-line"></span>7-point average</span>
-    {% if css == "glucose" %}<span><span class="swatch swatch-band"></span>target band</span>{% endif %}
+    <span><span class="swatch" style="background:var(--{{ css }})"></span>{% translate "measured" %}</span>
+    <span><span class="swatch swatch-line"></span>{% translate "7-point average" %}</span>
+    {% if css == "glucose" %}<span><span class="swatch swatch-band"></span>{% translate "target band" %}</span>{% endif %}
   </div>
 </section>
 
 {% if insights %}
 <section class="panel">
-  <h2 class="panel-title">Trends</h2>
+  <h2 class="panel-title">{% translate "Trends" %}</h2>
   <div class="insight-list">
     {% for i in insights %}
       <div class="insight insight-{{ i.tone }}"><span class="insight-dot"></span>{{ i.text }}</div>
@@ -36,7 +36,7 @@
 {% endif %}
 
 <section class="panel">
-  <h2 class="panel-title">Stats (all time)</h2>
+  <h2 class="panel-title">{% translate "Stats (all time)" %}</h2>
   <div class="stat-row">
     {% for label, value in stats %}
       <div class="stat"><div class="stat-value">{{ value|safe }}</div><div class="stat-label">{{ label }}</div></div>
@@ -45,7 +45,7 @@
 </section>
 
 <section class="panel">
-  <h2 class="panel-title">Readings</h2>
+  <h2 class="panel-title">{% translate "Readings" %}</h2>
   {% if rows %}
   <div class="table-scroll">
   <table class="table">
@@ -63,9 +63,9 @@
         {% endif %}
         <td class="cell-note">{{ r.note }}</td>
         <td class="cell-actions">
-          <a class="btn btn-ghost btn-xs" href="/{{ kind }}/edit/{{ r.id }}/">edit</a>
+          <a class="btn btn-ghost btn-xs" href="/{{ kind }}/edit/{{ r.id }}/">{% translate "edit" %}</a>
           <form method="post" action="/{{ kind }}/delete/{{ r.id }}/" class="inline-form">{% csrf_token %}
-            <button class="btn btn-ghost btn-xs danger" type="submit">delete</button>
+            <button class="btn btn-ghost btn-xs danger" type="submit">{% translate "delete" %}</button>
           </form>
         </td>
       </tr>
@@ -74,7 +74,7 @@
   </table>
   </div>
   {% else %}
-  <p class="empty">No readings in this range. <a href="/add/">Add one</a>.</p>
+  <p class="empty">{% translate "No readings in this range." %}<a href="/add/">{% translate "Add one" %}</a>.</p>
   {% endif %}
 </section>
 

@@ -1,20 +1,20 @@
-{% load static %}<!doctype html>
+{% load i18n static %}<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>Sign in &middot; Hälsa</title>
+<title>{% translate "Sign in" %} &middot; Hälsa</title>
 <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
 <body class="auth-body">
 <div class="auth-card">
   <div class="brand brand-lg">Hä<span>l</span>sa</div>
-  <p class="auth-sub">Private health tracking</p>
+  <p class="auth-sub">{% translate "Private health tracking" %}</p>
 
   {% if step == "code" %}
-    <h1 class="auth-title">Authentication code</h1>
-    <p class="auth-hint">Enter the 6-digit code from your authenticator app.</p>
+    <h1 class="auth-title">{% translate "Authentication code" %}</h1>
+    <p class="auth-hint">{% translate "Enter the 6-digit code from your authenticator app." %}</p>
     {% if error %}<div class="flash flash-error">{{ error }}</div>{% endif %}
     <form method="post" class="auth-form">
       {% csrf_token %}
@@ -22,7 +22,7 @@
       <input class="code-input" type="text" name="code" inputmode="numeric"
              autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6"
              placeholder="000000" autofocus required>
-      <button class="btn btn-primary btn-block" type="submit">Verify</button>
+      <button class="btn btn-primary btn-block" type="submit">{% translate "Verify" %}</button>
     </form>
   {% else %}
     <form method="post" class="auth-form">
@@ -32,11 +32,11 @@
         <div class="flash flash-error">{{ form.non_field_errors.0 }}</div>
       {% endif %}
       {% if error %}<div class="flash flash-error">{{ error }}</div>{% endif %}
-      <label for="id_username">Username</label>
+      <label for="id_username">{% translate "Username" %}</label>
       {{ form.username }}
-      <label for="id_password">Password</label>
+      <label for="id_password">{% translate "Password" %}</label>
       {{ form.password }}
-      <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+      <button class="btn btn-primary btn-block" type="submit">{% translate "Sign in" %}</button>
     </form>
   {% endif %}
 </div>
