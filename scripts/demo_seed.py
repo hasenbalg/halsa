@@ -63,7 +63,7 @@ for day in range(90):
     # weight: slow downward trend
     t = d0.replace(hour=6, minute=45) + timedelta(minutes=random.randint(0, 40))
     kg = 82.4 - 2.1 * frac + random.gauss(0, 0.18)
-    w.append(WeightReading(user=user, date=t.date(),
+    w.append(WeightReading(user=user, taken_at=t,
                            value_kg=round(kg, 1)))
     # blood pressure: morning + evening, slightly wider systolic
     for hour in (8, 21):

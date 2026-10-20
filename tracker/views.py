@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone, translation
 from django.utils.formats import date_format
 from django.utils.translation import gettext as _
-from django.utils.translation import gettext_lazy as _lazy
+from django.utils.translation import gettext_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -147,7 +147,7 @@ def login_view(request):
             if profile.language:
                 translation.activate(profile.language)
             logger.info("login ok")
-            messages.success(request, _lazy("Welcome back."))
+            messages.success(request, gettext_lazy("Welcome back."))
             return _set_language_cookie(request, redirect(next_url),
                                         profile.language)
         if request.method == "POST":
@@ -179,7 +179,7 @@ def dashboard(request):
     b_all = BloodPressureReading.objects.filter(user=user)
 
     g30 = list(g_all.filter(taken_at__gte=since30).order_by("taken_at"))
-    w30 = list(w_all.filter(date__gte=now.date() - timedelta(days=30)).order_by("date"))
+    w30 = list(w_all.filter(taken_at__date__gte=now.date() - timedelta(days=30)).order_by("taken_at"))
     b30 = list(b_all.filter(taken_at__gte=since30).order_by("taken_at"))
 
     latest_g = g_all.first()
@@ -201,8 +201,8 @@ def dashboard(request):
             return ""
         ref = WeightReading.objects.filter(
             user=user,
-            date__range=(latest_w.date - timedelta(days=8),
-                         latest_w.date - timedelta(days=6)),
+            taken_at__date__range=(latest_w.taken_at.date() - timedelta(days=8),
+                                   latest_w.taken_at.date() - timedelta(days=6)),
         ).aggregate(a=Avg("value_kg"))["a"]
         return _delta_html(latest_w.value_kg, ref, lambda d: f"{U.weight_display(d, units)[0]} kg")
 
@@ -231,10 +231,10 @@ def dashboard(request):
                 f'{U.weight_display(latest_w.value_kg, units)[0]}'
                 f'<span class="unit">{U.weight_unit_label(units)}</span>'
             ) if latest_w else "&ndash;",
-            "when": (_("on %(date)s") % {"date": date_format(latest_w.date)} if latest_w else _("no readings")),
+            "when": _fmt_dt(latest_w.taken_at, units) if latest_w else _("no readings"),
             "delta": w_delta(),
             "chart": charts.sparkline(
-                [(r.date, float(r.value_kg)) for r in w30],
+                [(r.taken_at, float(r.value_kg)) for r in w30],
                 color="var(--weight)",
             ),
             "insights": trends.weight_insights(w_all[:400], units)[:1],
@@ -261,14 +261,15 @@ def dashboard(request):
     }
     has_insights = any(insights.values())
 
+    kind_label = {"glucose": _("Glucose"), "weight": _("Weight"),
+                  "bp": _("Blood pressure")}
     recent = sorted(
         [("glucose", r.taken_at, r) for r in g_all[:10]]
-        + [("weight", timezone.make_aware(
-            timezone.datetime.combine(r.date, timezone.datetime.min.time())), r)
-           for r in w_all[:10]]
+        + [("weight", r.taken_at, r) for r in w_all[:10]]
         + [("bp", r.taken_at, r) for r in b_all[:10]],
         key=lambda t: t[1], reverse=True
     )[:8]
+    recent = [(k, dt, r, kind_label[k]) for k, dt, r in recent]
 
     return render(request, "dashboard.html", {
         "schedule_rows": [r for r in scheduling.status_rows(user) if r["s"].active],
@@ -296,7 +297,7 @@ def add(request):
             }
             saved = ", ".join(names[type(r)] for r in created)
             logger.info("readings saved: %s", saved)
-            messages.success(request, _lazy("Saved: %(names)s.") % {"names": saved})
+            messages.success(request, gettext_lazy("Saved: %(names)s.") % {"names": saved})
             return redirect("/add/?saved=1")
     else:
         form = QuickAddForm(initial={"taken_at": timezone.localtime().replace(microsecond=0)}, units=units)
@@ -315,7 +316,7 @@ def glucose_detail(request):
     rolling = _rolling([(p[0], p[1]) for p in points], window=7)
     stats = qs.aggregate(avg=Avg("value_mmol"), lo=Min("value_mmol"), hi=Max("value_mmol"))
     return render(request, "metric.html", {
-        "title": _lazy("Glucose"),
+        "title": gettext_lazy("Glucose"),
         "css": "glucose",
         "unit": U.glucose_unit_label(units),
         "chart": charts.line_chart(
@@ -341,8 +342,8 @@ def weight_detail(request):
     units = get_profile(request.user).units
     days = _range_days(request)
     qs = WeightReading.objects.filter(user=request.user)
-    rows = list(qs.filter(date__gte=timezone.localdate() - timedelta(days=days)).order_by("date")) if days else list(qs.order_by("date"))
-    points = [(r.date, float(r.value_kg)) for r in rows]
+    rows = list(qs.filter(taken_at__date__gte=timezone.localdate() - timedelta(days=days)).order_by("taken_at")) if days else list(qs.order_by("taken_at"))
+    points = [(r.taken_at, float(r.value_kg)) for r in rows]
     rolling = _rolling(points, window=7)
     stats = qs.aggregate(avg=Avg("value_kg"), lo=Min("value_kg"), hi=Max("value_kg"))
     return render(request, "metric.html", {
@@ -421,7 +422,7 @@ def _fmt_stats(stats, fmt):
 
 MODELS = {
     "glucose": (GlucoseReading, GlucoseForm, "taken_at"),
-    "weight": (WeightReading, WeightForm, "date"),
+    "weight": (WeightReading, WeightForm, "taken_at"),
     "bp": (BloodPressureReading, BloodPressureForm, "taken_at"),
 }
 
@@ -437,7 +438,7 @@ def edit(request, kind, pk):
         if form.is_valid():
             form.save()
             logger.info("reading updated: %s", kind)
-            messages.success(request, _lazy("Updated."))
+            messages.success(request, gettext_lazy("Updated."))
             return redirect(f"/{kind}/")
     else:
         form = form_class(instance=obj, **kwargs)
@@ -457,7 +458,7 @@ def delete(request, kind, pk):
     obj = get_object_or_404(model, pk=pk, user=request.user)
     obj.delete()
     logger.info("reading deleted: %s", kind)
-    messages.success(request, _lazy("Deleted."))
+    messages.success(request, gettext_lazy("Deleted."))
     return redirect(f"/{kind}/")
 
 
@@ -467,14 +468,15 @@ def history(request):
     g = GlucoseReading.objects.filter(user=request.user)[:50]
     w = WeightReading.objects.filter(user=request.user)[:50]
     b = BloodPressureReading.objects.filter(user=request.user)[:50]
+    kind_label = {"glucose": _("Glucose"), "weight": _("Weight"),
+                  "bp": _("Blood pressure")}
     rows = sorted(
         [("glucose", r.taken_at, r) for r in g]
-        + [("weight", timezone.make_aware(
-            timezone.datetime.combine(r.date, timezone.datetime.min.time())), r)
-           for r in w]
+        + [("weight", r.taken_at, r) for r in w]
         + [("bp", r.taken_at, r) for r in b],
         key=lambda t: t[1], reverse=True,
     )
+    rows = [(k, dt, r, kind_label[k]) for k, dt, r in rows]
     return render(request, "history.html", {"rows": rows, "units": units})
 
 
@@ -490,7 +492,7 @@ def settings_view(request):
             if profile.language:
                 translation.activate(profile.language)
             logger.info("language changed")
-            messages.success(request, _lazy("Language updated."))
+            messages.success(request, gettext_lazy("Language updated."))
             return _set_language_cookie(request, redirect("settings"),
                                         profile.language)
     elif request.method == "POST" and request.POST.get("units"):
@@ -498,7 +500,7 @@ def settings_view(request):
         if form.is_valid():
             form.save()
             logger.info("units changed")
-            messages.success(request, _lazy("Units updated."))
+            messages.success(request, gettext_lazy("Units updated."))
             return redirect("settings")
     elif request.method == "POST":
         forms_ = []
@@ -510,7 +512,7 @@ def settings_view(request):
             for f in forms_:
                 f.save()
             logger.info("scheduling settings updated")
-            messages.success(request, _lazy("Scheduling settings updated."))
+            messages.success(request, gettext_lazy("Scheduling settings updated."))
             return redirect("settings")
     form = UnitsForm(instance=profile)
     lang_form = LanguageForm(instance=profile)
@@ -543,27 +545,27 @@ def two_factor(request):
             profile.totp_confirmed = False
             profile.save(update_fields=["totp_seed", "totp_confirmed"])
             logger.info("2fa enrollment started")
-            messages.info(request, _lazy("Scan the QR code, then confirm with a code."))
+            messages.info(request, gettext_lazy("Scan the QR code, then confirm with a code."))
             return redirect("two_factor")
         elif action == "confirm":
             if profile.verify_enrollment(request.POST.get("code", "")):
                 profile.totp_confirmed = True
                 profile.save(update_fields=["totp_confirmed", "last_verified_at"])
                 logger.info("2fa enabled")
-                messages.success(request, _lazy("Two-factor authentication enabled."))
+                messages.success(request, gettext_lazy("Two-factor authentication enabled."))
                 return redirect("settings")
             logger.warning("2fa confirm failed")
-            messages.error(request, _lazy("Wrong code - try the next one from your app."))
+            messages.error(request, gettext_lazy("Wrong code - try the next one from your app."))
         elif action == "disable":
             if profile._check_token(request.POST.get("code", "")):
                 profile.totp_seed = ""
                 profile.totp_confirmed = False
                 profile.save(update_fields=["totp_seed", "totp_confirmed"])
                 logger.info("2fa disabled")
-                messages.success(request, _lazy("Two-factor authentication disabled."))
+                messages.success(request, gettext_lazy("Two-factor authentication disabled."))
                 return redirect("settings")
             logger.warning("2fa disable rejected")
-            messages.error(request, _lazy("A current valid code is required to disable 2FA."))
+            messages.error(request, gettext_lazy("A current valid code is required to disable 2FA."))
     if profile.totp_seed and not profile.two_factor_enabled:
         try:
             qr = segno.make(profile.provisioning_uri()).svg_data_uri(scale=5, border=2)
@@ -612,7 +614,7 @@ def schedule_edit(request, pk=None):
             s.user = request.user
             s.save()
             logger.info("schedule saved")
-            messages.success(request, _lazy("Schedule saved."))
+            messages.success(request, gettext_lazy("Schedule saved."))
             return redirect("schedules")
     else:
         form = ScheduleForm(instance=obj)
@@ -626,7 +628,7 @@ def schedule_delete(request, pk):
     obj = get_object_or_404(Schedule, pk=pk, user=request.user)
     obj.delete()
     logger.info("schedule deleted")
-    messages.success(request, _lazy("Schedule deleted."))
+    messages.success(request, gettext_lazy("Schedule deleted."))
     return redirect("schedules")
 
 
@@ -652,9 +654,9 @@ def _backup_payload(user):
             for r in GlucoseReading.objects.filter(user=user).order_by("taken_at")
         ],
         "weight_readings": [
-            {"id": str(r.id), "date": r.date.isoformat(),
+            {"id": str(r.id), "taken_at": r.taken_at.isoformat(),
              "value_kg": str(r.value_kg), "note": r.note}
-            for r in WeightReading.objects.filter(user=user).order_by("date")
+            for r in WeightReading.objects.filter(user=user).order_by("taken_at")
         ],
         "blood_pressure_readings": [
             {"id": str(r.id), "taken_at": iso(r.taken_at),
@@ -708,24 +710,24 @@ def restore(request):
 
     upload = request.FILES.get("backup")
     if not upload:
-        messages.error(request, _lazy("Choose a backup file first."))
+        messages.error(request, gettext_lazy("Choose a backup file first."))
         return redirect("settings")
     if upload.size > 20 * 1024 * 1024:
-        messages.error(request, _lazy("Backup file too large (max 20 MB)."))
+        messages.error(request, gettext_lazy("Backup file too large (max 20 MB)."))
         return redirect("settings")
     raw = upload.read().decode("utf-8", errors="replace")
     try:
         summary = restore_from_json(request.user, raw)
     except RestoreError as e:
         logger.warning("restore failed: %s", e)
-        messages.error(request, _lazy("Restore failed: %(err)s") % {"err": e})
+        messages.error(request, gettext_lazy("Restore failed: %(err)s") % {"err": e})
     else:
         created = sum(summary["created"].values())
         updated = sum(summary["updated"].values())
         logger.info("restore: %d created, %d updated", created, updated)
         messages.success(
             request,
-            _lazy("Restore complete: %(created)s records created, %(updated)s updated.")
+            gettext_lazy("Restore complete: %(created)s records created, %(updated)s updated.")
             % {"created": created, "updated": updated},
         )
     return redirect("settings")

@@ -28,9 +28,9 @@ class GlucoseAdmin(admin.ModelAdmin):
 
 @admin.register(WeightReading)
 class WeightAdmin(admin.ModelAdmin):
-    list_display = ("date", "user", "value_kg", "note")
+    list_display = ("taken_at", "user", "value_kg", "note")
     list_filter = ("user",)
-    date_hierarchy = "date"
+    date_hierarchy = "taken_at"
 
 
 @admin.register(BloodPressureReading)

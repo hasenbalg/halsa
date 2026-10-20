@@ -52,7 +52,7 @@
     <tbody>
     {% for r in rows reversed %}
       <tr>
-        <td class="cell-when">{% if kind == "weight" %}{{ r.date|day }}{% else %}{{ r.taken_at|when }}{% endif %}</td>
+        <td class="cell-when">{{ r.taken_at|when }}</td>
         <td class="cell-value">
           {% if kind == "glucose" %}{{ r.value_mmol|glucose:units }}
           {% elif kind == "weight" %}{{ r.value_kg|weight:units }}

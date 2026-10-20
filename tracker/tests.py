@@ -240,7 +240,7 @@ class ExportRestoreTests(TestCase):
         self.c = Client()
         self.c.force_login(self.user)
         GlucoseReading.objects.create(user=self.user, value_mmol=Decimal("5.5"))
-        WeightReading.objects.create(user=self.user, date=date.today(),
+        WeightReading.objects.create(user=self.user, taken_at=timezone.now(),
                                      value_kg=Decimal("80.1"))
         BloodPressureReading.objects.create(user=self.user, systolic=120,
                                             diastolic=80)
@@ -300,7 +300,7 @@ class PageTests(TestCase):
                 user=self.user, taken_at=now - timedelta(days=i),
                 value_mmol=Decimal(5) + Decimal(i) / 10)
             WeightReading.objects.create(
-                user=self.user, date=(now - timedelta(days=i)).date(),
+                user=self.user, taken_at=now - timedelta(days=i),
                 value_kg=Decimal("82") - Decimal(i) / 10)
             BloodPressureReading.objects.create(
                 user=self.user, taken_at=now - timedelta(days=i),
