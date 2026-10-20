@@ -285,8 +285,8 @@ msgid ""
 "Data is always stored in metric (mmol/L, kg, mmHg). This only changes "
 "display and input."
 msgstr ""
-"Daten werden immer metrisch gespeichert (mmol/L, kg, mmHg). Dies ändert nur "
-"Anzeige und Eingabe."
+"Die Daten werden immer in metrischen Einheiten gespeichert (mmol/L, kg, "
+"mmHg). Dies ändert nur Anzeige und Eingabe."
 
 #: templates/settings.html:17
 msgid "Save units"
