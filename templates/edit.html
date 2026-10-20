@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Edit {{ kind }} &middot; Hälsa{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Edit" %} {{ kind_label }} &middot; Hälsa{% endblock %}
 {% block content %}
 <section class="panel panel-narrow">
-  <h1 class="page-title">Edit reading</h1>
+  <h1 class="page-title">{% translate "Edit reading" %}</h1>
   <form method="post" class="form" novalidate>
     {% csrf_token %}
     {% if form.non_field_errors %}
@@ -16,8 +17,8 @@
       </div>
     {% endfor %}
     <div class="form-actions">
-      <button class="btn btn-primary" type="submit">Save</button>
-      <a class="btn btn-ghost" href="/{{ kind }}/">Cancel</a>
+      <button class="btn btn-primary" type="submit">{% translate "Save" %}</button>
+      <a class="btn btn-ghost" href="/{{ kind }}/">{% translate "Cancel" %}</a>
     </div>
   </form>
 </section>

@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django import template
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from .. import units as U
 
@@ -33,9 +34,9 @@ def when(dt):
     local = timezone.localtime(dt)
     today = timezone.localdate()
     if local.date() == today:
-        return f"today {local:%H:%M}"
+        return f"{_('today')} {local:%H:%M}"
     if local.date() == today - timedelta(days=1):
-        return f"yesterday {local:%H:%M}"
+        return f"{_('yesterday')} {local:%H:%M}"
     return f"{local:%d.%m.%y %H:%M}"
 
 
