@@ -8,10 +8,10 @@
   <div class="table-scroll">
   <table class="table">
     <tbody>
-    {% for kind, dt, r in rows %}
+    {% for kind, dt, r, label in rows %}
       <tr>
-        <td class="cell-kind"><span class="dot dot-{{ kind }}"></span>{{ kind }}</td>
-        <td class="cell-when">{% if kind == "weight" %}{{ dt|day }}{% else %}{{ dt|when }}{% endif %}</td>
+        <td class="cell-kind"><span class="dot dot-{{ kind }}"></span>{{ label }}</td>
+        <td class="cell-when">{{ dt|when }}</td>
         <td class="cell-value">
           {% if kind == "glucose" %}{{ r.value_mmol|glucose:units }} <span class="unit">{{ units|glucose_unit }}</span>
           {% elif kind == "weight" %}{{ r.value_kg|weight:units }} <span class="unit">{{ units|weight_unit }}</span>

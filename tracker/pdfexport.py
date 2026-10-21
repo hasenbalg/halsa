@@ -198,8 +198,8 @@ def build_report(user, units, days):
         story.append(Paragraph(_("No readings in this period."), st["body"]))
 
     # --- weight ---
-    w = list(window(WeightReading.objects.filter(user=user), "date")
-             .order_by("date"))
+    w = list(window(WeightReading.objects.filter(user=user), "taken_at")
+             .order_by("taken_at"))
     w_all = WeightReading.objects.filter(user=user)
     story.append(Paragraph(_("Weight ({unit})").format(unit=U.weight_unit_label(units)), st["h2"]))
     if w:
@@ -214,18 +214,17 @@ def build_report(user, units, days):
             % {"n": len(w), "avg": d, "lo": lo, "hi": hi}, st["body"]))
         for i in trends.weight_insights(w_all[:400], units):
             story.append(Paragraph(f"&bull; {i['text']}", st["ins"]))
-        chart = _chart([(timezone.datetime.combine(
-            r.date, timezone.datetime.min.time()), float(r.value_kg)) for r in w],
-            COLORS["weight"])
+        chart = _chart([(r.taken_at, float(r.value_kg)) for r in w],
+                       COLORS["weight"])
         if chart:
             story.append(Spacer(1, 6))
             story.append(chart)
         rows = []
         for r in w[-MAX_TABLE_ROWS:]:
             v, _lbl = U.weight_display(r.value_kg, units)
-            rows.append([f"{r.date:%d.%m.%Y}", str(v)])
+            rows.append([f"{timezone.localtime(r.taken_at):%d.%m.%Y %H:%M}", str(v)])
         story.append(Spacer(1, 8))
-        story.append(_table([_("Date"), U.weight_unit_label(units)], rows))
+        story.append(_table([_("When"), U.weight_unit_label(units)], rows))
     else:
         story.append(Paragraph(_("No readings in this period."), st["body"]))
 

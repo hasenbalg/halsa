@@ -73,7 +73,7 @@ class TrendTests(TestCase):
     def test_weight_down_then_up(self):
         for i in range(10):  # falling last 4 weeks
             WeightReading.objects.create(
-                user=self.user, date=(self.now - timedelta(days=i)).date(),
+                user=self.user, taken_at=self.now - timedelta(days=i),
                 value_kg=Decimal(80) - Decimal(i) / 5)
         out = trends.weight_insights(
             WeightReading.objects.filter(user=self.user), "metric")
@@ -81,7 +81,7 @@ class TrendTests(TestCase):
         WeightReading.objects.all().delete()
         for i in range(10):
             WeightReading.objects.create(
-                user=self.user, date=(self.now - timedelta(days=i)).date(),
+                user=self.user, taken_at=self.now - timedelta(days=i),
                 value_kg=Decimal(80) + Decimal(i) / 5)
         out = trends.weight_insights(
             WeightReading.objects.filter(user=self.user), "metric")
@@ -90,11 +90,11 @@ class TrendTests(TestCase):
     def test_weight_quarter_comparison(self):
         for i in range(6):
             WeightReading.objects.create(
-                user=self.user, date=(self.now - timedelta(days=i)).date(),
+                user=self.user, taken_at=self.now - timedelta(days=i),
                 value_kg=Decimal("78"))
             WeightReading.objects.create(
                 user=self.user,
-                date=(self.now - timedelta(days=100 + i)).date(),
+                taken_at=self.now - timedelta(days=100 + i),
                 value_kg=Decimal("82"))
         out = trends.weight_insights(
             WeightReading.objects.filter(user=self.user), "imperial")
@@ -402,7 +402,7 @@ class ExportExtraTests(TestCase):
                 user=self.user, taken_at=now - timedelta(days=i),
                 value_mmol=Decimal("6.0"))
             WeightReading.objects.create(
-                user=self.user, date=(now - timedelta(days=i)).date(),
+                user=self.user, taken_at=now - timedelta(days=i),
                 value_kg=Decimal("80"))
             BloodPressureReading.objects.create(
                 user=self.user, taken_at=now - timedelta(days=i),
@@ -428,12 +428,12 @@ class EditFlowTests(TestCase):
         self.c.login(username="ef", password=PW)
     def test_weight_edit_imperial(self):
         Profile.objects.create(user=self.user, units="imperial")
-        w = WeightReading.objects.create(user=self.user, date=date.today(),
+        w = WeightReading.objects.create(user=self.user, taken_at=timezone.now(),
                                          value_kg=Decimal("80.0"))
         page = self.c.get(f"/weight/edit/{w.id}/")
         self.assertIn(b"176", page.content)  # 80 kg shown as ~176 lb
         resp = self.c.post(f"/weight/edit/{w.id}/",
-                           {"date": "2026-10-17", "value": "176.37",
+                           {"taken_at": "2026-10-17T08:00", "value": "176.37",
                             "note": ""})
         self.assertEqual(resp.status_code, 302)
         w.refresh_from_db()

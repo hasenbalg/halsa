@@ -239,3 +239,19 @@ the field; old backups restore with blank context. Migration 0003.
 - Pitfalls hit: `_lazy` alias invisible to xgettext (must use `_`/gettext* names); `x, _ = ...` throwaways shadow gettext `_` (renamed _lbl/_x); `{% load %}` must come after `{% extends %}`; lazy messages are stringified into the session at store time (activate language before messages.success).
 - locale/de/LC_MESSAGES/django.{po,mo} — 207 entries, 100% translated.
 - tests7.py: 11 i18n tests (browser detect, pinning both directions, settings change, German email via run_tick, German PDF, Du-not-Sie). 99 tests green.
+
+## Weight readings now carry a time (2026-10-21)
+- User asked for consistency: glucose/BP store full timestamps, weight was date-only.
+- WeightReading.date (DateField) -> taken_at (DateTimeField). Migrations 0005 (add,
+  copy old dates as local midnight, drop date) + 0006 (index swap, Django-generated).
+- Updated: forms (datetime-local widget), quick-add, edit, dashboard/history/metric
+  views + templates (weight rows now use the same "today 07:01" rendering), trends
+  (still day-bucketed), PDF (Zeitpunkt column, full timestamps), backup payload now
+  exports taken_at; restore accepts legacy date-only entries (midnight fallback).
+- Admin date_hierarchy/list_display follow the rename.
+- Side fix: history + dashboard "recent" tables now show translated metric names
+  (was raw glucose/weight/bp keys in every language).
+- Side fix: views.py gettext_lazy alias `_lazy` renamed to plain gettext_lazy —
+  xgettext never saw those strings and makemessages obsoleted them.
+- tests8.py: 7 tests (quick-add time, history/metric/edit display, backup roundtrip,
+  legacy date-only restore, dashboard card). 107 green.

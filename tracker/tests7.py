@@ -92,7 +92,9 @@ class I18nTests(TestCase):
         ms = settings_for(self.user, "glucose")
         ms.email_enabled = True
         ms.save()
-        now = timezone.now()
+        # pin "now" to midday so the 07:30 slot is always overdue
+        now = timezone.localtime().replace(hour=12, minute=0,
+                                           second=0, microsecond=0)
         with override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend"):
             run_tick(now)
         self.assertEqual(len(mail.outbox), 1)
