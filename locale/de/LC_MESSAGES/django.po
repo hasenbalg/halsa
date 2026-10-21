@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 21:56+0200\n"
+"POT-Creation-Date: 2026-10-21 00:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,11 +30,11 @@ msgstr ""
 "bleibst hier."
 
 #: templates/add.html:16 tracker/forms.py:26 tracker/pdfexport.py:195
-#: tracker/pdfexport.py:260
+#: tracker/pdfexport.py:227 tracker/pdfexport.py:259
 msgid "When"
 msgstr "Zeitpunkt"
 
-#: templates/add.html:38 tracker/pdfexport.py:236
+#: templates/add.html:38 tracker/pdfexport.py:235
 msgid "Blood pressure (mmHg)"
 msgstr "Blutdruck (mmHg)"
 
@@ -46,8 +46,7 @@ msgstr "Systolisch"
 msgid "Diastolic"
 msgstr "Diastolisch"
 
-#: templates/add.html:59 templates/edit.html:20
-#: templates/schedule_form.html:36
+#: templates/add.html:59 templates/edit.html:20 templates/schedule_form.html:36
 msgid "Save"
 msgstr "Speichern"
 
@@ -60,19 +59,22 @@ msgid "Dashboard"
 msgstr "Übersicht"
 
 #: templates/base.html:19 tracker/forms.py:30 tracker/forms.py:101
-#: tracker/models.py:183 tracker/views.py:194 tracker/views.py:241
-#: tracker/views.py:301 tracker/views.py:428
+#: tracker/models.py:183 tracker/views.py:211 tracker/views.py:258
+#: tracker/views.py:264 tracker/views.py:319 tracker/views.py:446
+#: tracker/views.py:471
 msgid "Glucose"
 msgstr "Blutzucker"
 
 #: templates/base.html:20 tracker/forms.py:35 tracker/forms.py:129
-#: tracker/models.py:184 tracker/views.py:210 tracker/views.py:242
-#: tracker/views.py:332 tracker/views.py:428
+#: tracker/models.py:184 tracker/views.py:227 tracker/views.py:259
+#: tracker/views.py:264 tracker/views.py:350 tracker/views.py:446
+#: tracker/views.py:471
 msgid "Weight"
 msgstr "Gewicht"
 
-#: templates/base.html:21 tracker/models.py:185 tracker/views.py:226
-#: tracker/views.py:243 tracker/views.py:360 tracker/views.py:429
+#: templates/base.html:21 tracker/models.py:185 tracker/views.py:243
+#: tracker/views.py:260 tracker/views.py:265 tracker/views.py:378
+#: tracker/views.py:447 tracker/views.py:472
 msgid "Blood pressure"
 msgstr "Blutdruck"
 
@@ -85,8 +87,8 @@ msgstr "Zeitpläne"
 msgid "History"
 msgstr "Verlauf"
 
-#: templates/base.html:24 templates/schedules.html:47
-#: templates/settings.html:3 templates/settings.html:5
+#: templates/base.html:24 templates/schedules.html:47 templates/settings.html:3
+#: templates/settings.html:5
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -251,7 +253,7 @@ msgstr "Zeitplan bearbeiten"
 msgid "New schedule"
 msgstr "Neuer Zeitplan"
 
-#: templates/schedule_form.html:28 tracker/forms.py:194
+#: templates/schedule_form.html:28 tracker/forms.py:195
 msgid "Repeat on"
 msgstr "Wiederholen am"
 
@@ -273,8 +275,8 @@ msgstr ""
 #: templates/schedules.html:47
 msgid "Reminder knobs (window and grace minutes per metric) live in"
 msgstr ""
-"Erinnerungs-Einstellungen (Fenster- und Karenzminuten pro Metrik) findest du"
-" in den"
+"Erinnerungs-Einstellungen (Fenster- und Karenzminuten pro Metrik) findest du "
+"in den"
 
 #: templates/settings.html:8
 msgid "Units"
@@ -429,8 +431,8 @@ msgstr "Zurück"
 
 #: templates/two_factor.html:22
 msgid ""
-"1. Scan this QR code with your authenticator app (Aegis, Authy, 1Password, "
-"...)."
+"1. Scan this QR code with your authenticator app (Aegis, Authy, "
+"1Password, ...)."
 msgstr ""
 "1. Scanne diesen QR-Code mit deiner Authenticator-App (Aegis, Authy, "
 "1Password, ...)."
@@ -465,7 +467,7 @@ msgstr "Einrichtung starten"
 msgid "Context"
 msgstr "Kontext"
 
-#: tracker/forms.py:38 tracker/pdfexport.py:260
+#: tracker/forms.py:38 tracker/pdfexport.py:259
 msgid "Pulse"
 msgstr "Puls"
 
@@ -474,7 +476,7 @@ msgstr "Puls"
 msgid "Glucose ({unit})"
 msgstr "Blutzucker ({unit})"
 
-#: tracker/forms.py:47 tracker/forms.py:140 tracker/pdfexport.py:204
+#: tracker/forms.py:47 tracker/forms.py:141 tracker/pdfexport.py:204
 #, python-brace-format
 msgid "Weight ({unit})"
 msgstr "Gewicht ({unit})"
@@ -491,7 +493,7 @@ msgstr "Diastolisch (mmHg)"
 msgid "Blood pressure needs both systolic and diastolic."
 msgstr "Blutdruck benötigt systolisch und diastolisch."
 
-#: tracker/forms.py:60 tracker/forms.py:170
+#: tracker/forms.py:60 tracker/forms.py:171
 msgid "Diastolic must be lower than systolic."
 msgstr "Diastolisch muss niedriger als systolisch sein."
 
@@ -499,65 +501,65 @@ msgstr "Diastolisch muss niedriger als systolisch sein."
 msgid "Enter at least one value."
 msgstr "Gib mindestens einen Wert ein."
 
-#: tracker/forms.py:187
+#: tracker/forms.py:188
 msgid "Mon"
 msgstr "Mo"
 
-#: tracker/forms.py:187
+#: tracker/forms.py:188
 msgid "Tue"
 msgstr "Di"
 
-#: tracker/forms.py:187
+#: tracker/forms.py:188
 msgid "Wed"
 msgstr "Mi"
 
-#: tracker/forms.py:188
+#: tracker/forms.py:189
 msgid "Thu"
 msgstr "Do"
 
-#: tracker/forms.py:188
+#: tracker/forms.py:189
 msgid "Fri"
 msgstr "Fr"
 
-#: tracker/forms.py:188
+#: tracker/forms.py:189
 msgid "Sat"
 msgstr "Sa"
 
-#: tracker/forms.py:189
+#: tracker/forms.py:190
 msgid "Sun"
 msgstr "So"
 
-#: tracker/forms.py:204
+#: tracker/forms.py:205
 msgid "Name"
 msgstr "Name"
 
-#: tracker/forms.py:205
+#: tracker/forms.py:206
 msgid "Metric"
 msgstr "Metrik"
 
-#: tracker/forms.py:206
+#: tracker/forms.py:207
 msgid "Time"
 msgstr "Uhrzeit"
 
-#: tracker/forms.py:207
+#: tracker/forms.py:208
 msgid "Active"
 msgstr "Aktiv"
 
-#: tracker/forms.py:221
+#: tracker/forms.py:222
 msgid "A reading counts as done if within this many minutes of the slot"
 msgstr ""
-"Ein Messwert zählt als erledigt, wenn er innerhalb dieser Minutenzahl um den"
-" Termin liegt"
+"Ein Messwert zählt als erledigt, wenn er innerhalb dieser Minutenzahl um den "
+"Termin liegt"
 
-#: tracker/forms.py:222
+#: tracker/forms.py:223
 msgid "Email me this many minutes after a missed slot"
 msgstr "Mir so viele Minuten nach einem verpassten Termin eine E-Mail senden"
 
-#: tracker/forms.py:223
+#: tracker/forms.py:224
 msgid "Send overdue reminder emails for this metric"
 msgstr "Überfälligkeits-Erinnerungen für diese Metrik senden"
 
-#: tracker/forms.py:228
+#: tracker/forms.py:229
 msgid "Backup file (Hälsa JSON)"
 msgstr "Backup-Datei (Hälsa JSON)"
 
@@ -626,33 +628,29 @@ msgstr " (neueste %(n)s werden angezeigt)"
 msgid "Readings%(note)s"
 msgstr "Messwerte%(note)s"
 
-#: tracker/pdfexport.py:198 tracker/pdfexport.py:230 tracker/pdfexport.py:262
+#: tracker/pdfexport.py:198 tracker/pdfexport.py:229 tracker/pdfexport.py:261
 msgid "No readings in this period."
 msgstr "Keine Messwerte in diesem Zeitraum."
 
-#: tracker/pdfexport.py:228
-msgid "Date"
-msgstr "Datum"
-
-#: tracker/pdfexport.py:241
+#: tracker/pdfexport.py:240
 #, python-format
 msgid "%(n)s readings &nbsp;·&nbsp; average %(avg)s"
 msgstr "%(n)s Messwerte &nbsp;·&nbsp; Mittel %(avg)s"
 
-#: tracker/pdfexport.py:251
+#: tracker/pdfexport.py:250
 msgid "systolic"
 msgstr "systolisch"
 
-#: tracker/pdfexport.py:252
+#: tracker/pdfexport.py:251
 msgid "diastolic"
 msgstr "diastolisch"
 
-#: tracker/pdfexport.py:266
+#: tracker/pdfexport.py:265
 msgid "Generated by Hälsa. Self-reported data, not a medical diagnosis."
 msgstr ""
 "Erstellt von Hälsa. Selbstberichtete Daten, keine medizinische Diagnose."
 
-#: tracker/pdfexport.py:273
+#: tracker/pdfexport.py:272
 #, python-format
 msgid "Hälsa health report %(period)s"
 msgstr "Hälsa-Gesundheitsbericht %(period)s"
@@ -708,12 +706,11 @@ msgstr "erledigt"
 msgid "overdue"
 msgstr "überfällig"
 
-#: tracker/scheduling.py:173 tracker/templatetags/fmt.py:37
-#: tracker/views.py:63
+#: tracker/scheduling.py:173 tracker/templatetags/fmt.py:37 tracker/views.py:64
 msgid "today"
 msgstr "heute"
 
-#: tracker/templatetags/fmt.py:39 tracker/views.py:65
+#: tracker/templatetags/fmt.py:39 tracker/views.py:66
 msgid "yesterday"
 msgstr "gestern"
 
@@ -805,141 +802,142 @@ msgstr "fallend"
 msgid "Systolic %(arrow)s about %(v)s mmHg/week across 90 days"
 msgstr "Systolisch %(arrow)s um etwa %(v)s mmHg/Woche über 90 Tage"
 
-#: tracker/views.py:74
+#: tracker/views.py:75
 msgid "steady"
 msgstr "stabil"
 
-#: tracker/views.py:108
+#: tracker/views.py:122
 msgid "That code didn't work. Check your authenticator app."
 msgstr "Dieser Code hat nicht funktioniert. Prüfe deine Authenticator-App."
 
-#: tracker/views.py:114
+#: tracker/views.py:128
 msgid "Sign in again to continue."
 msgstr "Melde dich erneut an, um fortzufahren."
 
-#: tracker/views.py:134
+#: tracker/views.py:150
 msgid "Welcome back."
 msgstr "Willkommen zurück."
 
-#: tracker/views.py:201 tracker/views.py:217 tracker/views.py:230
+#: tracker/views.py:218 tracker/views.py:234 tracker/views.py:247
 msgid "no readings"
 msgstr "keine Messwerte"
 
-#: tracker/views.py:217
-#, python-format
-msgid "on %(date)s"
-msgstr "am %(date)s"
-
-#: tracker/views.py:276
+#: tracker/views.py:294
 msgid "glucose"
 msgstr "Blutzucker"
 
-#: tracker/views.py:277
+#: tracker/views.py:295
 msgid "weight"
 msgstr "Gewicht"
 
-#: tracker/views.py:278
+#: tracker/views.py:296
 msgid "blood pressure"
 msgstr "Blutdruck"
 
-#: tracker/views.py:282
+#: tracker/views.py:300
 #, python-format
 msgid "Saved: %(names)s."
 msgstr "Gespeichert: %(names)s."
 
-#: tracker/views.py:311
+#: tracker/views.py:329
 msgid "Glucose over time, mmol per litre"
 msgstr "Blutzuckerverlauf, mmol pro Liter"
 
-#: tracker/views.py:341
+#: tracker/views.py:359
 msgid "Weight over time"
 msgstr "Gewichtsverlauf"
 
-#: tracker/views.py:370
+#: tracker/views.py:388
 msgid "Blood pressure over time, systolic and diastolic"
 msgstr "Blutdruckverlauf, systolisch und diastolisch"
 
-#: tracker/views.py:375 tracker/views.py:397
+#: tracker/views.py:393 tracker/views.py:415
 msgid "Average"
 msgstr "Mittel"
 
-#: tracker/views.py:376
+#: tracker/views.py:394
 msgid "Systolic range"
 msgstr "Systolischer Bereich"
 
-#: tracker/views.py:398
+#: tracker/views.py:416
 msgid "Lowest"
 msgstr "Niedrigster"
 
-#: tracker/views.py:399
+#: tracker/views.py:417
 msgid "Highest"
 msgstr "Höchster"
 
-#: tracker/views.py:423
+#: tracker/views.py:441
 msgid "Updated."
 msgstr "Aktualisiert."
 
-#: tracker/views.py:443
+#: tracker/views.py:461
 msgid "Deleted."
 msgstr "Gelöscht."
 
-#: tracker/views.py:474
+#: tracker/views.py:495
 msgid "Language updated."
 msgstr "Sprache aktualisiert."
 
-#: tracker/views.py:481
+#: tracker/views.py:503
 msgid "Units updated."
 msgstr "Einheiten aktualisiert."
 
-#: tracker/views.py:493
+#: tracker/views.py:515
 msgid "Scheduling settings updated."
 msgstr "Zeitplan-Einstellungen aktualisiert."
 
-#: tracker/views.py:526
+#: tracker/views.py:548
 msgid "Scan the QR code, then confirm with a code."
 msgstr "Scanne den QR-Code und bestätige mit einem Code."
 
-#: tracker/views.py:533
+#: tracker/views.py:555
 msgid "Two-factor authentication enabled."
 msgstr "Zwei-Faktor-Authentifizierung aktiviert."
 
-#: tracker/views.py:536
+#: tracker/views.py:558
 msgid "Wrong code - try the next one from your app."
 msgstr "Falscher Code - versuche den nächsten aus deiner App."
 
-#: tracker/views.py:543
+#: tracker/views.py:565
 msgid "Two-factor authentication disabled."
 msgstr "Zwei-Faktor-Authentifizierung deaktiviert."
 
-#: tracker/views.py:546
+#: tracker/views.py:568
 msgid "A current valid code is required to disable 2FA."
-msgstr ""
-"Zum Deaktivieren von 2FA ist ein aktueller gültiger Code erforderlich."
+msgstr "Zum Deaktivieren von 2FA ist ein aktueller gültiger Code erforderlich."
 
-#: tracker/views.py:595
+#: tracker/views.py:617
 msgid "Schedule saved."
 msgstr "Zeitplan gespeichert."
 
-#: tracker/views.py:609
+#: tracker/views.py:631
 msgid "Schedule deleted."
 msgstr "Zeitplan gelöscht."
 
-#: tracker/views.py:691
+#: tracker/views.py:713
 msgid "Choose a backup file first."
 msgstr "Wähle zuerst eine Backup-Datei."
 
-#: tracker/views.py:694
+#: tracker/views.py:716
 msgid "Backup file too large (max 20 MB)."
 msgstr "Backup-Datei zu groß (max. 20 MB)."
 
-#: tracker/views.py:701
+#: tracker/views.py:723
 #, python-format
 msgid "Restore failed: %(err)s"
 msgstr "Wiederherstellung fehlgeschlagen: %(err)s"
 
-#: tracker/views.py:708
+#: tracker/views.py:730
 #, python-format
 msgid "Restore complete: %(created)s records created, %(updated)s updated."
 msgstr ""
 "Wiederherstellung abgeschlossen: %(created)s Datensätze erstellt, "
 "%(updated)s aktualisiert."
+
+#~ msgid "Date"
+#~ msgstr "Datum"
+
+#, python-format
+#~ msgid "on %(date)s"
+#~ msgstr "am %(date)s"

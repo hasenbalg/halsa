@@ -64,9 +64,9 @@
   <div class="table-scroll">
   <table class="table">
     <tbody>
-    {% for kind, dt, r in recent %}
+    {% for kind, dt, r, label in recent %}
       <tr>
-        <td class="cell-kind"><span class="dot dot-{{ kind }}"></span>{{ kind }}</td>
+        <td class="cell-kind"><span class="dot dot-{{ kind }}"></span>{{ label }}</td>
         <td class="cell-when">{{ dt|when }}</td>
         <td class="cell-value">
           {% if kind == "glucose" %}{{ r.value_mmol|glucose:units }} <span class="unit">{{ units|glucose_unit }}</span>

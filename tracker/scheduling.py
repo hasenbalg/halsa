@@ -35,7 +35,7 @@ READING_MODEL = {
 # Weight is stored per-day; a same-day reading satisfies any slot.
 DATE_FIELD = {
     Metric.GLUCOSE: "taken_at",
-    Metric.WEIGHT: "date",
+    Metric.WEIGHT: "taken_at__date",
     Metric.BP: "taken_at",
 }
 

@@ -138,7 +138,7 @@ class WeightReading(UUIDModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="weight_readings"
     )
-    date = models.DateField(default=timezone.localdate)
+    taken_at = models.DateTimeField(default=timezone.now)
     # Canonical storage unit: kg.
     value_kg = models.DecimalField(
         max_digits=5, decimal_places=2,
@@ -147,11 +147,11 @@ class WeightReading(UUIDModel):
     note = models.TextField(blank=True, max_length=2000)
 
     class Meta:
-        ordering = ["-date", "-created_at"]
-        indexes = [models.Index(fields=["user", "-date"])]
+        ordering = ["-taken_at", "-created_at"]
+        indexes = [models.Index(fields=["user", "-taken_at"])]
 
     def __str__(self):
-        return f"{self.value_kg} kg on {self.date}"
+        return f"{self.value_kg} kg on {self.taken_at:%d.%m.%Y %H:%M}"
 
 
 class BloodPressureReading(UUIDModel):

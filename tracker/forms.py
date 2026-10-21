@@ -80,7 +80,7 @@ class QuickAddForm(forms.Form):
             created.append(
                 WeightReading.objects.create(
                     user=user,
-                    date=cd["taken_at"].date(),
+                    taken_at=cd["taken_at"],
                     value_kg=U.weight_from_display(cd["weight"], self.units),
                 )
             )
@@ -130,17 +130,18 @@ class WeightForm(forms.ModelForm):
 
     class Meta:
         model = WeightReading
-        fields = ["date", "note"]
-        widgets = {"date": forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d")}
+        fields = ["taken_at", "note"]
+        widgets = {"taken_at": forms.DateTimeInput(
+            attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M")}
 
     def __init__(self, *args, units=Profile.Units.METRIC, **kwargs):
         super().__init__(*args, **kwargs)
         self.units = units
         imp = U.is_imperial(units)
         self.fields["value"].label = _("Weight ({unit})").format(unit=U.weight_unit_label(units))
+        self.fields["taken_at"].input_formats = ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M"]
         self.fields["value"].min_value = 4 if imp else 2
         self.fields["value"].max_value = 1100 if imp else 500
-        self.fields["date"].input_formats = ["%Y-%m-%d"]
         if self.instance.pk:
             d, _lbl = U.weight_display(self.instance.value_kg, units)
             self.initial["value"] = d

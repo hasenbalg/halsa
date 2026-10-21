@@ -101,9 +101,16 @@ def restore_from_json(user, raw_text):
                 "note": r.get("note", "") or "",
             })
         for r in data.get("weight_readings", []):
+            if r.get("taken_at"):
+                taken_at = _parse_dt(r["taken_at"])
+            else:  # pre-time backups stored weight as a plain date
+                taken_at = timezone.make_aware(
+                    datetime.combine(_parse_date(r.get("date")),
+                                     datetime.min.time()),
+                    timezone.get_current_timezone())
             upsert(WeightReading, summary["weight"], {
                 "id": r.get("id"),
-                "date": _parse_date(r.get("date")),
+                "taken_at": taken_at,
                 "value_kg": _dec(r.get("value_kg")),
                 "note": r.get("note", "") or "",
             })

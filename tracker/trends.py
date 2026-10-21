@@ -39,7 +39,7 @@ def weight_insights(readings, units):
     """readings: WeightReading queryset, newest first."""
     out = []
     now = timezone.localdate()
-    rows = [(r, r.date) for r in readings if r.date]
+    rows = [(r, r.taken_at.date()) for r in readings if r.taken_at]
     recent = [(r, d) for r, d in rows if (now - d).days <= 28]
     if len(recent) >= 5:
         pts = [(-(d - now).days, float(r.value_kg)) for r, d in recent]
