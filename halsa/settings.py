@@ -85,16 +85,25 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
 
-# Brute-force protection (django-axes): lock the offending client after
-# a few failed password attempts. Stored in the database, no extra service.
-# Over the onion service every request shares the tor circuit's source,
-# so an attacker's lockouts can inconvenience other onion users - the
-# price of exposing login; see README.
+# Brute-force protection (django-axes): 5 failed password attempts lock
+# the offending (username, client) pair for 15 minutes. Database-backed,
+# no extra service.
+# Why the TUPLE and not ip_address alone: over the onion service every
+# visitor arrives from the tor container's fixed address, so a shared
+# IP bucket would let one attacker lock every legitimate onion user out
+# by burning 5 wrong passwords (permanent onion-login DoS). Locking
+# (username, ip) pairs keeps honest users' pairs independent while an
+# attacker only ever locks out the exact pair he is hammering. The
+# residual gap - spraying many usernames at 4 tries each - is covered
+# by 2FA, which is mandatory for anyone reachable via the onion.
 AXES_FAILURE_LIMIT = int(env("AXES_FAILURE_LIMIT", "5"))
 AXES_COOLOFF_TIME = timedelta(minutes=15)
+# NOTE the nested list: axes 9 reads a flat list as OR (block if EITHER
+# matches) and a nested one as AND (one key = the pair). We need the pair.
 AXES_LOCKOUT_PARAMETERS = [
-    x.strip() for x in env("AXES_LOCKOUT_PARAMETERS", "ip_address").split(",")
-    if x.strip()
+    [x.strip() for x in
+     env("AXES_LOCKOUT_PARAMETERS", "username,ip_address").split(",")
+     if x.strip()]
 ]
 AXES_RESET_ON_SUCCESS = True
 # The suite fires deliberately failed logins; the database handler would

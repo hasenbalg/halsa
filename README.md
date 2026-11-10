@@ -273,8 +273,10 @@ requirements, decisions and progress.
   `docker compose build web && docker compose up -d web`.
 
 ## Security notes
-Failed logins are throttled per client by django-axes (5 tries,
-15-minute cool-off; failed 2FA codes count too).
+Failed logins are throttled by django-axes per (username, client)
+pair - 5 tries, 15-minute cool-off; failed 2FA codes count too. The
+tuple keeps onion visitors (who all share tor's address) from
+locking each other out; 2FA remains the hard barrier there.
 
 
 Login is required for every page; TOTP 2FA is per user; CSRF and

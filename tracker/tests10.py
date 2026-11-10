@@ -59,7 +59,7 @@ AXES_DUMMY = "axes.handlers.dummy.AxesDummyHandler"
 
 
 @override_settings(AXES_HANDLER=AXES_DB, AXES_FAILURE_LIMIT=3,
-                   AXES_LOCKOUT_PARAMETERS=["ip_address"])
+                   AXES_LOCKOUT_PARAMETERS=[["username", "ip_address"]])
 class AxesLockoutTests(TestCase):
     def setUp(self):
         self.user = make_user("ax")
@@ -86,6 +86,19 @@ class AxesLockoutTests(TestCase):
         total = AccessAttempt.objects.filter(username="ax").aggregate(
             t=Sum("failures_since_start"))["t"]
         self.assertTrue(total is None or total == 0)
+
+
+    def test_shared_onion_ip_does_not_lock_other_users(self):
+        # Over the onion every client shares the tor container's address.
+        # Burning the limit on one username must not lock a different
+        # user's login from the very same IP.
+        make_user("vic")
+        for _ in range(5):
+            self._post_login(PW + "wrong")
+        resp = self.c.post("/accounts/login/",
+                           {"username": "vic", "password": PW})
+        self.assertEqual(resp.status_code, 302)  # victim can still log in
+        self.assertIn("_auth_user_id", self.c.session)
 
 
 @override_settings(AXES_HANDLER=AXES_DB, AXES_FAILURE_LIMIT=10,
