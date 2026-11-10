@@ -465,3 +465,92 @@ class UnitsEdgeTests(TestCase):
         self.assertEqual(U.weight_unit_label("metric"), "kg")
         self.assertEqual(str(U.glucose_display(Decimal("3.9"), "metric")[0]),
                          "3.9")
+
+
+class DeleteTests(TestCase):
+    """Issue #29: delete must work for every kind and be idempotent."""
+
+    def setUp(self):
+        self.user = make_user("dl")
+        self.other = make_user("dl2")
+        self.c = Client()
+        self.c.force_login(self.user)
+
+    def _obj(self, kind, user=None):
+        u = user or self.user
+        if kind == "glucose":
+            return GlucoseReading.objects.create(
+                user=u, value_mmol=Decimal("5.5"),
+                taken_at=timezone.now())
+        if kind == "weight":
+            return WeightReading.objects.create(
+                user=u, value_kg=Decimal("70"), taken_at=timezone.now())
+        return BloodPressureReading.objects.create(
+            user=u, systolic=120, diastolic=80, taken_at=timezone.now())
+
+    def test_delete_every_kind(self):
+        for kind in ("glucose", "weight", "bp"):
+            obj = self._obj(kind)
+            resp = self.c.post(f"/{kind}/delete/{obj.id}/")
+            self.assertEqual(resp.status_code, 302, kind)
+            self.assertFalse(type(obj).objects.filter(pk=obj.pk).exists())
+
+    def test_delete_twice_is_not_404(self):
+        obj = self._obj("bp")
+        self.assertEqual(self.c.post(f"/bp/delete/{obj.id}/").status_code,
+                         302)
+        resp = self.c.post(f"/bp/delete/{obj.id}/")
+        self.assertEqual(resp.status_code, 302)  # idempotent
+        self.assertContains(self.c.get("/pressure/"), "Deleted.")
+
+    def test_delete_foreign_id_is_noop_not_oracle(self):
+        obj = self._obj("bp", user=self.other)
+        resp = self.c.post(f"/bp/delete/{obj.id}/")
+        self.assertEqual(resp.status_code, 302)  # same as own gone row
+        self.assertTrue(BloodPressureReading.objects.filter(
+            pk=obj.pk).exists())  # foreign row untouched
+
+
+class RedirectAfterMutationTests(TestCase):
+    """Issues #16/#29: after edit/delete the app must land on the
+    detail page - blood pressure's is /pressure/, not /bp/."""
+
+    def setUp(self):
+        self.user = make_user("rd")
+        self.c = Client()
+        self.c.force_login(self.user)
+
+    def test_edit_redirect_target(self):
+        cases = {
+            "glucose": (GlucoseReading, {"taken_at": "", "value": "5.5",
+                                         "glucose_context": "", "note": ""},
+                        "/glucose/"),
+            "weight": (WeightReading, {"taken_at": "", "value": "70",
+                                       "note": ""}, "/weight/"),
+            "bp": (BloodPressureReading, {"taken_at": "", "systolic": "120",
+                                          "diastolic": "80", "pulse": "",
+                                          "note": ""}, "/pressure/"),
+        }
+        now = timezone.localtime().strftime("%Y-%m-%dT%H:%M")
+        seeds = {
+            "glucose": {"value_mmol": Decimal("5.5")},
+            "weight": {"value_kg": Decimal("70")},
+            "bp": {"systolic": 120, "diastolic": 80},
+        }
+        for kind, (model, data, url) in cases.items():
+            obj = model.objects.create(user=self.user,
+                                       taken_at=timezone.now(), **seeds[kind])
+            data = dict(data, taken_at=now)
+            resp = self.c.post(f"/{kind}/edit/{obj.id}/", data)
+            self.assertEqual(resp.status_code, 302, kind)
+            self.assertEqual(resp.headers["Location"], url, kind)
+            target = self.c.get(url)
+            self.assertEqual(target.status_code, 200, kind)
+
+    def test_delete_redirect_target(self):
+        obj = BloodPressureReading.objects.create(
+            user=self.user, systolic=118, diastolic=77,
+            taken_at=timezone.now())
+        resp = self.c.post(f"/bp/delete/{obj.id}/")
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.headers["Location"], "/pressure/")

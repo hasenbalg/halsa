@@ -309,3 +309,16 @@ the field; old backups restore with blank context. Migration 0003.
   enrollment QRs rendered broken. Both switched to inline segno SVG
   (safe under script-src 'none'); white quiet zone via .qr-box CSS.
 - Final readiness curl now retries (no more HTTP 000 in summary).
+
+## Issue #29 (+ retro #16): 404 after editing/deleting a BP reading (2026-11-11)
+- Root cause: edit/delete redirect to f"/{kind}/" but blood pressure's
+  detail page is /pressure/, not /bp/ -> every bp edit/delete ended on
+  a 404 page (the write itself succeeded). Only bp affected: glucose/
+  weight kind names match their URLs. #16 (closed not-reproducible)
+  was the same bug - repro is the REDIRECT TARGET, not the POST.
+- Fix: KIND_URL map, both redirect sites.
+- Delete also made idempotent: already-gone row -> same 302+message
+  instead of bare 404 (stale tab / double-click; foreign id gets the
+  identical response -> no existence oracle).
+- tests2: DeleteTests (per-kind, twice, foreign) +
+  RedirectAfterMutationTests (assert Location per kind). 128 green.
