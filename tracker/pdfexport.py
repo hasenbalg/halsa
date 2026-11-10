@@ -135,7 +135,9 @@ def _table(header, rows):
     return t
 
 
-def build_report(user, units, days):
+def build_report(user, days):
+    units = U.user_units(user)
+    gu = U.user_glucose_units(user)
     from reportlab.platypus import (KeepTogether, Paragraph, SimpleDocTemplate,
                                     Spacer)
 
@@ -164,27 +166,27 @@ def build_report(user, units, days):
     g = list(window(GlucoseReading.objects.filter(user=user), "taken_at")
              .order_by("taken_at"))
     g_all = GlucoseReading.objects.filter(user=user)
-    story.append(Paragraph(_("Glucose ({unit})").format(unit=U.glucose_unit_label(units)), st["h2"]))
+    story.append(Paragraph(_("Glucose ({unit})").format(unit=U.glucose_unit_label(gu)), st["h2"]))
     if g:
         vals = [float(r.value_mmol) for r in g]
         avg = sum(vals) / len(vals)
-        d, _lbl = U.glucose_display(avg, units)
-        lo, _lbl = U.glucose_display(min(vals), units)
-        hi, _lbl = U.glucose_display(max(vals), units)
+        d, _lbl = U.glucose_display(avg, gu)
+        lo, _lbl = U.glucose_display(min(vals), gu)
+        hi, _lbl = U.glucose_display(max(vals), gu)
         story.append(Paragraph(
             _("%(n)s readings &nbsp;·&nbsp; average %(avg)s &nbsp;·&nbsp; "
               "range %(lo)s&ndash;%(hi)s")
             % {"n": len(g), "avg": d, "lo": lo, "hi": hi}, st["body"]))
-        for i in trends.glucose_insights(g_all[:400], units):
+        for i in trends.glucose_insights(g_all[:400], gu):
             story.append(Paragraph(f"&bull; {i['text']}", st["ins"]))
-        chart = _chart([(r.taken_at, float(r.value_mmol)) for r in g],
-                       COLORS["glucose"])
+        chart = _chart([(r.taken_at, float(U.glucose_display(r.value_mmol, gu)[0]))
+                        for r in g], COLORS["glucose"])
         if chart:
             story.append(Spacer(1, 6))
             story.append(chart)
         rows = []
         for r in g[-MAX_TABLE_ROWS:]:
-            v, _lbl = U.glucose_display(r.value_mmol, units)
+            v, _lbl = U.glucose_display(r.value_mmol, gu)
             rows.append([f"{timezone.localtime(r.taken_at):%d.%m.%Y %H:%M}",
                          str(v),
                          GLUCOSE_CONTEXT_LATIN.get(r.context, "")])
@@ -192,7 +194,7 @@ def build_report(user, units, days):
         note = "" if len(g) <= MAX_TABLE_ROWS else \
             _(" (showing most recent %(n)s)") % {"n": MAX_TABLE_ROWS}
         story.append(Paragraph(_("Readings%(note)s") % {"note": note}, st["small"]))
-        story.append(_table([_("When"), U.glucose_unit_label(units),
+        story.append(_table([_("When"), U.glucose_unit_label(gu),
                              _("Context")], rows))
     else:
         story.append(Paragraph(_("No readings in this period."), st["body"]))
@@ -214,8 +216,8 @@ def build_report(user, units, days):
             % {"n": len(w), "avg": d, "lo": lo, "hi": hi}, st["body"]))
         for i in trends.weight_insights(w_all[:400], units):
             story.append(Paragraph(f"&bull; {i['text']}", st["ins"]))
-        chart = _chart([(r.taken_at, float(r.value_kg)) for r in w],
-                       COLORS["weight"])
+        chart = _chart([(r.taken_at, float(U.weight_display(r.value_kg, units)[0]))
+                        for r in w], COLORS["weight"])
         if chart:
             story.append(Spacer(1, 6))
             story.append(chart)

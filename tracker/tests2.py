@@ -312,7 +312,8 @@ class SettingsViewTests(TestCase):
         self.assertEqual((ms.window_minutes, ms.grace_minutes), (45, 20))
 
     def test_imperial_dashboard_conversion(self):
-        Profile.objects.create(user=self.user, units="imperial")
+        Profile.objects.create(user=self.user, units="imperial",
+                               glucose_units="imperial")
         GlucoseReading.objects.create(user=self.user,
                                       value_mmol=Decimal("5.55"))
         body = self.c.get("/").content.decode()

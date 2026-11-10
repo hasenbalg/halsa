@@ -37,13 +37,16 @@ class QuickAddForm(forms.Form):
     diastolic = forms.IntegerField(label=_("Diastolic"), required=False, min_value=30, max_value=160)
     pulse = forms.IntegerField(label=_("Pulse"), required=False, min_value=20, max_value=250)
 
-    def __init__(self, *args, units=Profile.Units.METRIC, **kwargs):
+    def __init__(self, *args, units=Profile.Units.METRIC,
+                 glucose_units=Profile.GlucoseUnits.METRIC, **kwargs):
         super().__init__(*args, **kwargs)
         self.units = units
+        self.glucose_units = glucose_units
+        g_imp = U.is_imperial(glucose_units)
+        self.fields["glucose"].label = _("Glucose ({unit})").format(unit=U.glucose_unit_label(glucose_units))
+        self.fields["glucose"].min_value = 9 if g_imp else 0.5
+        self.fields["glucose"].max_value = 720 if g_imp else 40
         imp = U.is_imperial(units)
-        self.fields["glucose"].label = _("Glucose ({unit})").format(unit=U.glucose_unit_label(units))
-        self.fields["glucose"].min_value = 9 if imp else 0.5
-        self.fields["glucose"].max_value = 720 if imp else 40
         self.fields["weight"].label = _("Weight ({unit})").format(unit=U.weight_unit_label(units))
         self.fields["weight"].min_value = 4 if imp else 2
         self.fields["weight"].max_value = 1100 if imp else 500
@@ -72,7 +75,7 @@ class QuickAddForm(forms.Form):
                 GlucoseReading.objects.create(
                     user=user,
                     taken_at=cd["taken_at"],
-                    value_mmol=U.glucose_from_display(cd["glucose"], self.units),
+                    value_mmol=U.glucose_from_display(cd["glucose"], self.glucose_units),
                     context=cd.get("glucose_context") or "",
                 )
             )
@@ -105,16 +108,16 @@ class GlucoseForm(forms.ModelForm):
         fields = ["taken_at", "context", "note"]
         widgets = {"taken_at": forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M")}
 
-    def __init__(self, *args, units=Profile.Units.METRIC, **kwargs):
+    def __init__(self, *args, glucose_units=Profile.GlucoseUnits.METRIC, **kwargs):
         super().__init__(*args, **kwargs)
-        self.units = units
-        imp = U.is_imperial(units)
-        self.fields["value"].label = _("Glucose ({unit})").format(unit=U.glucose_unit_label(units))
+        self.units = glucose_units
+        imp = U.is_imperial(glucose_units)
+        self.fields["value"].label = _("Glucose ({unit})").format(unit=U.glucose_unit_label(glucose_units))
         self.fields["value"].min_value = 9 if imp else 0.5
         self.fields["value"].max_value = 720 if imp else 40
         self.fields["taken_at"].input_formats = ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M"]
         if self.instance.pk:
-            d, _lbl = U.glucose_display(self.instance.value_mmol, units)
+            d, _lbl = U.glucose_display(self.instance.value_mmol, glucose_units)
             self.initial["value"] = d
 
     def save(self, commit=True):
@@ -173,10 +176,25 @@ class BloodPressureForm(forms.ModelForm):
 
 
 class UnitsForm(forms.ModelForm):
+    """Both pickers are independently optional: a POST may carry either
+    or both (the settings page submits them together, the API may not)."""
+
     class Meta:
         model = Profile
-        fields = ["units"]
-        widgets = {"units": forms.RadioSelect}
+        fields = ["units", "glucose_units"]
+        widgets = {"units": forms.RadioSelect,
+                   "glucose_units": forms.RadioSelect}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["units"].required = False
+        self.fields["glucose_units"].required = False
+
+    def _post_clean(self):
+        for name in ("units", "glucose_units"):
+            if not self.cleaned_data.get(name):
+                self.cleaned_data.pop(name, None)
+        super()._post_clean()
 
 
 class LanguageForm(forms.ModelForm):
