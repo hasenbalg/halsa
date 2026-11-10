@@ -410,6 +410,8 @@ input::placeholder { color: var(--muted); opacity: 0.7; }
 }
 
 /* Onion service panel (settings) */
+.qr-box{background:#fff;border-radius:8px;padding:.4rem;display:inline-block}
+.qr-box svg{width:14rem;height:14rem;display:block}
 .onion-row{display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap}
 .onion-text{flex:1;min-width:260px}
 .onion-risks{margin:.25rem 0 0;padding-left:1.15rem;display:grid;gap:.35rem}

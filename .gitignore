@@ -12,3 +12,4 @@ __pycache__/
 # django
 staticfiles/
 .hermes-tmp.*
+/tor-state/
