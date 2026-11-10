@@ -16,6 +16,7 @@ from django.utils.formats import date_format
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
@@ -570,7 +571,7 @@ def settings_view(request):
     if onion_url:
         import segno
         try:
-            onion_qr = segno.make(onion_url).svg_data_uri(scale=5, border=2)
+            onion_qr = mark_safe(segno.make(onion_url).svg_inline(scale=5, border=2))
         except OSError:
             onion_qr = None
     return render(request, "settings.html", {
@@ -622,7 +623,7 @@ def two_factor(request):
             messages.error(request, gettext_lazy("A current valid code is required to disable 2FA."))
     if profile.totp_seed and not profile.two_factor_enabled:
         try:
-            qr = segno.make(profile.provisioning_uri()).svg_data_uri(scale=5, border=2)
+            qr = mark_safe(segno.make(profile.provisioning_uri()).svg_inline(scale=5, border=2))
         except Exception:
             qr = None
     return render(request, "two_factor.html", {

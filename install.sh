@@ -282,14 +282,14 @@ if [ "$ONION" = 1 ]; then
   docker compose --profile onion up -d tor
 
   # restoring a previous install: ./tor-state next to this file wins
-  if [ -f tor-state/private_key ] && [ -f tor-state/hostname ]; then
+  if [ -d tor-state/hidden_service ]; then
     say "importing existing onion key from ./tor-state"
-    docker compose exec -T tor sh -c \
-      'rm -rf /var/lib/tor/hidden_service && mkdir -p /var/lib/tor/hidden_service' \
-      </dev/null || true
-    docker compose cp tor-state/private_key tor:/var/lib/tor/hidden_service/private_key || true
-    docker compose cp tor-state/hostname  tor:/var/lib/tor/hidden_service/hostname  || true
+    docker compose exec -T --user root tor sh -c 'rm -rf /var/lib/tor/hidden_service' </dev/null || true
+    docker compose cp tor-state/hidden_service tor:/var/lib/tor/hidden_service || true
+    docker compose exec -T --user root tor sh -c \
+      'chown -R tor:tor /var/lib/tor/hidden_service && chmod 700 /var/lib/tor/hidden_service && chmod 600 /var/lib/tor/hidden_service/* 2>/dev/null; true' </dev/null || true
     docker compose restart tor
+    sleep 3
   fi
 
   say "waiting for tor to produce the address"
@@ -312,17 +312,23 @@ if [ "$ONION" = 1 ]; then
 
   # back the address-forming key up next to this file (chmod 700 dir)
   mkdir -p tor-state && chmod 700 tor-state
-  docker compose cp tor:/var/lib/tor/hidden_service/hostname      tor-state/hostname      || true
-  docker compose cp tor:/var/lib/tor/hidden_service/private_key   tor-state/private_key   || true
-  chmod 600 tor-state/private_key 2>/dev/null || true
+  # whole dir: tor >=0.4.7 stores the v3 key as hs_ed25519_secret_key,
+  # older versions used private_key - mirroring the dir covers both
+  docker compose cp tor:/var/lib/tor/hidden_service tor-state/hidden_service || true
+  chmod -R go-rwx tor-state/hidden_service 2>/dev/null || true
   say "onion service live: http://${ONION_HOST}"
 fi
 
 # ---------------------------------------------------------------------------
 # summary
 # ---------------------------------------------------------------------------
-code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 \
-  "$BASE_URL/accounts/login/" || true)
+code=000
+for _ in 1 2 3 4 5 6; do
+  code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 \
+    "$BASE_URL/accounts/login/" || true)
+  [ "$code" != 000 ] && break
+  sleep 3
+done
 echo
 say "done. Hälsa answers at ${BASE_URL} (HTTP $code)"
 echo "  login: $ADMIN_USER / the password you just chose"

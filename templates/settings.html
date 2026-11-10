@@ -105,7 +105,7 @@
   <h2 class="panel-title">{% translate "Tor onion service" %}</h2>
   <div class="onion-row">
     {% if onion_qr %}
-    <div class="qr-box"><img src="{{ onion_qr }}" alt="{% translate 'Onion address QR code' %}" width="220" height="220"></div>
+    <div class="qr-box">{{ onion_qr }}</div>
     {% endif %}
     <div class="onion-text">
       <p>{% translate "This Hälsa instance is also reachable over the Tor network. Open the address in Tor Browser, or scan the QR code." %}</p>
