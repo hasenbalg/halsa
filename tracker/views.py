@@ -170,7 +170,9 @@ def logout_view(request):
 @login_required
 def dashboard(request):
     user = request.user
-    units = get_profile(user).units
+    profile = get_profile(user)
+    units = profile.units
+    gu = profile.glucose_units
     now = timezone.now()
     since30 = now - timedelta(days=30)
 
@@ -194,7 +196,7 @@ def dashboard(request):
             taken_at__range=(latest_g.taken_at - timedelta(days=8),
                              latest_g.taken_at - timedelta(days=6)),
         ).aggregate(a=Avg("value_mmol"))["a"]
-        return _delta_html(latest_g.value_mmol, ref, lambda d: f"{U.glucose_display(d, units)[0]}")
+        return _delta_html(latest_g.value_mmol, ref, lambda d: f"{U.glucose_display(d, gu)[0]}")
 
     def w_delta():
         if not latest_w:
@@ -212,16 +214,17 @@ def dashboard(request):
             "url": "glucose",
             "css": "glucose",
             "value": (
-                f'{U.glucose_display(latest_g.value_mmol, units)[0]}'
-                f'<span class="unit">{U.glucose_unit_label(units)}</span>'
+                f'{U.glucose_display(latest_g.value_mmol, gu)[0]}'
+                f'<span class="unit">{U.glucose_unit_label(gu)}</span>'
             ) if latest_g else "&ndash;",
             "when": _fmt_dt(latest_g.taken_at, units) if latest_g else _("no readings"),
             "delta": g_delta(),
             "chart": charts.sparkline(
-                [(r.taken_at, float(r.value_mmol)) for r in g30],
+                [(r.taken_at, float(U.glucose_display(r.value_mmol, gu)[0]))
+                 for r in g30],
                 color="var(--glucose)",
             ),
-            "insights": trends.glucose_insights(g_all[:400], units)[:1],
+            "insights": trends.glucose_insights(g_all[:400], gu)[:1],
         },
         {
             "name": _("Weight"),
@@ -234,7 +237,8 @@ def dashboard(request):
             "when": _fmt_dt(latest_w.taken_at, units) if latest_w else _("no readings"),
             "delta": w_delta(),
             "chart": charts.sparkline(
-                [(r.taken_at, float(r.value_kg)) for r in w30],
+                [(r.taken_at, float(U.weight_display(r.value_kg, units)[0]))
+                 for r in w30],
                 color="var(--weight)",
             ),
             "insights": trends.weight_insights(w_all[:400], units)[:1],
@@ -255,7 +259,7 @@ def dashboard(request):
     ]
 
     insights = {
-        _("Glucose"): trends.glucose_insights(g_all[:400], units),
+        _("Glucose"): trends.glucose_insights(g_all[:400], gu),
         _("Weight"): trends.weight_insights(w_all[:400], units),
         _("Blood pressure"): trends.bp_insights(b_all[:400], units),
     }
@@ -278,6 +282,7 @@ def dashboard(request):
         "has_insights": has_insights,
         "recent": recent,
         "units": units,
+        "glucose_units": gu,
     })
 
 
@@ -285,9 +290,11 @@ def dashboard(request):
 
 @login_required
 def add(request):
-    units = get_profile(request.user).units
+    profile = get_profile(request.user)
+    units = profile.units
+    gu = profile.glucose_units
     if request.method == "POST":
-        form = QuickAddForm(request.POST, units=units)
+        form = QuickAddForm(request.POST, units=units, glucose_units=gu)
         if form.is_valid():
             created = form.save(request.user)
             names = {
@@ -300,50 +307,64 @@ def add(request):
             messages.success(request, gettext_lazy("Saved: %(names)s.") % {"names": saved})
             return redirect("/add/?saved=1")
     else:
-        form = QuickAddForm(initial={"taken_at": timezone.localtime().replace(microsecond=0)}, units=units)
-    return render(request, "add.html", {"form": form, "units": units})
+        form = QuickAddForm(initial={"taken_at": timezone.localtime().replace(microsecond=0)}, units=units, glucose_units=gu)
+    return render(request, "add.html", {"form": form, "units": units,
+                             "glucose_units": gu})
 
 
 # --- per-metric detail ---------------------------------------------------------
 
 @login_required
 def glucose_detail(request):
-    units = get_profile(request.user).units
+    gu = get_profile(request.user).glucose_units
     days = _range_days(request)
     qs = GlucoseReading.objects.filter(user=request.user)
     rows = list(qs.filter(taken_at__gte=_since(days)).order_by("taken_at")) if days else list(qs.order_by("taken_at"))
-    points = [(r.taken_at, float(r.value_mmol), r.context) for r in rows]
+    imp = U.is_imperial(gu)
+    points = [(r.taken_at, float(U.glucose_display(r.value_mmol, gu)[0]),
+               r.context) for r in rows]
     rolling = _rolling([(p[0], p[1]) for p in points], window=7)
+    band = None
+    if imp:
+        band = (float(U.glucose_display(Decimal("3.9"), gu)[0]),
+                float(U.glucose_display(Decimal("7.8"), gu)[0]))
+    else:
+        band = (3.9, 7.8)
     stats = qs.aggregate(avg=Avg("value_mmol"), lo=Min("value_mmol"), hi=Max("value_mmol"))
     return render(request, "metric.html", {
         "title": gettext_lazy("Glucose"),
         "css": "glucose",
-        "unit": U.glucose_unit_label(units),
+        "unit": U.glucose_unit_label(gu),
         "chart": charts.line_chart(
             [
                 {"points": points, "color": "var(--glucose)"},
                 {"points": rolling, "color": "var(--muted)", "fill": False, "dashed": True},
             ],
-            band=(3.9, 7.8),
-            y_decimals=1,
-            aria_label=_("Glucose over time, mmol per litre"),
+            band=band,
+            y_decimals=0 if imp else 1,
+            aria_label=(_("Glucose over time, milligrammes per decilitre")
+                         if imp else _("Glucose over time, mmol per litre")),
         ),
         "rows": rows,
         "kind": "glucose",
-        "stats": _fmt_stats(stats, lambda v: str(U.glucose_display(v, units)[0])),
-        "insights": trends.glucose_insights(qs[:400], units),
+        "stats": _fmt_stats(stats, lambda v: str(U.glucose_display(v, gu)[0])),
+        "insights": trends.glucose_insights(qs[:400], gu),
         "days": days,
-        "units": units,
+        "units": gu,
+        "glucose_units": gu,
     })
 
 
 @login_required
 def weight_detail(request):
-    units = get_profile(request.user).units
+    profile = get_profile(request.user)
+    units = profile.units
+    gu = profile.glucose_units
     days = _range_days(request)
     qs = WeightReading.objects.filter(user=request.user)
     rows = list(qs.filter(taken_at__date__gte=timezone.localdate() - timedelta(days=days)).order_by("taken_at")) if days else list(qs.order_by("taken_at"))
-    points = [(r.taken_at, float(r.value_kg)) for r in rows]
+    points = [(r.taken_at, float(U.weight_display(r.value_kg, units)[0]))
+              for r in rows]
     rolling = _rolling(points, window=7)
     stats = qs.aggregate(avg=Avg("value_kg"), lo=Min("value_kg"), hi=Max("value_kg"))
     return render(request, "metric.html", {
@@ -364,12 +385,15 @@ def weight_detail(request):
         "insights": trends.weight_insights(qs[:400], units),
         "days": days,
         "units": units,
+        "glucose_units": gu,
     })
 
 
 @login_required
 def bp_detail(request):
-    units = get_profile(request.user).units
+    profile = get_profile(request.user)
+    units = profile.units
+    gu = profile.glucose_units
     days = _range_days(request)
     qs = BloodPressureReading.objects.filter(user=request.user)
     rows = list(qs.filter(taken_at__gte=_since(days)).order_by("taken_at")) if days else list(qs.order_by("taken_at"))
@@ -396,6 +420,7 @@ def bp_detail(request):
         "insights": trends.bp_insights(qs[:400], units),
         "days": days,
         "units": units,
+        "glucose_units": gu,
     })
 
 
@@ -431,8 +456,15 @@ MODELS = {
 def edit(request, kind, pk):
     model, form_class, _x = MODELS[kind]
     obj = get_object_or_404(model, pk=pk, user=request.user)
-    units = get_profile(request.user).units
-    kwargs = {"units": units} if form_class is not BloodPressureForm else {}
+    profile = get_profile(request.user)
+    units = profile.units
+    gu = profile.glucose_units
+    if form_class is GlucoseForm:
+        kwargs = {"glucose_units": gu}
+    elif form_class is BloodPressureForm:
+        kwargs = {}
+    else:
+        kwargs = {"units": units}
     if request.method == "POST":
         form = form_class(request.POST, instance=obj, **kwargs)
         if form.is_valid():
@@ -464,7 +496,9 @@ def delete(request, kind, pk):
 
 @login_required
 def history(request):
-    units = get_profile(request.user).units
+    profile = get_profile(request.user)
+    units = profile.units
+    gu = profile.glucose_units
     g = GlucoseReading.objects.filter(user=request.user)[:50]
     w = WeightReading.objects.filter(user=request.user)[:50]
     b = BloodPressureReading.objects.filter(user=request.user)[:50]
@@ -477,7 +511,8 @@ def history(request):
         key=lambda t: t[1], reverse=True,
     )
     rows = [(k, dt, r, kind_label[k]) for k, dt, r in rows]
-    return render(request, "history.html", {"rows": rows, "units": units})
+    return render(request, "history.html", {"rows": rows, "units": units,
+                                 "glucose_units": gu})
 
 
 # --- settings --------------------------------------------------------------------
@@ -646,6 +681,7 @@ def _backup_payload(user):
             "username": user.username,
             "email": user.email,
             "units": get_profile(user).units,
+            "glucose_units": get_profile(user).glucose_units,
         },
         "glucose_readings": [
             {"id": str(r.id), "taken_at": iso(r.taken_at),
@@ -696,7 +732,7 @@ def export_pdf(request):
     from django.http import HttpResponse
     days = _range_days(request)
     logger.info("pdf export: range=%s", days)
-    pdf = pdfexport.build_report(request.user, get_profile(request.user).units, days)
+    pdf = pdfexport.build_report(request.user, days)
     response = HttpResponse(pdf, content_type="application/pdf")
     day = timezone.localdate().strftime("%Y%m%d")
     response["Content-Disposition"] = f'attachment; filename="halsa-report-{day}.pdf"'

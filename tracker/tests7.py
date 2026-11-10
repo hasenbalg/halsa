@@ -107,7 +107,7 @@ class I18nTests(TestCase):
         self.profile.save()
         from tracker.pdfexport import build_report
         with translation.override("de"):
-            pdf = build_report(self.user, Profile.Units.METRIC, 90)
+            pdf = build_report(self.user, 90)
         import base64
         import re
         import zlib

@@ -21,8 +21,13 @@ class UUIDModel(models.Model):
 
 class Profile(UUIDModel):
     class Units(models.TextChoices):
-        METRIC = "metric", _("Metric (mmol/L, kg)")
-        IMPERIAL = "imperial", _("Imperial (mg/dL, lb)")
+        # Weight only: glucose has its own unit (issue #21), BP is mmHg always.
+        METRIC = "metric", _("Kilograms (kg)")
+        IMPERIAL = "imperial", _("Pounds (lb)")
+
+    class GlucoseUnits(models.TextChoices):
+        METRIC = "metric", "mmol/L"
+        IMPERIAL = "imperial", "mg/dL"
 
     class Language(models.TextChoices):
         AUTO = "", _("Auto (browser)")
@@ -33,6 +38,8 @@ class Profile(UUIDModel):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile"
     )
     units = models.CharField(max_length=10, choices=Units.choices, default=Units.METRIC)
+    glucose_units = models.CharField(
+        max_length=10, choices=GlucoseUnits.choices, default=GlucoseUnits.METRIC)
     # Empty means "auto": follow the browser's Accept-Language.
     language = models.CharField(max_length=10, blank=True, choices=Language.choices,
                                 default=Language.AUTO)

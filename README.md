@@ -49,8 +49,10 @@ Follows your OS `prefers-color-scheme`. Zero clicks, zero JS.
 ### Units
 
 Data is stored canonically in metric (mmol/L, kg, mmHg); each user
-picks metric or imperial display and everything converts — charts,
-insights, PDF, entry forms.
+picks their display units — blood glucose (mmol/L or mg/dL) and weight
+(kg or lb) are configured independently, since glucose units follow
+regional convention, not the metric/imperial split. Everything
+converts: charts, target band, insights, PDF, entry forms.
 
 ### Languages
 
@@ -107,7 +109,7 @@ table — safe to merge exports, no enumerable ids.
 
 ### Tested
 
-**100 tests** over views, models, scheduling, export, restore, units,
+**116 tests** over views, models, scheduling, export, restore, units,
 i18n, logging and the 2FA flow; OWASP-based security audit on record
 (`security-audit/REPORT.md`).
 

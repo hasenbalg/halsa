@@ -1,7 +1,8 @@
 """Canonical units are European: mmol/L, kg, mmHg.
 
 Blood pressure is displayed in mmHg for everyone (imperial BP is not a
-thing); only glucose and weight convert per user preference.
+thing); glucose and weight each convert per independently configured
+user preference (issue #21).
 """
 
 from decimal import Decimal, ROUND_HALF_UP
@@ -22,6 +23,13 @@ def user_units(user):
 
     profile, _ = Profile.objects.get_or_create(user=user)
     return profile.units
+
+
+def user_glucose_units(user):
+    from .models import Profile
+
+    profile, _ = Profile.objects.get_or_create(user=user)
+    return profile.glucose_units
 
 
 def is_imperial(units):

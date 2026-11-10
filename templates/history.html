@@ -13,7 +13,7 @@
         <td class="cell-kind"><span class="dot dot-{{ kind }}"></span>{{ label }}</td>
         <td class="cell-when">{{ dt|when }}</td>
         <td class="cell-value">
-          {% if kind == "glucose" %}{{ r.value_mmol|glucose:units }} <span class="unit">{{ units|glucose_unit }}</span>
+          {% if kind == "glucose" %}{{ r.value_mmol|glucose:glucose_units }} <span class="unit">{{ glucose_units|glucose_unit }}</span>
           {% elif kind == "weight" %}{{ r.value_kg|weight:units }} <span class="unit">{{ units|weight_unit }}</span>
           {% else %}{{ r.systolic }}/{{ r.diastolic }} <span class="unit">mmHg</span>{% endif %}
         </td>
