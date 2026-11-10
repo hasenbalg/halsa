@@ -448,9 +448,9 @@ msgid ""
 " blocked automatically - but anyone with the address is one weak password "
 "away from your health data."
 msgstr ""
-"Deine Daten liegen hinter Passwort und 2FA, und wiederholte Fehlversuche "
-"werden automatisch gesperrt – aber wer die Adresse kennt, ist nur ein "
-"schwaches Passwort von deinen Gesundheitsdaten entfernt."
+"Dein Zugang bleibt durch Passwort und 2FA geschützt; wiederholte "
+"Fehlversuche werden automatisch gesperrt. Doch bei einem schwachen Passwort "
+"genügt die Adresse, um an deine Gesundheitsdaten zu gelangen."
 
 #: templates/settings.html:121
 msgid ""
