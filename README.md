@@ -109,7 +109,7 @@ table — safe to merge exports, no enumerable ids.
 
 ### Tested
 
-**116 tests** over views, models, scheduling, export, restore, units,
+**124 tests** over views, models, scheduling, export, restore, units,
 i18n, logging and the 2FA flow; OWASP-based security audit on record
 (`security-audit/REPORT.md`).
 
@@ -273,6 +273,9 @@ requirements, decisions and progress.
   `docker compose build web && docker compose up -d web`.
 
 ## Security notes
+Failed logins are throttled per client by django-axes (5 tries,
+15-minute cool-off; failed 2FA codes count too).
+
 
 Login is required for every page; TOTP 2FA is per user; CSRF and
 session cookies are hardened (`SameSite`, `Secure` behind TLS); the
@@ -280,3 +283,30 @@ app sets CSP (`script-src 'none'`), `X-Frame-Options: DENY`, HSTS on
 TLS answers and `nosniff`; there is no JavaScript at all, which removes
 a whole class of XSS payloads; the scheduler endpoint is token-gated
 and returns only counters. Health data stays on your machine.
+
+## Optional: Tor onion service
+
+`install.sh` can expose the app as a **Tor hidden service**: a `tor`
+sidecar container publishes it on a persistent `.onion` address —
+reachable from anywhere through Tor Browser, no open ports, no domain,
+no TLS proxy.
+
+- (+) remote access with zero exposed ports; traffic never travels
+  over plain internet routes.
+- (-) your login page sits on the open internet. The axes throttle and
+  2FA stay between attackers and your data, but a weak password
+  becomes dangerous.
+- (-) whoever knows the address can reach the login page — treat the
+  address like a house key.
+- (-) Tor gives no TLS certificate: the address *is* the server's
+  identity. Share it exactly and deliberately.
+
+Hard rule: **`/admin/` is never reachable over the onion service** —
+requests whose Host is a `.onion` name get a 404. Admin stays
+local-network only.
+
+The v3 key that forms the address lives in the `halsa_tor` volume and
+is mirrored to `./tor-state` next to the compose file (chmod 700/600).
+That folder *is* the address: back it up, and it survives reinstalls.
+Settings shows the address as QR code with the full sharing guidance;
+opting in is one installer answer (it sets `COMPOSE_PROFILES=onion`).

@@ -100,6 +100,31 @@
   <a class="btn btn-ghost" href="/accounts/password/">{% translate "Change password" %}</a>
 </section>
 
+{% if onion_url %}
+<section class="panel panel-narrow">
+  <h2 class="panel-title">{% translate "Tor onion service" %}</h2>
+  <div class="onion-row">
+    {% if onion_qr %}
+    <div class="qr-box"><img src="{{ onion_qr }}" alt="{% translate 'Onion address QR code' %}" width="220" height="220"></div>
+    {% endif %}
+    <div class="onion-text">
+      <p>{% translate "This Hälsa instance is also reachable over the Tor network. Open the address in Tor Browser, or scan the QR code." %}</p>
+      <label class="label" for="onion-url">{% translate "Onion address" %}</label>
+      <input id="onion-url" class="input" type="text" readonly value="{{ onion_url }}">
+      <p class="muted">{% translate "Select the address and copy it manually." %}</p>
+    </div>
+  </div>
+  <h3>{% translate "Before you share this address" %}</h3>
+  <ul class="onion-risks">
+    <li>{% translate "Anyone who knows this address can reach your login page over Tor. It is a public door, not a private network." %}</li>
+    <li>{% translate "Your data stays behind your password and 2FA, and repeated failed logins are blocked automatically - but anyone with the address is one weak password away from your health data." %}</li>
+    <li>{% translate "Tor gives no TLS certificate: the server's identity is the address itself. Share the exact address and double-check it." %}</li>
+    <li>{% translate "Treat the address like a house key: share it only with people you trust." %}</li>
+    <li>{% translate "For security, the Django admin is not reachable over Tor - only from the local network." %}</li>
+  </ul>
+</section>
+{% endif %}
+
 {% if user.is_staff %}
 <section class="panel panel-narrow">
   <h2 class="panel-title">{% translate "Admin" %}</h2>

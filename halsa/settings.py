@@ -1,4 +1,6 @@
 import os
+import sys
+from datetime import timedelta
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,6 +16,10 @@ def env_list(name, default):
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", "dev-insecure-key")
 DEBUG = env("DEBUG", "0") == "1"
+
+# Full http://<addr>.onion URL when the optional tor sidecar is enabled
+# (written by install.sh); empty hides the onion panel in settings.
+ONION_URL = env("HALSA" + "_ONION" + "_URL", "")
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
 
 INSTALLED_APPS = [
@@ -24,11 +30,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "tracker",
+    "axes",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "halsa.security.SecurityHeadersMiddleware",
+    "halsa.security.OnionGuardMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -38,6 +46,7 @@ MIDDLEWARE = [
     "halsa.i18n.UserLanguageMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "halsa.urls"
@@ -70,6 +79,30 @@ DATABASES = {
         "CONN_MAX_AGE": 60,
     }
 }
+
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+# Brute-force protection (django-axes): lock the offending client after
+# a few failed password attempts. Stored in the database, no extra service.
+# Over the onion service every request shares the tor circuit's source,
+# so an attacker's lockouts can inconvenience other onion users - the
+# price of exposing login; see README.
+AXES_FAILURE_LIMIT = int(env("AXES_FAILURE_LIMIT", "5"))
+AXES_COOLOFF_TIME = timedelta(minutes=15)
+AXES_LOCKOUT_PARAMETERS = [
+    x.strip() for x in env("AXES_LOCKOUT_PARAMETERS", "ip_address").split(",")
+    if x.strip()
+]
+AXES_RESET_ON_SUCCESS = True
+# The suite fires deliberately failed logins; the database handler would
+# lock the test client out mid-suite. Tests that exercise the lockout
+# itself override AXES_HANDLER explicitly.
+AXES_HANDLER = ("axes.handlers.dummy.AxesDummyHandler"
+                if "test" in sys.argv
+                else "axes.handlers.database.AxesDatabaseHandler")
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

@@ -42,9 +42,23 @@ services:
           sleep 300
         done
 
+  # Optional hidden service (COMPOSE_PROFILES=onion in .env). The v3 key
+  # that defines the address lives in the halsa_tor volume; install.sh
+  # mirrors it to ./tor-state next to this file for backups, and imports
+  # it back on reinstall so the address survives.
+  tor:
+    image: ghcr.io/hasenbalg/halsa-tor:latest
+    restart: unless-stopped
+    profiles: ["onion"]
+    volumes:
+      - halsa_tor:/var/lib/tor
+    depends_on: [web]
+    networks: [halsa]
+
 volumes:
   halsa_db:
   halsa_logs:
+  halsa_tor:
 
 networks:
   halsa:

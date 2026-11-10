@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 20:11+0100\n"
+"POT-Creation-Date: 2026-11-10 21:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,22 +60,22 @@ msgid "Dashboard"
 msgstr "Übersicht"
 
 #: templates/base.html:19 tracker/forms.py:30 tracker/forms.py:104
-#: tracker/models.py:190 tracker/views.py:213 tracker/views.py:262
-#: tracker/views.py:268 tracker/views.py:335 tracker/views.py:478
-#: tracker/views.py:505
+#: tracker/models.py:190 tracker/views.py:222 tracker/views.py:271
+#: tracker/views.py:277 tracker/views.py:344 tracker/views.py:487
+#: tracker/views.py:514
 msgid "Glucose"
 msgstr "Blutzucker"
 
 #: templates/base.html:20 templates/settings.html:21 tracker/forms.py:35
-#: tracker/forms.py:132 tracker/models.py:191 tracker/views.py:230
-#: tracker/views.py:263 tracker/views.py:268 tracker/views.py:371
-#: tracker/views.py:478 tracker/views.py:505
+#: tracker/forms.py:132 tracker/models.py:191 tracker/views.py:239
+#: tracker/views.py:272 tracker/views.py:277 tracker/views.py:380
+#: tracker/views.py:487 tracker/views.py:514
 msgid "Weight"
 msgstr "Gewicht"
 
-#: templates/base.html:21 tracker/models.py:192 tracker/views.py:247
-#: tracker/views.py:264 tracker/views.py:269 tracker/views.py:402
-#: tracker/views.py:479 tracker/views.py:506
+#: templates/base.html:21 tracker/models.py:192 tracker/views.py:256
+#: tracker/views.py:273 tracker/views.py:278 tracker/views.py:411
+#: tracker/views.py:488 tracker/views.py:515
 msgid "Blood pressure"
 msgstr "Blutdruck"
 
@@ -292,7 +292,6 @@ msgstr ""
 "mmHg). Dies ändert nur Anzeige und Eingabe."
 
 #: templates/settings.html:13
-#| msgid "glucose"
 msgid "Blood glucose"
 msgstr "Blutzucker"
 
@@ -408,10 +407,79 @@ msgstr ""
 "schützen."
 
 #: templates/settings.html:105
+msgid "Tor onion service"
+msgstr "Tor-Onion-Dienst"
+
+#: templates/settings.html:108
+msgid "Onion address QR code"
+msgstr "QR-Code der Onion-Adresse"
+
+#: templates/settings.html:111
+msgid ""
+"This Hälsa instance is also reachable over the Tor network. Open the address"
+" in Tor Browser, or scan the QR code."
+msgstr ""
+"Diese Hälsa-Instanz ist auch über das Tor-Netzwerk erreichbar. Öffne die "
+"Adresse im Tor Browser oder scanne den QR-Code."
+
+#: templates/settings.html:112
+msgid "Onion address"
+msgstr "Onion-Adresse"
+
+#: templates/settings.html:114
+msgid "Select the address and copy it manually."
+msgstr "Markiere die Adresse und kopiere sie manuell."
+
+#: templates/settings.html:117
+msgid "Before you share this address"
+msgstr "Bevor du diese Adresse teilst"
+
+#: templates/settings.html:119
+msgid ""
+"Anyone who knows this address can reach your login page over Tor. It is a "
+"public door, not a private network."
+msgstr ""
+"Jeder, der diese Adresse kennt, kann über Tor deine Login-Seite erreichen. "
+"Sie ist eine Tür zur Öffentlichkeit, kein privates Netz."
+
+#: templates/settings.html:120
+msgid ""
+"Your data stays behind your password and 2FA, and repeated failed logins are"
+" blocked automatically - but anyone with the address is one weak password "
+"away from your health data."
+msgstr ""
+"Deine Daten liegen hinter Passwort und 2FA, und wiederholte Fehlversuche "
+"werden automatisch gesperrt – aber wer die Adresse kennt, ist nur ein "
+"schwaches Passwort von deinen Gesundheitsdaten entfernt."
+
+#: templates/settings.html:121
+msgid ""
+"Tor gives no TLS certificate: the server's identity is the address itself. "
+"Share the exact address and double-check it."
+msgstr ""
+"Tor liefert kein TLS-Zertifikat: Die Identität des Servers ist die Adresse "
+"selbst. Teile die exakte Adresse und prüfe sie genau."
+
+#: templates/settings.html:122
+msgid ""
+"Treat the address like a house key: share it only with people you trust."
+msgstr ""
+"Behandle die Adresse wie einen Hausschlüssel: Teile sie nur mit Menschen, "
+"denen du vertraust."
+
+#: templates/settings.html:123
+msgid ""
+"For security, the Django admin is not reachable over Tor - only from the "
+"local network."
+msgstr ""
+"Aus Sicherheitsgründen ist das Django-Admin nicht über Tor erreichbar – nur "
+"aus dem lokalen Netz."
+
+#: templates/settings.html:130
 msgid "Admin"
 msgstr "Administration"
 
-#: templates/settings.html:106
+#: templates/settings.html:131
 msgid "Django admin"
 msgstr "Django-Administration"
 
@@ -713,11 +781,11 @@ msgid "overdue"
 msgstr "überfällig"
 
 #: tracker/scheduling.py:173 tracker/templatetags/fmt.py:37
-#: tracker/views.py:64
+#: tracker/views.py:66
 msgid "today"
 msgstr "heute"
 
-#: tracker/templatetags/fmt.py:39 tracker/views.py:66
+#: tracker/templatetags/fmt.py:39 tracker/views.py:68
 msgid "yesterday"
 msgstr "gestern"
 
@@ -809,139 +877,138 @@ msgstr "fallend"
 msgid "Systolic %(arrow)s about %(v)s mmHg/week across 90 days"
 msgstr "Systolisch %(arrow)s um etwa %(v)s mmHg/Woche über 90 Tage"
 
-#: tracker/views.py:75
+#: tracker/views.py:77
 msgid "steady"
 msgstr "stabil"
 
-#: tracker/views.py:122
+#: tracker/views.py:130
 msgid "That code didn't work. Check your authenticator app."
 msgstr "Dieser Code hat nicht funktioniert. Prüfe deine Authenticator-App."
 
-#: tracker/views.py:128
+#: tracker/views.py:136
 msgid "Sign in again to continue."
 msgstr "Melde dich erneut an, um fortzufahren."
 
-#: tracker/views.py:150
+#: tracker/views.py:159
 msgid "Welcome back."
 msgstr "Willkommen zurück."
 
-#: tracker/views.py:220 tracker/views.py:237 tracker/views.py:251
+#: tracker/views.py:229 tracker/views.py:246 tracker/views.py:260
 msgid "no readings"
 msgstr "keine Messwerte"
 
-#: tracker/views.py:301
+#: tracker/views.py:310
 msgid "glucose"
 msgstr "Blutzucker"
 
-#: tracker/views.py:302
+#: tracker/views.py:311
 msgid "weight"
 msgstr "Gewicht"
 
-#: tracker/views.py:303
+#: tracker/views.py:312
 msgid "blood pressure"
 msgstr "Blutdruck"
 
-#: tracker/views.py:307
+#: tracker/views.py:316
 #, python-format
 msgid "Saved: %(names)s."
 msgstr "Gespeichert: %(names)s."
 
-#: tracker/views.py:345
-#| msgid "Glucose over time, mmol per litre"
+#: tracker/views.py:354
 msgid "Glucose over time, milligrammes per decilitre"
 msgstr "Blutzuckerverlauf in Milligramm pro Deziliter"
 
-#: tracker/views.py:346
+#: tracker/views.py:355
 msgid "Glucose over time, mmol per litre"
 msgstr "Blutzuckerverlauf, mmol pro Liter"
 
-#: tracker/views.py:380
+#: tracker/views.py:389
 msgid "Weight over time"
 msgstr "Gewichtsverlauf"
 
-#: tracker/views.py:412
+#: tracker/views.py:421
 msgid "Blood pressure over time, systolic and diastolic"
 msgstr "Blutdruckverlauf, systolisch und diastolisch"
 
-#: tracker/views.py:417 tracker/views.py:440
+#: tracker/views.py:426 tracker/views.py:449
 msgid "Average"
 msgstr "Mittel"
 
-#: tracker/views.py:418
+#: tracker/views.py:427
 msgid "Systolic range"
 msgstr "Systolischer Bereich"
 
-#: tracker/views.py:441
+#: tracker/views.py:450
 msgid "Lowest"
 msgstr "Niedrigster"
 
-#: tracker/views.py:442
+#: tracker/views.py:451
 msgid "Highest"
 msgstr "Höchster"
 
-#: tracker/views.py:473
+#: tracker/views.py:482
 msgid "Updated."
 msgstr "Aktualisiert."
 
-#: tracker/views.py:493
+#: tracker/views.py:502
 msgid "Deleted."
 msgstr "Gelöscht."
 
-#: tracker/views.py:530
+#: tracker/views.py:539
 msgid "Language updated."
 msgstr "Sprache aktualisiert."
 
-#: tracker/views.py:538
+#: tracker/views.py:547
 msgid "Units updated."
 msgstr "Einheiten aktualisiert."
 
-#: tracker/views.py:550
+#: tracker/views.py:559
 msgid "Scheduling settings updated."
 msgstr "Zeitplan-Einstellungen aktualisiert."
 
-#: tracker/views.py:583
+#: tracker/views.py:602
 msgid "Scan the QR code, then confirm with a code."
 msgstr "Scanne den QR-Code und bestätige mit einem Code."
 
-#: tracker/views.py:590
+#: tracker/views.py:609
 msgid "Two-factor authentication enabled."
 msgstr "Zwei-Faktor-Authentifizierung aktiviert."
 
-#: tracker/views.py:593
+#: tracker/views.py:612
 msgid "Wrong code - try the next one from your app."
 msgstr "Falscher Code - versuche den nächsten aus deiner App."
 
-#: tracker/views.py:600
+#: tracker/views.py:619
 msgid "Two-factor authentication disabled."
 msgstr "Zwei-Faktor-Authentifizierung deaktiviert."
 
-#: tracker/views.py:603
+#: tracker/views.py:622
 msgid "A current valid code is required to disable 2FA."
 msgstr ""
 "Zum Deaktivieren von 2FA ist ein aktueller gültiger Code erforderlich."
 
-#: tracker/views.py:652
+#: tracker/views.py:671
 msgid "Schedule saved."
 msgstr "Zeitplan gespeichert."
 
-#: tracker/views.py:666
+#: tracker/views.py:685
 msgid "Schedule deleted."
 msgstr "Zeitplan gelöscht."
 
-#: tracker/views.py:749
+#: tracker/views.py:768
 msgid "Choose a backup file first."
 msgstr "Wähle zuerst eine Backup-Datei."
 
-#: tracker/views.py:752
+#: tracker/views.py:771
 msgid "Backup file too large (max 20 MB)."
 msgstr "Backup-Datei zu groß (max. 20 MB)."
 
-#: tracker/views.py:759
+#: tracker/views.py:778
 #, python-format
 msgid "Restore failed: %(err)s"
 msgstr "Wiederherstellung fehlgeschlagen: %(err)s"
 
-#: tracker/views.py:766
+#: tracker/views.py:785
 #, python-format
 msgid "Restore complete: %(created)s records created, %(updated)s updated."
 msgstr ""
