@@ -82,7 +82,8 @@ class QuickAddTests(TestCase):
         self.assertEqual((b.systolic, b.diastolic, b.pulse), (124, 80, 66))
 
     def test_imperial_input_stored_metric(self):
-        Profile.objects.create(user=self.user, units="imperial")
+        Profile.objects.create(user=self.user, units="imperial",
+                               glucose_units="imperial")
         self.c.post("/add/", {"taken_at": "2026-10-17T08:00",
                               "glucose": "180", "weight": "180"})
         g = GlucoseReading.objects.get()

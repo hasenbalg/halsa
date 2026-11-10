@@ -9,11 +9,22 @@
   <p class="page-sub">{% translate "Data is always stored in metric (mmol/L, kg, mmHg). This only changes display and input." %}</p>
   <form method="post" class="form">
     {% csrf_token %}
-    <div class="radio-row">
-      {% for radio in form.units %}
-        <label class="radio-card">{{ radio.tag }} {{ radio.choice_label }}</label>
-      {% endfor %}
-    </div>
+    <fieldset class="field-group">
+      <legend>{% translate "Blood glucose" %}</legend>
+      <div class="radio-row">
+        {% for radio in form.glucose_units %}
+          <label class="radio-card">{{ radio.tag }} {{ radio.choice_label }}</label>
+        {% endfor %}
+      </div>
+    </fieldset>
+    <fieldset class="field-group">
+      <legend>{% translate "Weight" %}</legend>
+      <div class="radio-row">
+        {% for radio in form.units %}
+          <label class="radio-card">{{ radio.tag }} {{ radio.choice_label }}</label>
+        {% endfor %}
+      </div>
+    </fieldset>
     <button class="btn btn-primary" type="submit">{% translate "Save units" %}</button>
   </form>
 </section>

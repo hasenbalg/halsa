@@ -255,3 +255,22 @@ the field; old backups restore with blank context. Migration 0003.
   xgettext never saw those strings and makemessages obsoleted them.
 - tests8.py: 7 tests (quick-add time, history/metric/edit display, backup roundtrip,
   legacy date-only restore, dashboard card). 107 green.
+
+## Issue #21 — glucose unit independent of weight unit (2026-11-10)
+- Blood glucose display (mmol/L vs mg/dL) is regional convention, not
+  metric/imperial. Profile.glucose_units added; Profile.units now means
+  weight (kg/lb) only. Storage unchanged (canonical mmol/L + kg).
+- Migration 0007 seeds glucose_units=imperial for existing imperial
+  profiles (display unchanged); 0008 = choices relabel.
+- Grill decisions: charts convert per profile INCLUDING the 3.9–7.8
+  target band (→ 70–141 mg/dL) and the weight chart + PDF charts;
+  settings = one Units panel with two labelled groups (Blood glucose /
+  Weight), one Save; radio labels are concrete units (Kilograms (kg) /
+  Pounds (lb), mmol/L / mg/dL).
+- UnitsForm fields independently optional (either-or-both POST shapes).
+- aria labels: new "Glucose over time, milligrammes per decilitre" (de
+  translated); fuzzy msgmerge match ("Blood glucose", aria mgdl) caught
+  and fixed by hand before compiling.
+- tests9.py: 9 tests (independent settings, mixed kg+mg/dL across
+  dashboard/add/history/PDF, canonical storage, chart unit, backup
+  roundtrip). 116 green.

@@ -149,6 +149,11 @@ def restore_from_json(user, raw_text):
             summary["metric_settings"][0 if created else 1] += 1
 
         prof = data.get("profile") or {}
+        if prof.get("glucose_units") in ("metric", "imperial"):
+            profile, _ = Profile.objects.get_or_create(user=user)
+            if profile.glucose_units != prof["glucose_units"]:
+                profile.glucose_units = prof["glucose_units"]
+                profile.save(update_fields=["glucose_units"])
         if prof.get("units") in ("metric", "imperial"):
             profile, _ = Profile.objects.get_or_create(user=user)
             if profile.units != prof["units"]:

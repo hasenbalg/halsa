@@ -140,7 +140,7 @@ class ContextPdfTests(TestCase):
             user=u, taken_at=timezone.now(),
             value_mmol=Decimal("5.9"), context="post")
         from .pdfexport import build_report
-        pdf = build_report(u, Profile.Units.METRIC, 90)
+        pdf = build_report(u, 90)
         # reportlab compresses content streams; decompress before matching
         import base64
         import re
