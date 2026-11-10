@@ -300,3 +300,12 @@ the field; old backups restore with blank context. Migration 0003.
   in setups (client.login + axes = request-required error).
 - tests10: guard (3), panel (2), lockout (2), totp-counted (1). 124
   green. Issue comment documents the amendments.
+
+## Onion key mirror + CSP QR breakage (2026-11-10, from Pi install log)
+- Pi run showed tor-state missing the v3 key: tor 0.4.9 stores it as
+  hs_ed25519_secret_key, not private_key. Installer now mirrors the
+  WHOLE hidden_service dir both ways (import chowns back to tor).
+- CSP img-src 'self' blocked every data: URI -> the onion AND the 2FA
+  enrollment QRs rendered broken. Both switched to inline segno SVG
+  (safe under script-src 'none'); white quiet zone via .qr-box CSS.
+- Final readiness curl now retries (no more HTTP 000 in summary).
