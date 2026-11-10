@@ -461,6 +461,11 @@ MODELS = {
     "bp": (BloodPressureReading, BloodPressureForm, "taken_at"),
 }
 
+# Detail page per kind. NOT derivable from the kind: blood pressure is
+# kind "bp" but lives at /pressure/ - redirecting to /{kind}/ there is
+# the 404 from issues #16 and #29 (edit/delete a bp value -> 404 page).
+KIND_URL = {"glucose": "/glucose/", "weight": "/weight/", "bp": "/pressure/"}
+
 
 @login_required
 def edit(request, kind, pk):
@@ -481,7 +486,7 @@ def edit(request, kind, pk):
             form.save()
             logger.info("reading updated: %s", kind)
             messages.success(request, gettext_lazy("Updated."))
-            return redirect(f"/{kind}/")
+            return redirect(KIND_URL[kind])
     else:
         form = form_class(instance=obj, **kwargs)
     kind_label = {
@@ -497,11 +502,14 @@ def edit(request, kind, pk):
 @require_POST
 def delete(request, kind, pk):
     model, _x, _y = MODELS[kind]
-    obj = get_object_or_404(model, pk=pk, user=request.user)
-    obj.delete()
-    logger.info("reading deleted: %s", kind)
+    # Idempotent: deleting an already-gone reading is a success, not a
+    # bare 404 page. Stale tabs and double-clicked delete buttons are
+    # indistinguishable from an attacker here, and the outcome the user
+    # wants is identical: the reading must not exist afterwards.
+    deleted = model.objects.filter(pk=pk, user=request.user).delete()[0]
+    logger.info("reading deleted: %s (existing=%s)", kind, bool(deleted))
     messages.success(request, gettext_lazy("Deleted."))
-    return redirect(f"/{kind}/")
+    return redirect(KIND_URL[kind])
 
 
 @login_required
