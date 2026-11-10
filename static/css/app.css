@@ -408,3 +408,9 @@ input::placeholder { color: var(--muted); opacity: 0.7; }
   .metric-knobs table, .metric-knobs tr, .metric-knobs tbody { display: block; }
   .qr-box { max-width: 100%; overflow: auto; }
 }
+
+/* Onion service panel (settings) */
+.onion-row{display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap}
+.onion-text{flex:1;min-width:260px}
+.onion-risks{margin:.25rem 0 0;padding-left:1.15rem;display:grid;gap:.35rem}
+.onion-risks li{color:var(--text-soft)}

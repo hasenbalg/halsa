@@ -32,3 +32,22 @@ class SecurityHeadersMiddleware:
             response["Content-Security-Policy"] = CSP
         response.setdefault("Referrer-Policy", "same-origin")
         return response
+
+
+class OnionGuardMiddleware:
+    """The onion service serves the user-facing app only.
+
+    Django admin must stay reachable from the local network alone, so any
+    request whose Host is a .onion name never sees /admin/ - answered with
+    404 rather than 403 so the admin URL is not advertised.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        host = request.get_host().split(":")[0].lower()
+        if host.endswith(".onion") and request.path.startswith("/admin"):
+            from django.http import Http404
+            raise Http404
+        return self.get_response(request)

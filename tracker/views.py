@@ -2,8 +2,10 @@ import logging
 from datetime import timedelta
 from decimal import Decimal
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login as auth_login
+from django.contrib.auth.signals import user_login_failed
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
@@ -110,12 +112,18 @@ def login_view(request):
             profile = get_profile(user)
             if profile.verify(token):
                 logger.info("login ok (2fa)")
-                auth_login(request, user)
+                auth_login(request, user,
+                     backend="django.contrib.auth.backends.ModelBackend")
                 if profile.language:
                     translation.activate(profile.language)
                 return _set_language_cookie(request, redirect(next_url),
                                             profile.language)
             logger.warning("login 2fa code failed")
+            user_login_failed.send(
+                sender=__name__,
+                credentials={"username": user.username},
+                request=request,
+            )
             return render(
                 request, "login.html",
                 {"step": "code", "next": next_url,
@@ -143,7 +151,8 @@ def login_view(request):
                     request, "login.html",
                     {"step": "code", "next": next_url},
                 )
-            auth_login(request, user)
+            auth_login(request, user,
+                     backend="django.contrib.auth.backends.ModelBackend")
             if profile.language:
                 translation.activate(profile.language)
             logger.info("login ok")
@@ -556,12 +565,22 @@ def settings_view(request):
         ms = scheduling.settings_for(request.user, metric)
         metric_forms.append((label, MetricSettingsForm(instance=ms,
                                                         prefix=f"m{metric}")))
+    onion_url = getattr(settings, "ONION_URL", "")
+    onion_qr = None
+    if onion_url:
+        import segno
+        try:
+            onion_qr = segno.make(onion_url).svg_data_uri(scale=5, border=2)
+        except OSError:
+            onion_qr = None
     return render(request, "settings.html", {
         "form": form,
         "lang_form": lang_form,
         "profile": profile,
         "metric_forms": metric_forms,
         "restore_form": RestoreForm(),
+        "onion_url": onion_url,
+        "onion_qr": onion_qr,
     })
 
 

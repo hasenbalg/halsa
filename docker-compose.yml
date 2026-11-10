@@ -43,9 +43,24 @@ services:
           sleep 300
         done
 
+  # Optional hidden service (install.sh enables it via COMPOSE_PROFILES).
+  # The v3 key that defines the address lives in the halsa_tor volume;
+  # install.sh mirrors it to ./tor-state next to this file for backups
+  # (this host's docker daemon cannot bind-mount - verified 2026-11-10).
+  tor:
+    build: docker/tor
+    container_name: halsa-tor
+    restart: unless-stopped
+    profiles: ["onion"]
+    volumes:
+      - halsa_tor:/var/lib/tor
+    depends_on: [web]
+    networks: [halsa]
+
 volumes:
   halsa_db:
   halsa_logs:
+  halsa_tor:
 
 networks:
   halsa:

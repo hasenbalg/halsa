@@ -274,3 +274,29 @@ the field; old backups restore with blank context. Migration 0003.
 - tests9.py: 9 tests (independent settings, mixed kg+mg/dL across
   dashboard/add/history/PDF, canonical storage, chart unit, backup
   roundtrip). 116 green.
+
+## Issue #22 — optional Tor onion service + axes hardening (2026-11-10)
+- install.sh asks about an onion service (pros/cons incl. the sharing
+  risk text) and wires everything: boots tor once, reads the generated
+  .onion hostname, appends it to ALLOWED_HOSTS + HALSA_ONION_URL in
+  .env, recreates web. Redo keeps the option; update path just works
+  via COMPOSE_PROFILES.
+- tor sidecar: docker/tor (alpine+tini, non-root, HiddenServicePort 80
+  -> web:8000). Compose profile "onion"; CI publishes
+  ghcr.io/hasenbalg/halsa-tor (amd64+arm64). This host's daemon
+  cannot bind-mount (verified) -> keys in halsa_tor volume, mirrored
+  to ./tor-state next to the compose file (that folder is the address;
+  installer imports it back on reinstall).
+- Settings bottom panel: segno QR + readonly address field (strict
+  zero-JS, no click-to-copy) + "Before you share this address" risk
+  list. German translated.
+- /admin/ never over onion: OnionGuardMiddleware 404s .onion Host on
+  /admin/* (don't advertise). Verified live: login 200, admin 404 via
+  tor socks5 client.
+- django-axes (audit leftover): 5 fails/15min by ip, DB-backed;
+  failed 2FA codes counted via user_login_failed signal; dummy
+  handler under tests; auth_login needs explicit backend now (multi-
+  backend gotcha, also a latent prod bug fixed). Tests: force_login
+  in setups (client.login + axes = request-required error).
+- tests10: guard (3), panel (2), lockout (2), totp-counted (1). 124
+  green. Issue comment documents the amendments.

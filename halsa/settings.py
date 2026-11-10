@@ -1,4 +1,6 @@
 import os
+import sys
+from datetime import timedelta
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -14,6 +16,10 @@ def env_list(name, default):
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", "dev-insecure-key")
 DEBUG = env("DEBUG", "0") == "1"
+
+# Full http://<addr>.onion URL when the optional tor sidecar is enabled
+# (written by install.sh); empty hides the onion panel in settings.
+ONION_URL = env("HALSA" + "_ONION" + "_URL", "")
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
 
 INSTALLED_APPS = [
@@ -24,11 +30,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "tracker",
+    "axes",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "halsa.security.SecurityHeadersMiddleware",
+    "halsa.security.OnionGuardMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -38,6 +46,7 @@ MIDDLEWARE = [
     "halsa.i18n.UserLanguageMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "halsa.urls"
@@ -70,6 +79,39 @@ DATABASES = {
         "CONN_MAX_AGE": 60,
     }
 }
+
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+# Brute-force protection (django-axes): 5 failed password attempts lock
+# the offending (username, client) pair for 15 minutes. Database-backed,
+# no extra service.
+# Why the TUPLE and not ip_address alone: over the onion service every
+# visitor arrives from the tor container's fixed address, so a shared
+# IP bucket would let one attacker lock every legitimate onion user out
+# by burning 5 wrong passwords (permanent onion-login DoS). Locking
+# (username, ip) pairs keeps honest users' pairs independent while an
+# attacker only ever locks out the exact pair he is hammering. The
+# residual gap - spraying many usernames at 4 tries each - is covered
+# by 2FA, which is mandatory for anyone reachable via the onion.
+AXES_FAILURE_LIMIT = int(env("AXES_FAILURE_LIMIT", "5"))
+AXES_COOLOFF_TIME = timedelta(minutes=15)
+# NOTE the nested list: axes 9 reads a flat list as OR (block if EITHER
+# matches) and a nested one as AND (one key = the pair). We need the pair.
+AXES_LOCKOUT_PARAMETERS = [
+    [x.strip() for x in
+     env("AXES_LOCKOUT_PARAMETERS", "username,ip_address").split(",")
+     if x.strip()]
+]
+AXES_RESET_ON_SUCCESS = True
+# The suite fires deliberately failed logins; the database handler would
+# lock the test client out mid-suite. Tests that exercise the lockout
+# itself override AXES_HANDLER explicitly.
+AXES_HANDLER = ("axes.handlers.dummy.AxesDummyHandler"
+                if "test" in sys.argv
+                else "axes.handlers.database.AxesDatabaseHandler")
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

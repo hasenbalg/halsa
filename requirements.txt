@@ -6,3 +6,4 @@ pyotp>=2.9
 segno>=1.6
 reportlab>=4.2
 coverage>=7.6
+django-axes>=7.0

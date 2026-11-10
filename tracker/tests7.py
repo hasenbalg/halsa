@@ -27,7 +27,7 @@ class I18nTests(TestCase):
         self.assertContains(res, "Anmelden")
 
     def test_auto_profile_follows_browser(self):
-        self.client.login(username="u", password="***")
+        self.client.force_login(self.user)
         res = self._get("/", "de")
         self.assertContains(res, "Übersicht")
         res = self._get("/", "en")
@@ -36,19 +36,19 @@ class I18nTests(TestCase):
     def test_pinned_de_beats_en_browser(self):
         self.profile.language = "de"
         self.profile.save()
-        self.client.login(username="u", password="***")
+        self.client.force_login(self.user)
         res = self._get("/", "en")
         self.assertContains(res, "Übersicht")
 
     def test_pinned_en_beats_de_browser(self):
         self.profile.language = "en"
         self.profile.save()
-        self.client.login(username="u", password="***")
+        self.client.force_login(self.user)
         res = self._get("/", "de")
         self.assertContains(res, "Dashboard")
 
     def test_settings_language_change_persists(self):
-        self.client.login(username="u", password="***")
+        self.client.force_login(self.user)
         res = self.client.post("/settings/", {"language": "de"},
                                follow=True)
         self.profile.refresh_from_db()
@@ -59,7 +59,7 @@ class I18nTests(TestCase):
         self.assertContains(res, "Übersicht")
 
     def test_settings_page_shows_language_form(self):
-        self.client.login(username="u", password="***")
+        self.client.force_login(self.user)
         res = self._get("/settings/", "de")
         self.assertContains(res, "Sprache")
         self.assertContains(res, 'value="de"')
@@ -123,7 +123,7 @@ class I18nTests(TestCase):
     def test_german_uses_du_not_sie(self):
         self.profile.language = "de"
         self.profile.save()
-        self.client.login(username="u", password="***")
+        self.client.force_login(self.user)
         res = self._get("/settings/", "de")
         html = res.content.decode()
         self.assertNotIn("Ihre", html)
