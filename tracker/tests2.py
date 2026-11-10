@@ -230,7 +230,7 @@ class TwoFactorFlowTests(TestCase):
         self.assertFalse(p.two_factor_enabled)
         page = self.c.get("/settings/2fa/")
         body = page.content.decode()
-        self.assertIn("data:image/svg+xml", body)  # QR rendered
+        self.assertIn("<svg", body)  # inline SVG QR (CSP-safe)
         self.assertIn(p.totp_seed, body)           # manual key shown
         # confirm with wrong code re-renders enrollment
         resp = self.c.post("/settings/2fa/", {"action": "confirm",

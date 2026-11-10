@@ -20,7 +20,7 @@
 
   {% elif qr %}
     <p class="page-sub">{% translate "1. Scan this QR code with your authenticator app (Aegis, Authy, 1Password, ...)." %}</p>
-    <div class="qr-box"><img src="{{ qr }}" alt="{% translate 'TOTP QR code' %}" width="220" height="220"></div>
+    <div class="qr-box">{{ qr }}</div>
     <p class="page-sub">{% translate "Or enter this key manually:" %}</p>
     <code class="seed">{{ seed }}</code>
     <hr class="rule">

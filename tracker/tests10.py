@@ -44,7 +44,7 @@ class OnionPanelTests(TestCase):
         self.assertIn("Tor onion service", body)
         self.assertIn(ONION_URL, body)
         self.assertIn('type="text" readonly', body)
-        self.assertIn("data:image/svg+xml", body)  # segno QR
+        self.assertIn("<svg", body)  # inline SVG QR (CSP-safe)
         self.assertIn("Before you share this address", body)
         self.assertIn("not reachable over Tor", body)
 
