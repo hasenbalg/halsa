@@ -322,3 +322,19 @@ the field; old backups restore with blank context. Migration 0003.
   identical response -> no existence oracle).
 - tests2: DeleteTests (per-kind, twice, foreign) +
   RedirectAfterMutationTests (assert Location per kind). 128 green.
+
+## Issue #30: account menu instead of click-name-to-logout (2026-11-11)
+- Chosen from 4 options (B): native <details> account menu - Settings,
+  Two-factor authentication, Log out. Zero JS; keyboard works; logout
+  stays a POST form inside the menu.
+- Zero-JS limitation accepted: no click-outside-to-close; closes on
+  re-click of the chip or when an item navigates.
+- CSS: chip caret flips on [open]; panel 252px so the German compound
+  fits one line; divider must NOT bleed into the rounded corners
+  (first version had margin -6px -> notch artifact).
+- i18n: gettext fuzzy-kept 'Sign out'->'Log out' as 'Abmelden' (correct;
+  unfuzzied). 'Sign out' obsolete in catalog.
+- i18n-tools container has NO bind mount - copy the tree in with tar
+  before makemessages (silent no-op otherwise!).
+- AccountMenuTests: menu present, no GET logout link, POST logout 302.
+  126 green on this base (main).

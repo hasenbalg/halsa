@@ -109,7 +109,7 @@ table — safe to merge exports, no enumerable ids.
 
 ### Tested
 
-**128 tests** over views, models, scheduling, export, restore, units,
+**129 tests** over views, models, scheduling, export, restore, units,
 i18n, logging and the 2FA flow; OWASP-based security audit on record
 (`security-audit/REPORT.md`).
 
