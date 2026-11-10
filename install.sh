@@ -91,7 +91,7 @@ banner
 # ---------------------------------------------------------------------------
 # existing installation?  back up, then offer update / redo / quit
 # ---------------------------------------------------------------------------
-KEEP_PG_USER="" ; KEEP_PG_DB="" ; KEEP_PG_PW=""
+KEEP_PG_USER="" ; KEEP_PG_DB="" ; KEEP_PG_PW="" ; KEEP_ONION=""
 if [ -f .env ] && [ -f docker-compose.yml ]; then
   say "existing Hälsa installation found here"
   mkdir -p backups
@@ -121,6 +121,7 @@ if [ -f .env ] && [ -f docker-compose.yml ]; then
       KEEP_PG_USER=$(grep -s '^POSTGRES_USER=' .env | cut -d= -f2-)
       KEEP_PG_DB=$(grep -s '^POSTGRES_DB=' .env | cut -d= -f2-)
       KEEP_PG_PW=$(grep -s '^POSTGRES_PASSWORD=' .env | cut -d= -f2-)
+      if grep -qs '^COMPOSE_PROFILES=onion' .env; then KEEP_ONION=1; fi
       say "redoing the questions (database password preserved)" ;;
     *)
       say "nothing changed" ; exit 0 ;;
@@ -137,6 +138,25 @@ HTTP_PORT=$(ask "Which TCP port should Hälsa listen on?" 8000)
 HOSTS=$(ask "Hostnames this app is reachable at (comma-separated)" "localhost,127.0.0.1")
 PROXY=$(ask "Is a TLS reverse proxy in front of it? (y/N)" n)
 case "$PROXY" in [yY]*) PROXY=1 ;; *) PROXY=0 ;; esac
+
+echo
+echo "  Onion service (Tor) - pros and cons:"
+echo "    + reach Hälsa from anywhere without opening ports, a domain, or"
+echo "      a TLS proxy; Tor Browser is the only client requirement"
+echo "    + traffic never touches your ISP's DNS or plain internet routes"
+echo "    - your login page lands on the open internet. Failed logins are"
+echo "      throttled and 2FA still applies, but a weak password becomes"
+echo "      dangerous - and anyone who knows the address is one weak"
+echo "      password away from your data. Treat the address like a key."
+echo "    - the Django admin is never reachable over Tor (local network"
+echo "      only); everything else is"
+if [ -n "$KEEP_ONION" ]; then
+  ONION=1
+  say "onion service: enabled (kept from your existing install)"
+else
+  ONION=$(ask "Expose an onion service via Tor? (y/N)" n)
+fi
+case "$ONION" in [yY]*) ONION=1 ;; *) ONION=0 ;; esac
 
 TIMEZ=$(ask "Timezone for schedules and reminders" "Europe/Berlin")
 
@@ -193,6 +213,9 @@ fi
   echo "TIME_ZONE=$TIMEZ"
   echo "INSECURE_COOKIES=$COOKIES"
   echo "HALSA_BEHIND_PROXY=$PROXY"
+  if [ "$ONION" = 1 ]; then
+    echo "COMPOSE_PROFILES=onion"
+  fi
   if [ -n "$SMTP_HOST" ]; then
     echo "EMAIL_HOST=$SMTP_HOST"
     echo "EMAIL_PORT=$SMTP_PORT"
@@ -250,6 +273,52 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# onion service (optional): boot tor, wire the address, mirror the key
+# ---------------------------------------------------------------------------
+ONION_HOST=""
+if [ "$ONION" = 1 ]; then
+  say "enabling the Tor onion service"
+  docker compose --profile onion pull tor 2>/dev/null || true
+  docker compose --profile onion up -d tor
+
+  # restoring a previous install: ./tor-state next to this file wins
+  if [ -f tor-state/private_key ] && [ -f tor-state/hostname ]; then
+    say "importing existing onion key from ./tor-state"
+    docker compose exec -T tor sh -c \
+      'rm -rf /var/lib/tor/hidden_service && mkdir -p /var/lib/tor/hidden_service' \
+      </dev/null || true
+    docker compose cp tor-state/private_key tor:/var/lib/tor/hidden_service/private_key || true
+    docker compose cp tor-state/hostname  tor:/var/lib/tor/hidden_service/hostname  || true
+    docker compose restart tor
+  fi
+
+  say "waiting for tor to produce the address"
+  for _ in $(seq 1 45); do
+    ONION_HOST=$(docker compose exec -T tor cat \
+      /var/lib/tor/hidden_service/hostname </dev/null 2>/dev/null || true)
+    [ -n "$ONION_HOST" ] && break
+    sleep 2
+  done
+  [ -n "$ONION_HOST" ] || die "tor produced no address - check: docker compose logs tor"
+
+  # Django must accept the onion Host header; Settings shows the QR
+  case "$(cat .env)" in
+    *"$ONION_HOST"*) : ;;
+    *) sed -i "s|^DJANGO_ALLOWED_HOSTS=.*|&,${ONION_HOST}|" .env ;;
+  esac
+  grep -qs '^HALSA_ONION_URL=' .env \
+    || echo "HALSA_ONION_URL=http://${ONION_HOST}" >> .env
+  docker compose up -d web   # recreate with the updated env
+
+  # back the address-forming key up next to this file (chmod 700 dir)
+  mkdir -p tor-state && chmod 700 tor-state
+  docker compose cp tor:/var/lib/tor/hidden_service/hostname      tor-state/hostname      || true
+  docker compose cp tor:/var/lib/tor/hidden_service/private_key   tor-state/private_key   || true
+  chmod 600 tor-state/private_key 2>/dev/null || true
+  say "onion service live: http://${ONION_HOST}"
+fi
+
+# ---------------------------------------------------------------------------
 # summary
 # ---------------------------------------------------------------------------
 code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 \
@@ -264,6 +333,13 @@ echo "    2. reminder emails: $( [ -n "$SMTP_HOST" ] && echo "SMTP configured ($
 echo "    3. scheduler token (for external cron): $TOK"
 echo "    4. backups: docker compose exec db pg_dump -U $PG_DB $PG_DB | gzip > halsa.sql.gz"
 echo "    5. logs: docker compose logs -f web"
+if [ "$ONION" = 1 ]; then
+  echo
+  echo "  onion: http://${ONION_HOST}"
+  echo "  a QR code and sharing guidance wait in Settings."
+  echo "  the key lives in the halsa_tor volume, mirrored to ./tor-state -"
+  echo "  back that folder up; it IS the address (chmod it 700/600)."
+fi
 if [ "$PROXY" = 0 ]; then
   echo
   echo "  NOTE: plain http on a LAN. For anything beyond that, put a TLS"

@@ -110,11 +110,11 @@ class EventLogTests(TestCase):
         with self.assertLogs("halsa", level="INFO") as cm:
             self.c.post("/accounts/login/", {"username": "lg",
                              "password": PW})
-            self.c.login(username="lg", password=PW)
+            self.c.force_login(self.user)
             self.assertIn("login ok", "\n".join(cm.output))
 
     def test_reading_saved_logged_without_values(self):
-        self.c.login(username="lg", password=PW)
+        self.c.force_login(self.user)
         with self.assertLogs("halsa", level="INFO") as cm:
             self.c.post("/add/", {
                 "taken_at": timezone.localtime().strftime("%Y-%m-%dT%H:%M"),
@@ -138,7 +138,7 @@ class EventLogTests(TestCase):
             self.assertIn("bad token", "\n".join(cm.output))
 
     def test_restore_and_export_logged(self):
-        self.c.login(username="lg", password=PW)
+        self.c.force_login(self.user)
         GlucoseReading.objects.create(user=self.user,
                                       value_mmol=Decimal("5.0"))
         with self.assertLogs("halsa", level="INFO") as cm:

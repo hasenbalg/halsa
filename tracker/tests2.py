@@ -220,7 +220,7 @@ class TwoFactorFlowTests(TestCase):
     def setUp(self):
         self.user = make_user("tf")
         self.c = Client()
-        self.c.login(username="tf", password=PW)
+        self.c.force_login(self.user)
     def test_enroll_confirm_disable(self):
         # enroll
         resp = self.c.post("/settings/2fa/", {"action": "enroll"})
@@ -291,7 +291,7 @@ class SettingsViewTests(TestCase):
     def setUp(self):
         self.user = make_user("sv")
         self.c = Client()
-        self.c.login(username="sv", password=PW)
+        self.c.force_login(self.user)
     def test_units_post(self):
         resp = self.c.post("/settings/", {"units": "imperial"})
         self.assertEqual(resp.status_code, 302)
@@ -388,7 +388,7 @@ class ExportExtraTests(TestCase):
     def setUp(self):
         self.user = make_user("ex")
         self.c = Client()
-        self.c.login(username="ex", password=PW)
+        self.c.force_login(self.user)
     def test_pdf_empty_data(self):
         resp = self.c.get("/export/pdf/?range=30")
         self.assertEqual(resp.status_code, 200)
@@ -426,7 +426,7 @@ class EditFlowTests(TestCase):
     def setUp(self):
         self.user = make_user("ef")
         self.c = Client()
-        self.c.login(username="ef", password=PW)
+        self.c.force_login(self.user)
     def test_weight_edit_imperial(self):
         Profile.objects.create(user=self.user, units="imperial")
         w = WeightReading.objects.create(user=self.user, taken_at=timezone.now(),
