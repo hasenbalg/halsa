@@ -97,6 +97,37 @@ a:hover { text-decoration: underline; }
 }
 .userchip:hover { color: var(--text); border-color: var(--muted); }
 
+/* Issue #30: account menu (native details, zero JS) */
+.account { position: relative; }
+.account > summary { list-style: none; cursor: pointer; }
+.account > summary::-webkit-details-marker { display: none; }
+.account .caret { margin-left: 6px; font-size: 10px; color: var(--muted); }
+.account[open] .userchip { color: var(--text); border-color: var(--muted); }
+.account[open] .caret { display: inline-block; transform: rotate(180deg); }
+.account-menu {
+  position: absolute; right: 0; top: calc(100% + 8px);
+  min-width: 150px; display: flex; flex-direction: column;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 6px; z-index: 60;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+.account-menu a, .account-menu .menu-logout {
+  display: block; width: 100%; text-align: left;
+  padding: 9px 12px; border: 0; border-radius: 8px;
+  background: none; color: var(--text); text-decoration: none;
+  font-size: 13.5px; font-family: inherit; cursor: pointer;
+}
+.account-menu a:hover, .account-menu .menu-logout:hover {
+  background: var(--accent-soft); color: var(--accent);
+}
+.account-menu form { margin: 4px 0 0; padding-top: 4px;
+  border-top: 1px solid var(--border); }
+.account-menu .menu-logout { color: var(--bad); }
+.account-menu .menu-logout:hover {
+  background: color-mix(in srgb, var(--bad) 8%, transparent);
+  color: var(--bad);
+}
+
 /* ---- cards & panels ---- */
 .grid { display: grid; gap: 16px; }
 .grid-cards { grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); margin-bottom: 16px; }

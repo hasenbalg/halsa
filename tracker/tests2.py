@@ -554,3 +554,25 @@ class RedirectAfterMutationTests(TestCase):
         resp = self.c.post(f"/bp/delete/{obj.id}/")
         self.assertEqual(resp.status_code, 302)
         self.assertEqual(resp.headers["Location"], "/pressure/")
+
+
+class AccountMenuTests(TestCase):
+    """Issue #30: username must open an account menu, not log out."""
+
+    def setUp(self):
+        self.user = make_user("am")
+        self.c = Client()
+        self.c.force_login(self.user)
+
+    def test_menu_present_and_logout_still_post_only(self):
+        resp = self.c.get("/")
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, '<details class="account">')
+        self.assertContains(resp, 'href="/settings/"')
+        self.assertNotContains(resp, 'href="/settings/2fa/"')
+        # no GET logout anywhere
+        self.assertNotContains(resp, 'href="/accounts/logout/"')
+        # GET logout must not succeed (POST-only route)
+        self.assertIn(self.c.get("/accounts/logout/").status_code,
+                      (405, 302))
+        self.assertEqual(self.c.post("/accounts/logout/").status_code, 302)
