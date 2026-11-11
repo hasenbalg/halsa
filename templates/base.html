@@ -32,7 +32,6 @@
         <summary class="userchip">{{ user.username }}<span class="caret" aria-hidden="true">&#9662;</span></summary>
         <div class="account-menu">
           <a href="/settings/">{% translate "Settings" %}</a>
-          <a href="/settings/2fa/">{% translate "Two-factor authentication" %}</a>
           <form method="post" action="{% url 'logout' %}">{% csrf_token %}
             <button class="menu-logout" type="submit">{% translate "Log out" %}</button>
           </form>

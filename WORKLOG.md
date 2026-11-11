@@ -338,3 +338,5 @@ the field; old backups restore with blank context. Migration 0003.
   before makemessages (silent no-op otherwise!).
 - AccountMenuTests: menu present, no GET logout link, POST logout 302.
   126 green on this base (main).
+- Follow-up (Frank): 2FA entry removed from the menu - it lives in
+  Settings anyway; menu = Settings + Log out, panel trimmed to 150px.

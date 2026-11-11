@@ -569,7 +569,7 @@ class AccountMenuTests(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, '<details class="account">')
         self.assertContains(resp, 'href="/settings/"')
-        self.assertContains(resp, 'href="/settings/2fa/"')
+        self.assertNotContains(resp, 'href="/settings/2fa/"')
         # no GET logout anywhere
         self.assertNotContains(resp, 'href="/accounts/logout/"')
         # GET logout must not succeed (POST-only route)
