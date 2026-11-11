@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 21:44+0100\n"
+"POT-Creation-Date: 2026-11-11 00:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,22 +60,22 @@ msgid "Dashboard"
 msgstr "Übersicht"
 
 #: templates/base.html:19 tracker/forms.py:30 tracker/forms.py:104
-#: tracker/models.py:190 tracker/views.py:222 tracker/views.py:271
-#: tracker/views.py:277 tracker/views.py:344 tracker/views.py:487
-#: tracker/views.py:514
+#: tracker/models.py:190 tracker/views.py:223 tracker/views.py:272
+#: tracker/views.py:278 tracker/views.py:345 tracker/views.py:488
+#: tracker/views.py:515
 msgid "Glucose"
 msgstr "Blutzucker"
 
 #: templates/base.html:20 templates/settings.html:21 tracker/forms.py:35
-#: tracker/forms.py:132 tracker/models.py:191 tracker/views.py:239
-#: tracker/views.py:272 tracker/views.py:277 tracker/views.py:380
-#: tracker/views.py:487 tracker/views.py:514
+#: tracker/forms.py:132 tracker/models.py:191 tracker/views.py:240
+#: tracker/views.py:273 tracker/views.py:278 tracker/views.py:381
+#: tracker/views.py:488 tracker/views.py:515
 msgid "Weight"
 msgstr "Gewicht"
 
-#: templates/base.html:21 tracker/models.py:192 tracker/views.py:256
-#: tracker/views.py:273 tracker/views.py:278 tracker/views.py:411
-#: tracker/views.py:488 tracker/views.py:515
+#: templates/base.html:21 tracker/models.py:192 tracker/views.py:257
+#: tracker/views.py:274 tracker/views.py:279 tracker/views.py:412
+#: tracker/views.py:489 tracker/views.py:516
 msgid "Blood pressure"
 msgstr "Blutdruck"
 
@@ -88,7 +88,7 @@ msgstr "Zeitpläne"
 msgid "History"
 msgstr "Verlauf"
 
-#: templates/base.html:24 templates/schedules.html:47
+#: templates/base.html:24 templates/base.html:35 templates/schedules.html:47
 #: templates/settings.html:3 templates/settings.html:5
 msgid "Settings"
 msgstr "Einstellungen"
@@ -97,11 +97,17 @@ msgstr "Einstellungen"
 msgid "+ Add reading"
 msgstr "+ Messwert erfassen"
 
-#: templates/base.html:29
-msgid "Sign out"
+#: templates/base.html:36 templates/settings.html:87
+#: templates/two_factor.html:6
+msgid "Two-factor authentication"
+msgstr "Zwei-Faktor-Authentifizierung"
+
+#: templates/base.html:38
+#| msgid "Sign out"
+msgid "Log out"
 msgstr "Abmelden"
 
-#: templates/base.html:44
+#: templates/base.html:55
 msgid "your health data, on your own server"
 msgstr "deine Gesundheitsdaten, auf deinem eigenen Server"
 
@@ -384,10 +390,6 @@ msgstr "Wiederherstellen"
 msgid "Import backup"
 msgstr "Backup importieren"
 
-#: templates/settings.html:87 templates/two_factor.html:6
-msgid "Two-factor authentication"
-msgstr "Zwei-Faktor-Authentifizierung"
-
 #: templates/settings.html:89
 msgid "2FA is"
 msgstr "2FA ist"
@@ -409,10 +411,6 @@ msgstr ""
 #: templates/settings.html:105
 msgid "Tor onion service"
 msgstr "Tor-Onion-Dienst"
-
-#: templates/settings.html:108
-msgid "Onion address QR code"
-msgstr "QR-Code der Onion-Adresse"
 
 #: templates/settings.html:111
 msgid ""
@@ -510,10 +508,6 @@ msgid ""
 msgstr ""
 "1. Scanne diesen QR-Code mit deiner Authenticator-App (Aegis, Authy, "
 "1Password, ...)."
-
-#: templates/two_factor.html:23
-msgid "TOTP QR code"
-msgstr "TOTP-QR-Code"
 
 #: templates/two_factor.html:24
 msgid "Or enter this key manually:"
@@ -781,11 +775,11 @@ msgid "overdue"
 msgstr "überfällig"
 
 #: tracker/scheduling.py:173 tracker/templatetags/fmt.py:37
-#: tracker/views.py:66
+#: tracker/views.py:67
 msgid "today"
 msgstr "heute"
 
-#: tracker/templatetags/fmt.py:39 tracker/views.py:68
+#: tracker/templatetags/fmt.py:39 tracker/views.py:69
 msgid "yesterday"
 msgstr "gestern"
 
@@ -877,143 +871,149 @@ msgstr "fallend"
 msgid "Systolic %(arrow)s about %(v)s mmHg/week across 90 days"
 msgstr "Systolisch %(arrow)s um etwa %(v)s mmHg/Woche über 90 Tage"
 
-#: tracker/views.py:77
+#: tracker/views.py:78
 msgid "steady"
 msgstr "stabil"
 
-#: tracker/views.py:130
+#: tracker/views.py:131
 msgid "That code didn't work. Check your authenticator app."
 msgstr "Dieser Code hat nicht funktioniert. Prüfe deine Authenticator-App."
 
-#: tracker/views.py:136
+#: tracker/views.py:137
 msgid "Sign in again to continue."
 msgstr "Melde dich erneut an, um fortzufahren."
 
-#: tracker/views.py:159
+#: tracker/views.py:160
 msgid "Welcome back."
 msgstr "Willkommen zurück."
 
-#: tracker/views.py:229 tracker/views.py:246 tracker/views.py:260
+#: tracker/views.py:230 tracker/views.py:247 tracker/views.py:261
 msgid "no readings"
 msgstr "keine Messwerte"
 
-#: tracker/views.py:310
+#: tracker/views.py:311
 msgid "glucose"
 msgstr "Blutzucker"
 
-#: tracker/views.py:311
+#: tracker/views.py:312
 msgid "weight"
 msgstr "Gewicht"
 
-#: tracker/views.py:312
+#: tracker/views.py:313
 msgid "blood pressure"
 msgstr "Blutdruck"
 
-#: tracker/views.py:316
+#: tracker/views.py:317
 #, python-format
 msgid "Saved: %(names)s."
 msgstr "Gespeichert: %(names)s."
 
-#: tracker/views.py:354
+#: tracker/views.py:355
 msgid "Glucose over time, milligrammes per decilitre"
 msgstr "Blutzuckerverlauf in Milligramm pro Deziliter"
 
-#: tracker/views.py:355
+#: tracker/views.py:356
 msgid "Glucose over time, mmol per litre"
 msgstr "Blutzuckerverlauf, mmol pro Liter"
 
-#: tracker/views.py:389
+#: tracker/views.py:390
 msgid "Weight over time"
 msgstr "Gewichtsverlauf"
 
-#: tracker/views.py:421
+#: tracker/views.py:422
 msgid "Blood pressure over time, systolic and diastolic"
 msgstr "Blutdruckverlauf, systolisch und diastolisch"
 
-#: tracker/views.py:426 tracker/views.py:449
+#: tracker/views.py:427 tracker/views.py:450
 msgid "Average"
 msgstr "Mittel"
 
-#: tracker/views.py:427
+#: tracker/views.py:428
 msgid "Systolic range"
 msgstr "Systolischer Bereich"
 
-#: tracker/views.py:450
+#: tracker/views.py:451
 msgid "Lowest"
 msgstr "Niedrigster"
 
-#: tracker/views.py:451
+#: tracker/views.py:452
 msgid "Highest"
 msgstr "Höchster"
 
-#: tracker/views.py:482
+#: tracker/views.py:483
 msgid "Updated."
 msgstr "Aktualisiert."
 
-#: tracker/views.py:502
+#: tracker/views.py:503
 msgid "Deleted."
 msgstr "Gelöscht."
 
-#: tracker/views.py:539
+#: tracker/views.py:540
 msgid "Language updated."
 msgstr "Sprache aktualisiert."
 
-#: tracker/views.py:547
+#: tracker/views.py:548
 msgid "Units updated."
 msgstr "Einheiten aktualisiert."
 
-#: tracker/views.py:559
+#: tracker/views.py:560
 msgid "Scheduling settings updated."
 msgstr "Zeitplan-Einstellungen aktualisiert."
 
-#: tracker/views.py:602
+#: tracker/views.py:603
 msgid "Scan the QR code, then confirm with a code."
 msgstr "Scanne den QR-Code und bestätige mit einem Code."
 
-#: tracker/views.py:609
+#: tracker/views.py:610
 msgid "Two-factor authentication enabled."
 msgstr "Zwei-Faktor-Authentifizierung aktiviert."
 
-#: tracker/views.py:612
+#: tracker/views.py:613
 msgid "Wrong code - try the next one from your app."
 msgstr "Falscher Code - versuche den nächsten aus deiner App."
 
-#: tracker/views.py:619
+#: tracker/views.py:620
 msgid "Two-factor authentication disabled."
 msgstr "Zwei-Faktor-Authentifizierung deaktiviert."
 
-#: tracker/views.py:622
+#: tracker/views.py:623
 msgid "A current valid code is required to disable 2FA."
 msgstr ""
 "Zum Deaktivieren von 2FA ist ein aktueller gültiger Code erforderlich."
 
-#: tracker/views.py:671
+#: tracker/views.py:672
 msgid "Schedule saved."
 msgstr "Zeitplan gespeichert."
 
-#: tracker/views.py:685
+#: tracker/views.py:686
 msgid "Schedule deleted."
 msgstr "Zeitplan gelöscht."
 
-#: tracker/views.py:768
+#: tracker/views.py:769
 msgid "Choose a backup file first."
 msgstr "Wähle zuerst eine Backup-Datei."
 
-#: tracker/views.py:771
+#: tracker/views.py:772
 msgid "Backup file too large (max 20 MB)."
 msgstr "Backup-Datei zu groß (max. 20 MB)."
 
-#: tracker/views.py:778
+#: tracker/views.py:779
 #, python-format
 msgid "Restore failed: %(err)s"
 msgstr "Wiederherstellung fehlgeschlagen: %(err)s"
 
-#: tracker/views.py:785
+#: tracker/views.py:786
 #, python-format
 msgid "Restore complete: %(created)s records created, %(updated)s updated."
 msgstr ""
 "Wiederherstellung abgeschlossen: %(created)s Datensätze erstellt, "
 "%(updated)s aktualisiert."
+
+#~ msgid "Onion address QR code"
+#~ msgstr "QR-Code der Onion-Adresse"
+
+#~ msgid "TOTP QR code"
+#~ msgstr "TOTP-QR-Code"
 
 #~ msgid "Metric (mmol/L, kg)"
 #~ msgstr "Metrisch (mmol/L, kg)"
