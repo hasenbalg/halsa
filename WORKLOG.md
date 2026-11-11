@@ -340,3 +340,6 @@ the field; old backups restore with blank context. Migration 0003.
   126 green on this base (main).
 - Follow-up (Frank): 2FA entry removed from the menu - it lives in
   Settings anyway; menu = Settings + Log out, panel trimmed to 150px.
+- Follow-up 2 (Frank): Settings dropped from the main nav - redundant
+  with the account menu entry; nav = 6 pages, Settings reachable via
+  the username chip only.

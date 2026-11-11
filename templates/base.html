@@ -21,7 +21,6 @@
       <a href="/pressure/" class="{% if request.resolver_match.url_name == 'pressure' %}active{% endif %}">{% translate "Blood pressure" %}</a>
       <a href="/schedules/" class="{% if 'schedules' in request.path %}active{% endif %}">{% translate "Schedules" %}</a>
       <a href="/history/" class="{% if request.resolver_match.url_name == 'history' %}active{% endif %}">{% translate "History" %}</a>
-      <a href="/settings/" class="{% if request.resolver_match.url_name == 'settings' or request.resolver_match.url_name == 'two_factor' %}active{% endif %}">{% translate "Settings" %}</a>
     </nav>
     <div class="topbar-right">
       <a class="btn btn-primary btn-sm" href="/add/">{% translate "+ Add reading" %}</a>
